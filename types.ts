@@ -19,6 +19,7 @@ export interface ExperienceItem {
     imageUrl: string;
     category: string;
     metrics?: { label: string; value: string }[];
+    matterportUrl?: string;
 }
 
 // FIX: Define and export BookableItem and Booking interfaces to resolve import errors.
