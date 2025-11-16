@@ -2,14 +2,20 @@ import { GoogleGenAI, Chat, Modality } from "@google/genai";
 
 const apiKey = process.env.API_KEY;
 
-if (!apiKey) {
-    console.warn("API Key not found. Please set the API_KEY environment variable.");
+let ai: GoogleGenAI | null = null;
+
+function getAI(): GoogleGenAI {
+    if (!ai) {
+        if (!apiKey) {
+            throw new Error("API Key not found. Please set the API_KEY environment variable to use AI features.");
+        }
+        ai = new GoogleGenAI({ apiKey: apiKey });
+    }
+    return ai;
 }
 
-const ai = new GoogleGenAI({ apiKey: apiKey! });
-
 export const initializeChat = (): Chat => {
-    return ai.chats.create({
+    return getAI().chats.create({
         model: 'gemini-2.5-flash',
         config: {
             systemInstruction: "You are 'Bonus', an AI concierge for the 'Bona Parks' virtual experience platform. Your expertise is in helping guests discover events, navigate the platform, and answer questions about our experiences. Your tone is friendly, helpful, and knowledgeable. Do not refer to yourself as an AI model.",
@@ -25,7 +31,7 @@ export type AspectRatio = '1:1' | '3:4' | '4:3' | '9:16' | '16:9';
 
 export const generateImage = async (prompt: string, aspectRatio: AspectRatio = '1:1'): Promise<string> => {
     try {
-        const response = await ai.models.generateImages({
+        const response = await getAI().models.generateImages({
             model: 'imagen-4.0-generate-001',
             prompt: prompt,
             config: {
@@ -74,7 +80,7 @@ export const editImage = async (prompt: string, baseImage: string, logoImage?: s
             }
         }
 
-        const response = await ai.models.generateContent({
+        const response = await getAI().models.generateContent({
             model: 'gemini-2.5-flash-image-preview',
             contents: {
                 parts: [
@@ -102,7 +108,7 @@ export const editImage = async (prompt: string, baseImage: string, logoImage?: s
 
 export const generateVideo = async (prompt: string, aspectRatio: AspectRatio = '16:9'): Promise<any> => {
     try {
-        const operation = await ai.models.generateVideos({
+        const operation = await getAI().models.generateVideos({
             model: 'veo-2.0-generate-001',
             prompt: prompt,
             config: {
@@ -119,7 +125,7 @@ export const generateVideo = async (prompt: string, aspectRatio: AspectRatio = '
 
 export const checkVideoStatus = async (operation: any): Promise<any> => {
     try {
-        const status = await ai.operations.getVideosOperation({ operation: operation });
+        const status = await getAI().operations.getVideosOperation({ operation: operation });
         return status;
     } catch (error) {
         console.error("Gemini video status check error:", error);
