@@ -61,7 +61,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, isLoggedIn }) => {
       <section className="hero-section text-center mb-16">
         <div className="hero-text">
           <h1 className="text-5xl md:text-7xl font-bold text-slate-800 dark:text-slate-100 mb-8 tracking-tight leading-tight">
-            Discover Sardinia Like Never Before
+            Step Into a New Dimension of Discovery
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-4xl mx-auto leading-relaxed mb-8">
             Bona Parks creates high-resolution immersive virtual experiences that bring Sardinia's heritage, landscapes,
