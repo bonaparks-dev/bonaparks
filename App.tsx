@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import HomePage from './components/pages/HomePage';
-import ConciergePage from './components/pages/ConciergePage';
 import DigitalTwinsPage from './components/pages/DigitalTwinsPage';
 import ProofOfWorkPage from './components/pages/ProofOfWorkPage';
 import AISolutionsPage from './components/pages/AISolutionsPage';
@@ -9,7 +8,6 @@ import SignUpPage from './components/pages/SignUpPage';
 import ControlRoomPage from './components/pages/ControlRoomPage';
 import UserProfilePage from './components/pages/UserProfilePage';
 import AvatarStudioPage from './components/pages/AvatarStudioPage';
-import BusinessStudioPage from './components/pages/BusinessStudioPage';
 import { Booking } from './types';
 import { WalletIcon, UserIcon } from './components/IconComponents';
 import LoginOptionsModal from './components/LoginOptionsModal';
@@ -278,7 +276,6 @@ const App: React.FC = () => {
 
       <main className="flex-grow flex items-center justify-center p-4 pt-24 pb-8">
         {page === 'home' && <HomePage onNavigate={navigate} isLoggedIn={isLoggedIn} />}
-        {page === 'ai-assistant' && <ConciergePage />}
         {page === 'digital-twins' && <DigitalTwinsPage isLoggedIn={isLoggedIn} />}
         {page === 'proof-of-work' && <ProofOfWorkPage isLoggedIn={isLoggedIn} />}
         {page === 'ai-solutions' && <AISolutionsPage onNavigate={navigate} />}
@@ -287,7 +284,6 @@ const App: React.FC = () => {
         {page === 'control-room' && <ControlRoomPage bookings={bookings} onNavigate={navigate}/>}
         {page === 'user-profile' && <UserProfilePage walletAddress={walletAddress} handleLogout={handleLogout} />}
         {page === 'avatar-studio' && <AvatarStudioPage />}
-        {page === 'business-studio' && <BusinessStudioPage onNavigate={navigate} />}
       </main>
 
       {showAccessOptions && !isLoggedIn && (
