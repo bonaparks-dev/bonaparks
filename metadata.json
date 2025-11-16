@@ -1,0 +1,7 @@
+{
+  "name": "Bona Parks",
+  "description": "Your AI-powered B2B partner for business automation, creative generation, and marketing solutions. Leverage the full power of Gemini for your business needs. 3D scanning, livestreams.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
