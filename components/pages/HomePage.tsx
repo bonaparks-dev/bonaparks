@@ -58,34 +58,48 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, isLoggedIn }) => {
   return (
     <div className="container mx-auto animate-fade-in px-4 w-full">
       {/* Hero Section */}
-      <div className="text-center mb-16">
-        <h1 className="text-5xl md:text-6xl font-bold text-slate-800 dark:text-slate-100 mb-6 tracking-tight">
-          3D Virtual Tours
-        </h1>
-        <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
-          Professional Matterport scanning and 3D visualization services for real estate, commercial spaces, and venues
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-slate-500 dark:text-slate-500">
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            High-Resolution 4K
-          </span>
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Professional Quality
-          </span>
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-amber-600 dark:text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-            </svg>
-            Interactive 3D
-          </span>
+      <section className="hero-section text-center mb-20">
+        <div className="hero-text">
+          <h1 className="text-5xl md:text-7xl font-bold text-slate-800 dark:text-slate-100 mb-8 tracking-tight leading-tight">
+            Discover Sardinia Like Never Before
+          </h1>
+          <p className="text-2xl md:text-3xl text-slate-600 dark:text-slate-400 max-w-4xl mx-auto leading-relaxed font-light mb-4">
+            Immersive digital experiences that bring spaces to life
+          </p>
+          <p className="text-lg text-slate-500 dark:text-slate-500 max-w-3xl mx-auto leading-relaxed">
+            From luxury penthouses to vibrant nightclubs, explore extraordinary venues through cutting-edge 3D technology
+          </p>
         </div>
-      </div>
+      </section>
+
+      {/* Our World Section */}
+      <section id="our-world" className="mb-20 max-w-4xl mx-auto">
+        <div className="language-en">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-center">
+            Our World
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+            Bona Parks was born from a vision: To fuse the heritage of the past with the innovation of the future.
+            We believe that spaces tell stories, and through immersive digital experiences, we preserve and share
+            these narratives with the world.
+          </p>
+          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+            Using professional Matterport scanning and 3D visualization technology, we transform real-world venues
+            into interactive digital experiences. Each space we capture becomes a window into possibility, whether
+            for real estate, hospitality, cultural preservation, or entertainment.
+          </p>
+        </div>
+      </section>
+
+      {/* Featured Experiences */}
+      <section id="experiences" className="mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4 text-center">
+          Featured Experiences
+        </h2>
+        <p className="text-lg text-slate-600 dark:text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+          Step inside our collection of meticulously captured spaces
+        </p>
+      </section>
 
       {/* Portfolio Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -128,22 +142,23 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, isLoggedIn }) => {
       </div>
 
       {/* Call to Action */}
-      <div className="mt-20 text-center pb-8">
-        <div className="max-w-3xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 p-10 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg">
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-            Need 3D Scanning Services?
+      <section className="cta-section mt-20 text-center pb-8">
+        <div className="max-w-3xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 p-12 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+            Transform Your Space Into an Experience
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-6">
-            Professional Matterport scanning for your property or venue
+          <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+            Whether you are showcasing real estate, promoting a venue, or preserving cultural heritage,
+            we bring your vision to life through immersive 3D technology.
           </p>
           <a
             href="mailto:contact@bonaparks.com"
-            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
+            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold px-10 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl text-lg"
           >
-            Get in Touch
+            Start Your Project
           </a>
         </div>
-      </div>
+      </section>
 
       {selectedItem && (
         <ImmersiveView
