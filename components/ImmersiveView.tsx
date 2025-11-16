@@ -5,57 +5,89 @@ interface ImmersiveViewProps {
   item: {
     title: string;
     imageUrl: string;
+    matterportUrl?: string;
   };
   onExit: () => void;
 }
 
 const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
-  const [isWebXRSupported, setIsWebXRSupported] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for WebXR support on the client side
-    setIsWebXRSupported('xr' in navigator);
+    // Simulate initial loading
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
   }, []);
+
+  // Extract Matterport model ID for embedding
+  const getMatterportEmbedUrl = (url?: string) => {
+    if (!url) return null;
+    const match = url.match(/m=([a-zA-Z0-9]+)/);
+    if (match) {
+      return `https://my.matterport.com/show/?m=${match[1]}&play=1&qs=1`;
+    }
+    return null;
+  };
+
+  const embedUrl = getMatterportEmbedUrl(item.matterportUrl);
 
   return (
     <div
-      className="fixed inset-0 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center z-50 p-4 animate-fade-in"
+      className="fixed inset-0 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center z-50 animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="immersive-view-title"
-      onClick={onExit} // Allow closing by clicking the background
     >
-      <img
-        src={item.imageUrl}
-        alt={`Immersive view of ${item.title}`}
-        className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none"
-      />
-      <div 
-        className="relative text-center z-10 flex flex-col items-center"
-        onClick={e => e.stopPropagation()} // Prevent clicks inside from closing the modal
-      >
-        <div className="flex items-center space-x-3 text-cyan-300 mb-4">
-          <LoadingIcon />
-          <span className="text-xl font-semibold tracking-wider">INITIALIZING IMMERSIVE SESSION</span>
-        </div>
-        <h2 id="immersive-view-title" className="text-4xl md:text-6xl font-extrabold text-white mb-4" style={{ textShadow: '0 0 20px rgba(0, 255, 255, 0.5)' }}>
+      {/* Header bar with title and close button */}
+      <div className="absolute top-0 left-0 right-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/50 p-4 z-20 flex justify-between items-center">
+        <h2 id="immersive-view-title" className="text-xl md:text-2xl font-bold text-white tracking-tight">
           {item.title}
         </h2>
-        <div className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
-            <p>Please put on your VR/AR device to begin the experience.</p>
-            {!isWebXRSupported && (
-                 <p className="text-sm text-yellow-400/80 mt-2">
-                    For the best experience, use a WebXR compatible browser.
-                 </p>
-            )}
-        </div>
-        
         <button
           onClick={onExit}
-          className="px-8 py-3 rounded-lg font-semibold bg-fuchsia-500/80 text-white hover:bg-fuchsia-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-fuchsia-400 transition-all duration-300 transform hover:scale-105"
+          className="px-6 py-2 rounded-lg font-semibold bg-slate-700 text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-300 transform hover:scale-105"
+          aria-label="Close viewer"
         >
-          Exit Experience
+          Close
         </button>
+      </div>
+
+      {/* Main content area */}
+      <div className="w-full h-full pt-16 pb-4 px-4">
+        {embedUrl ? (
+          <div className="relative w-full h-full">
+            {isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-10">
+                <LoadingIcon />
+                <span className="text-slate-300 text-lg font-semibold tracking-wide mt-4">LOADING 3D TOUR...</span>
+              </div>
+            )}
+            <iframe
+              src={embedUrl}
+              className="w-full h-full rounded-lg border-2 border-slate-700/30 shadow-2xl"
+              allow="xr-spatial-tracking; vr; fullscreen"
+              allowFullScreen
+              title={`3D tour of ${item.title}`}
+              onLoad={() => setIsLoading(false)}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              className="max-w-2xl max-h-96 object-contain rounded-lg shadow-2xl mb-8 border-2 border-slate-700/30"
+            />
+            <p className="text-gray-300 text-lg">3D tour preview not available</p>
+          </div>
+        )}
+      </div>
+
+      {/* Footer instructions */}
+      <div className="absolute bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-md border-t border-slate-700/50 p-3 text-center">
+        <p className="text-sm text-slate-400">
+          Use your mouse to navigate • Click and drag to look around • Scroll to zoom
+        </p>
       </div>
     </div>
   );
