@@ -58,47 +58,23 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, isLoggedIn }) => {
   return (
     <div className="container mx-auto animate-fade-in px-4 w-full">
       {/* Hero Section */}
-      <section className="hero-section text-center mb-20">
+      <section className="hero-section text-center mb-16">
         <div className="hero-text">
           <h1 className="text-5xl md:text-7xl font-bold text-slate-800 dark:text-slate-100 mb-8 tracking-tight leading-tight">
             Discover Sardinia Like Never Before
           </h1>
-          <p className="text-2xl md:text-3xl text-slate-600 dark:text-slate-400 max-w-4xl mx-auto leading-relaxed font-light mb-4">
-            Immersive digital experiences that bring spaces to life
+          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-4xl mx-auto leading-relaxed mb-8">
+            Bona Parks creates high-resolution immersive virtual experiences that bring Sardinia's heritage, landscapes,
+            and culture to life, connecting audiences worldwide to authentic and innovative tourism.
           </p>
-          <p className="text-lg text-slate-500 dark:text-slate-500 max-w-3xl mx-auto leading-relaxed">
-            From luxury penthouses to vibrant nightclubs, explore extraordinary venues through cutting-edge 3D technology
-          </p>
+          <div className="max-w-3xl mx-auto mb-12">
+            <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+              Bona Parks was born from a vision: To fuse the heritage of the past with the innovation of the future.
+              We believe that spaces tell stories, and through immersive digital experiences, we preserve and share
+              these narratives with the world.
+            </p>
+          </div>
         </div>
-      </section>
-
-      {/* Our World Section */}
-      <section id="our-world" className="mb-20 max-w-4xl mx-auto">
-        <div className="language-en">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-center">
-            Our World
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-            Bona Parks was born from a vision: To fuse the heritage of the past with the innovation of the future.
-            We believe that spaces tell stories, and through immersive digital experiences, we preserve and share
-            these narratives with the world.
-          </p>
-          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-            Using professional Matterport scanning and 3D visualization technology, we transform real-world venues
-            into interactive digital experiences. Each space we capture becomes a window into possibility, whether
-            for real estate, hospitality, cultural preservation, or entertainment.
-          </p>
-        </div>
-      </section>
-
-      {/* Featured Experiences */}
-      <section id="experiences" className="mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4 text-center">
-          Featured Experiences
-        </h2>
-        <p className="text-lg text-slate-600 dark:text-slate-400 text-center mb-12 max-w-2xl mx-auto">
-          Step inside our collection of meticulously captured spaces
-        </p>
       </section>
 
       {/* Portfolio Grid */}
@@ -149,7 +125,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, isLoggedIn }) => {
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
             Whether you are showcasing real estate, promoting a venue, or preserving cultural heritage,
-            we bring your vision to life through immersive 3D technology.
+            we bring your vision to life through immersive digital experiences.
           </p>
           <a
             href="mailto:contact@bonaparks.com"
