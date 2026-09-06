@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Page } from '../App';
 import { WalletIcon, LoadingIcon, EmailIcon, UserPlusIcon } from './IconComponents';
 
@@ -12,90 +12,91 @@ interface LoginOptionsModalProps {
   walletError: string | null;
 }
 
-const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({ onClose, onNavigate, onConnectWallet, walletStatus, walletError }) => {
-    
-    const handleNavigation = (page: Page) => {
-        onNavigate(page);
-        onClose();
+const optionClasses =
+  'flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3.5 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-wait disabled:opacity-60';
+
+const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
+  onClose,
+  onNavigate,
+  onConnectWallet,
+  walletStatus,
+  walletError,
+}) => {
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
     };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
 
-    const isConnecting = walletStatus === 'connecting';
+  const handleNavigation = (page: Page) => {
+    onNavigate(page);
+    onClose();
+  };
 
-    const connectButtonClasses = `w-full flex items-center justify-center space-x-3 py-3 rounded-lg font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 ${
-        isConnecting 
-            ? 'bg-gray-400 dark:bg-gray-600 cursor-wait' 
-            : walletStatus === 'error' 
-                ? 'bg-red-500/80 hover:bg-red-500 text-white focus:ring-red-400' 
-                : 'bg-fuchsia-500/80 hover:bg-fuchsia-500 text-white focus:ring-fuchsia-400'
-    }`;
+  const isConnecting = walletStatus === 'connecting';
 
-
-    return (
-        <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in"
+  return (
+    <div
+      className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-4 backdrop-blur-md"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="login-options-title"
+    >
+      <div
+        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-line bg-surface"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
           onClick={onClose}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="login-options-title"
+          className="absolute right-5 top-5 text-muted transition-colors hover:text-bone"
+          aria-label="Close modal"
         >
-          <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-cyan-500/30 rounded-2xl shadow-2xl shadow-cyan-500/20 w-full max-w-md overflow-hidden"
-            onClick={e => e.stopPropagation()}
-          >
-             <div className="p-8 text-center relative">
-                 <button 
-                    onClick={onClose}
-                    className="absolute top-3 right-3 text-gray-800 dark:text-white bg-white/50 dark:bg-black/50 rounded-full p-1 hover:bg-white/80 dark:hover:bg-black/80 transition-colors"
-                    aria-label="Close modal"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <h2 id="login-options-title" className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Bona Parks Access</h2>
-                <p className="text-gray-600 dark:text-gray-400 mb-8">Choose your preferred method to enter.</p>
-                
-                <div className="space-y-4">
-                    <button
-                        onClick={onConnectWallet}
-                        disabled={isConnecting}
-                        className={connectButtonClasses}
-                    >
-                         {isConnecting ? <LoadingIcon /> : <WalletIcon className="h-6 w-6" />}
-                         <span>
-                             {
-                                {
-                                  idle: 'Connect with Web3',
-                                  connecting: 'Connecting...',
-                                  error: 'Retry Connection'
-                                }[walletStatus]
-                              }
-                         </span>
-                    </button>
-                    {walletStatus === 'error' && walletError && (
-                        <p className="text-red-400 text-xs text-center mt-2">{walletError}</p>
-                    )}
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-                    <button
-                        onClick={() => handleNavigation('login')}
-                        className="w-full flex items-center justify-center space-x-3 py-3 rounded-lg font-semibold bg-cyan-500/80 hover:bg-cyan-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 focus:ring-cyan-400 transition-all duration-300"
-                    >
-                        <EmailIcon />
-                        <span>Login with Email</span>
-                    </button>
-                    
-                     <button
-                        onClick={() => handleNavigation('signup')}
-                        className="w-full flex items-center justify-center space-x-3 py-3 rounded-lg font-semibold bg-gray-600 dark:bg-gray-700/80 hover:bg-gray-700 dark:hover:bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 focus:ring-gray-500 transition-all duration-300"
-                    >
-                         <UserPlusIcon />
-                        <span>Create an Account</span>
-                    </button>
-                </div>
-             </div>
+        <div className="p-8 md:p-10">
+          <h2 id="login-options-title" className="font-display text-4xl leading-tight text-bone">
+            Bona Parks access
+          </h2>
+          <p className="mt-3 text-sm text-muted">Choose how you want to enter.</p>
+
+          <div className="mt-8 space-y-3">
+            <button onClick={onConnectWallet} disabled={isConnecting} className={optionClasses}>
+              {isConnecting ? <LoadingIcon /> : <WalletIcon className="h-5 w-5" />}
+              <span>
+                {
+                  {
+                    idle: 'Connect with Web3',
+                    connecting: 'Connecting...',
+                    error: 'Retry connection',
+                  }[walletStatus]
+                }
+              </span>
+            </button>
+
+            {walletStatus === 'error' && walletError && (
+              <p className="text-center text-xs leading-relaxed text-gold">{walletError}</p>
+            )}
+
+            <button onClick={() => handleNavigation('login')} className={optionClasses}>
+              <EmailIcon />
+              <span>Login with email</span>
+            </button>
+
+            <button onClick={() => handleNavigation('signup')} className={optionClasses}>
+              <UserPlusIcon className="h-5 w-5" />
+              <span>Create an account</span>
+            </button>
           </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default LoginOptionsModal;

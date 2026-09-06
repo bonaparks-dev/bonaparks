@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Page } from '../../App';
 import { GoogleIcon } from '../IconComponents';
+import { Button, Field, Panel } from '../ui';
 
 const LoginPage: React.FC<{
   onLogin: () => void;
@@ -31,148 +32,124 @@ const LoginPage: React.FC<{
   };
 
   return (
-    <div className="w-full max-w-md animate-fade-in">
-      <div className="bg-white/70 dark:bg-black/50 backdrop-blur-lg rounded-xl shadow-2xl shadow-cyan-500/10 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
-        <div className="p-8">
+    <div className="animate-fade-in mx-auto w-full max-w-md px-6">
+      <Panel className="overflow-hidden">
+        <div className="p-8 md:p-10">
           {view === 'login' && (
             <>
-              <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white tracking-wider mb-2">
-                Account Login
-              </h2>
-              <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-                Access your tickets and experiences.
-              </p>
+              <h1 className="font-display text-4xl leading-tight text-bone">Account login</h1>
+              <p className="mt-3 text-sm text-muted">Access your tickets and experiences.</p>
+
               <button
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center space-x-3 py-3 mb-6 rounded-lg font-semibold bg-white/90 text-gray-800 hover:bg-white border border-gray-300 dark:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-cyan-400 transition-all duration-300"
+                className="mt-8 flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <GoogleIcon />
                 <span>Continue with Google</span>
               </button>
-              <div className="relative flex py-2 items-center">
-                <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
-                <span className="flex-shrink mx-4 text-gray-500 dark:text-gray-400 text-xs uppercase">Or with email</span>
-                <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+
+              <div className="my-8 flex items-center gap-4">
+                <span className="h-px flex-grow bg-line" />
+                <span className="text-[10px] uppercase tracking-widest2 text-muted">Or with email</span>
+                <span className="h-px flex-grow bg-line" />
               </div>
-              <form onSubmit={handleEmailLogin} className="space-y-6 mt-4">
-                <div>
-                  <label htmlFor="email" className="text-sm font-bold text-gray-700 dark:text-gray-300 block mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 focus:outline-none transition-all duration-300"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label
-                      htmlFor="password"
-                      className="text-sm font-bold text-gray-700 dark:text-gray-300"
-                    >
-                      Password
-                    </label>
+
+              <form onSubmit={handleEmailLogin} className="space-y-6">
+                <Field
+                  id="email"
+                  label="Email address"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                />
+                <Field
+                  id="password"
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  action={
                     <button
                       type="button"
                       onClick={() => setView('forgot')}
-                      className="text-xs font-medium text-cyan-500 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300"
+                      className="text-[11px] font-semibold uppercase tracking-widest2 text-gold hover:text-bone"
                     >
-                      Forgot Password?
+                      Forgot?
                     </button>
-                  </div>
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 focus:outline-none transition-all duration-300"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={!email || !password}
-                  className="w-full py-3 rounded-lg font-semibold bg-cyan-500 text-white hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-cyan-400 transition-all duration-300 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
-                >
-                  SIGN IN
-                </button>
+                  }
+                />
+                <Button type="submit" disabled={!email || !password} className="w-full">
+                  Sign in
+                </Button>
               </form>
             </>
           )}
 
           {view === 'forgot' && (
-             <>
-                <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white tracking-wider mb-2">
-                    Reset Password
-                </h2>
-                <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-                    Enter your email to receive a reset link.
-                </p>
-                <form onSubmit={handlePasswordReset} className="space-y-6">
-                    <div>
-                        <label htmlFor="email-forgot" className="text-sm font-bold text-gray-700 dark:text-gray-300 block mb-2">
-                            Email Address
-                        </label>
-                        <input
-                            id="email-forgot"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 focus:outline-none transition-all duration-300"
-                            placeholder="you@example.com"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={!email}
-                        className="w-full py-3 rounded-lg font-semibold bg-cyan-500 text-white hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-cyan-400 transition-all duration-300 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
-                    >
-                        Send Reset Link
-                    </button>
-                </form>
-                 <div className="text-center mt-6">
-                    <button type="button" onClick={() => setView('login')} className="font-medium text-cyan-500 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 text-sm">
-                        &larr; Back to Login
-                    </button>
-                </div>
-             </>
+            <>
+              <h1 className="font-display text-4xl leading-tight text-bone">Reset password</h1>
+              <p className="mt-3 text-sm text-muted">Enter your email to receive a reset link.</p>
+
+              <form onSubmit={handlePasswordReset} className="mt-8 space-y-6">
+                <Field
+                  id="email-forgot"
+                  label="Email address"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                />
+                <Button type="submit" disabled={!email} className="w-full">
+                  Send reset link
+                </Button>
+              </form>
+
+              <button
+                type="button"
+                onClick={() => setView('login')}
+                className="mt-6 text-sm text-muted transition-colors hover:text-gold"
+              >
+                &larr; Back to login
+              </button>
+            </>
           )}
 
           {view === 'forgotSuccess' && (
-               <div className="text-center">
-                    <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white tracking-wider mb-2">
-                        Check Your Email
-                    </h2>
-                    <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-                        If an account exists for <span className="font-semibold text-gray-800 dark:text-white">{email}</span>, you will receive a password reset link.
-                    </p>
-                    <button type="button" onClick={() => setView('login')} className="font-medium text-cyan-500 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 text-sm">
-                         &larr; Back to Login
-                    </button>
-                </div>
+            <>
+              <h1 className="font-display text-4xl leading-tight text-bone">Check your email</h1>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                If an account exists for <span className="text-bone">{email}</span>, you will
+                receive a password reset link.
+              </p>
+              <button
+                type="button"
+                onClick={() => setView('login')}
+                className="mt-8 text-sm text-muted transition-colors hover:text-gold"
+              >
+                &larr; Back to login
+              </button>
+            </>
           )}
         </div>
-        
+
         {view === 'login' && (
-            <div className="bg-gray-100 dark:bg-gray-900/50 px-8 py-4 text-center text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
-                <button
-                    type="button"
-                    onClick={() => onNavigate('signup')}
-                    className="font-medium text-cyan-500 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300"
-                >
-                    Create one
-                </button>
-            </div>
+          <div className="border-t border-line bg-elev px-8 py-5 text-center text-sm md:px-10">
+            <span className="text-muted">Don't have an account? </span>
+            <button
+              type="button"
+              onClick={() => onNavigate('signup')}
+              className="font-semibold text-gold transition-colors hover:text-bone"
+            >
+              Create one
+            </button>
+          </div>
         )}
-      </div>
+      </Panel>
     </div>
   );
 };

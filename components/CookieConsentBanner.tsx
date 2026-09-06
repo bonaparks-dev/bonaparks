@@ -5,39 +5,28 @@ interface CookieConsentBannerProps {
   onDecline: () => void;
 }
 
-const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onAccept, onDecline }) => {
-  return (
-    <div 
-      className="fixed bottom-0 left-0 right-0 bg-gray-900/90 dark:bg-black/90 backdrop-blur-sm text-white z-50 animate-fade-in"
-      style={{ animationName: 'fadeInUp', animationDuration: '0.5s' }}
-    >
-      <div className="container mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-300 text-center sm:text-left">
-          We use cookies to enhance your experience, analyze site traffic, and personalize content. By clicking "Accept", you agree to our use of cookies.
-        </p>
-        <div className="flex-shrink-0 flex items-center gap-3">
-          <button 
-            onClick={onAccept}
-            className="px-5 py-2 rounded-md font-semibold bg-cyan-500 text-white hover:bg-cyan-400 transition-colors duration-300 text-sm"
-          >
-            Accept
-          </button>
-          <button 
-            onClick={onDecline}
-            className="px-5 py-2 rounded-md font-semibold bg-transparent text-gray-300 hover:bg-gray-700/50 transition-colors duration-300 text-sm"
-          >
-            Decline
-          </button>
-        </div>
+const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onAccept, onDecline }) => (
+  <div className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-ink/95 backdrop-blur-xl">
+    <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-6 py-5 sm:flex-row md:px-10">
+      <p className="text-center text-sm leading-relaxed text-muted sm:text-left">
+        We use cookies to enhance your experience, analyze site traffic, and personalize content.
+      </p>
+      <div className="flex flex-shrink-0 items-center gap-3">
+        <button
+          onClick={onAccept}
+          className="rounded-full bg-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest2 text-ink transition-colors duration-300 hover:bg-bone"
+        >
+          Accept
+        </button>
+        <button
+          onClick={onDecline}
+          className="rounded-full border border-line px-6 py-2.5 text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors duration-300 hover:border-gold hover:text-gold"
+        >
+          Decline
+        </button>
       </div>
-      <style>{`
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
-  );
-};
+  </div>
+);
 
 export default CookieConsentBanner;

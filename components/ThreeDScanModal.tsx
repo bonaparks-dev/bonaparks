@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { LoadingIcon } from './IconComponents';
+import { Panel } from './ui';
 
 interface ThreeDScanModalProps {
     onClose: () => void;
@@ -29,7 +30,7 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
             setCameraError("Could not access camera. Please check browser permissions.");
         }
     }, []);
-    
+
     useEffect(() => {
         startCamera();
         return () => {
@@ -47,9 +48,9 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
             "Now, slowly turn your head to the left.",
             "Tilt your head slightly up.",
             "Finally, look straight ahead.",
-            "Scan complete! Processing...",
+            "Scan complete. Processing...",
         ];
-        
+
         const interval = setInterval(() => {
             setScanProgress(prev => {
                 const nextProgress = prev + 20;
@@ -70,39 +71,47 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
         return () => clearInterval(interval);
     }, [cameraError, onComplete]);
 
-
     return (
-        <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in"
+        <div
+            className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-4 backdrop-blur-md"
             onClick={onClose}
+            role="dialog"
+            aria-modal="true"
         >
-            <div 
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-cyan-500/30 rounded-2xl shadow-2xl shadow-cyan-500/20 w-full max-w-2xl overflow-hidden"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-4">3D Face Scan</h3>
-                    <div className="relative bg-gray-200 dark:bg-black rounded-lg overflow-hidden aspect-video">
-                        <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover scale-x-[-1]" />
+            <Panel className="w-full max-w-2xl overflow-hidden p-8">
+                <div onClick={e => e.stopPropagation()}>
+                    <h3 className="font-display text-3xl text-bone">3D face scan</h3>
+
+                    <div className="relative mt-6 aspect-video overflow-hidden rounded-xl border border-line bg-ink">
+                        <video ref={videoRef} autoPlay playsInline className="h-full w-full scale-x-[-1] object-cover" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-2/3 h-5/6 border-4 border-dashed border-cyan-400/50 rounded-[50%] animate-pulse"></div>
+                            <div className="h-5/6 w-2/3 animate-pulse rounded-[50%] border-2 border-dashed border-gold/50" />
                         </div>
-                        {cameraError && <div className="absolute inset-0 flex items-center justify-center text-center text-red-500 dark:text-red-400 p-4 bg-black/50">{cameraError}</div>}
+                        {cameraError && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-ink/80 p-6 text-center text-sm text-gold">
+                                {cameraError}
+                            </div>
+                        )}
                     </div>
-                    <div className="mt-6 text-center">
-                        <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">{scanMessage}</p>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                            <div className="bg-cyan-400 h-2.5 rounded-full transition-all duration-500" style={{ width: `${scanProgress}%` }}></div>
+
+                    <div className="mt-8">
+                        <p className="text-sm text-muted">{scanMessage}</p>
+                        <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-line">
+                            <div
+                                className="h-full rounded-full bg-gold transition-all duration-500"
+                                style={{ width: `${scanProgress}%` }}
+                            />
                         </div>
                     </div>
-                     {scanProgress >= 100 && (
-                        <div className="flex items-center justify-center space-x-2 mt-4 text-cyan-500 dark:text-cyan-300">
+
+                    {scanProgress >= 100 && (
+                        <div className="mt-5 flex items-center gap-3 text-gold">
                             <LoadingIcon />
-                            <span>Processing scan data...</span>
+                            <span className="text-xs uppercase tracking-widest2">Processing scan data</span>
                         </div>
                     )}
                 </div>
-            </div>
+            </Panel>
         </div>
     );
 };

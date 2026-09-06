@@ -1,92 +1,118 @@
 import React, { useState, useEffect } from 'react';
 import { LoadingIcon } from './IconComponents';
+import { tourEmbedUrl } from '../data/tours';
 
 interface ImmersiveViewProps {
   item: {
     title: string;
+    category?: string;
     imageUrl: string;
     matterportUrl?: string;
   };
   onExit: () => void;
 }
 
+/** Pulls the Matterport model id out of any share/embed link. */
+const modelIdFrom = (url?: string) => url?.match(/m=([a-zA-Z0-9]+)/)?.[1] ?? null;
+
 const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onExit();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [onExit]);
 
-  // Extract Matterport model ID for embedding
-  const getMatterportEmbedUrl = (url?: string) => {
-    if (!url) return null;
-    const match = url.match(/m=([a-zA-Z0-9]+)/);
-    if (match) {
-      return `https://my.matterport.com/show/?m=${match[1]}&play=1&qs=1`;
-    }
-    return null;
-  };
-
-  const embedUrl = getMatterportEmbedUrl(item.matterportUrl);
+  const modelId = modelIdFrom(item.matterportUrl);
+  const embedUrl = modelId ? tourEmbedUrl(modelId) : null;
 
   return (
     <div
-      className="fixed inset-0 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center z-50 animate-fade-in"
+      className="fixed inset-0 z-50 flex flex-col bg-ink animate-fade-in"
       role="dialog"
       aria-modal="true"
       aria-labelledby="immersive-view-title"
     >
-      {/* Header bar with title and close button */}
-      <div className="absolute top-0 left-0 right-0 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/50 p-4 z-20 flex justify-between items-center">
-        <h2 id="immersive-view-title" className="text-xl md:text-2xl font-bold text-white tracking-tight">
-          {item.title}
-        </h2>
-        <button
-          onClick={onExit}
-          className="px-6 py-2 rounded-lg font-semibold bg-slate-700 text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-300 transform hover:scale-105"
-          aria-label="Close viewer"
-        >
-          Close
-        </button>
+      <div className="flex items-center justify-between gap-6 border-b border-line px-6 py-4 md:px-10">
+        <div className="min-w-0">
+          {item.category && (
+            <p className="text-[10px] font-semibold uppercase tracking-widest2 text-gold">
+              {item.category}
+            </p>
+          )}
+          <h2
+            id="immersive-view-title"
+            className="truncate font-display text-2xl leading-tight text-bone md:text-3xl"
+          >
+            {item.title}
+          </h2>
+        </div>
+
+        <div className="flex flex-shrink-0 items-center gap-4">
+          {item.matterportUrl && (
+            <a
+              href={item.matterportUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors hover:text-gold sm:block"
+            >
+              Open full screen
+            </a>
+          )}
+          <button
+            onClick={onExit}
+            className="rounded-full border border-line px-6 py-2 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            aria-label="Close viewer"
+          >
+            Close
+          </button>
+        </div>
       </div>
 
-      {/* Main content area */}
-      <div className="w-full h-full pt-16 pb-4 px-4">
+      <div className="relative flex-1">
         {embedUrl ? (
-          <div className="relative w-full h-full">
+          <>
             {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-10">
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-ink">
                 <LoadingIcon />
-                <span className="text-slate-300 text-lg font-semibold tracking-wide mt-4">LOADING 3D TOUR...</span>
+                <span className="text-xs font-semibold uppercase tracking-widest2 text-muted">
+                  Loading the tour
+                </span>
               </div>
             )}
             <iframe
               src={embedUrl}
-              className="w-full h-full rounded-lg border-2 border-slate-700/30 shadow-2xl"
-              allow="xr-spatial-tracking; vr; fullscreen"
+              className="h-full w-full border-0"
+              allow="autoplay; fullscreen; web-share; xr-spatial-tracking; vr; accelerometer; gyroscope"
               allowFullScreen
               title={`3D tour of ${item.title}`}
               onLoad={() => setIsLoading(false)}
             />
-          </div>
+          </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-6 px-6 text-center">
             <img
               src={item.imageUrl}
               alt={item.title}
-              className="max-w-2xl max-h-96 object-contain rounded-lg shadow-2xl mb-8 border-2 border-slate-700/30"
+              className="max-h-[50vh] w-auto rounded-2xl border border-line object-contain"
             />
-            <p className="text-gray-300 text-lg">3D tour preview not available</p>
+            <p className="text-sm text-muted">
+              This space has no 3D tour published yet.
+            </p>
           </div>
         )}
       </div>
 
-      {/* Footer instructions */}
-      <div className="absolute bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-md border-t border-slate-700/50 p-3 text-center">
-        <p className="text-sm text-slate-400">
-          Use your mouse to navigate • Click and drag to look around • Scroll to zoom
+      <div className="border-t border-line px-6 py-3 text-center">
+        <p className="text-[11px] uppercase tracking-widest2 text-muted">
+          Drag to look around &middot; Scroll to zoom &middot; Esc to close
         </p>
       </div>
     </div>

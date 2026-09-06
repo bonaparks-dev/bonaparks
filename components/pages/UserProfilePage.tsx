@@ -1,299 +1,319 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { UserIcon, CameraIcon, ClipboardIcon, BellIcon, ShieldCheckIcon, LockClosedIcon, LogoutIcon } from '../IconComponents';
+import { UserIcon, CameraIcon, ClipboardIcon, LockClosedIcon, LogoutIcon } from '../IconComponents';
+import { Button, PageHeader, PageShell, Panel } from '../ui';
 
 const CameraModal: React.FC<{
-    onClose: () => void;
-    onCapture: (dataUrl: string) => void;
+  onClose: () => void;
+  onCapture: (dataUrl: string) => void;
 }> = ({ onClose, onCapture }) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const streamRef = useRef<MediaStream | null>(null);
-    const [cameraError, setCameraError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
-    const startCamera = useCallback(async () => {
-        try {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach(track => track.stop());
-            }
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            streamRef.current = stream;
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-            }
-            setCameraError(null);
-        } catch (err) {
-            console.error("Error accessing camera:", err);
-            setCameraError("Could not access the camera. Please check your browser permissions.");
-        }
-    }, []);
-    
-    useEffect(() => {
-        startCamera();
-        return () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach(track => track.stop());
-            }
-        };
-    }, [startCamera]);
+  const startCamera = useCallback(async () => {
+    try {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setCameraError(null);
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setCameraError("Could not access the camera. Please check your browser permissions.");
+    }
+  }, []);
 
-
-    const takePicture = () => {
-        if (videoRef.current && canvasRef.current) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
-            if (context) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                const dataUrl = canvas.toDataURL('image/png');
-                onCapture(dataUrl);
-            }
-        }
+  useEffect(() => {
+    startCamera();
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
     };
+  }, [startCamera]);
 
-    return (
-        <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in"
-            onClick={onClose}
-        >
-            <div 
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-cyan-500/30 rounded-2xl shadow-2xl shadow-cyan-500/20 w-full max-w-2xl overflow-hidden"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-4">Live Camera Feed</h3>
-                    <div className="relative bg-gray-200 dark:bg-black rounded-lg overflow-hidden aspect-video">
-                        <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-                        {cameraError && <div className="absolute inset-0 flex items-center justify-center text-center text-red-500 dark:text-red-400 p-4">{cameraError}</div>}
-                    </div>
-                    <canvas ref={canvasRef} className="hidden" />
-                    <div className="flex justify-center space-x-4 mt-6">
-                        <button onClick={onClose} className="px-6 py-2 rounded-lg font-semibold bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                            Cancel
-                        </button>
-                        <button onClick={takePicture} disabled={!!cameraError} className="px-6 py-2 rounded-lg font-semibold bg-cyan-500 text-white hover:bg-cyan-400 transition-colors disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed">
-                            Take Picture
-                        </button>
-                    </div>
-                </div>
-            </div>
+  const takePicture = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      if (context) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        const dataUrl = canvas.toDataURL('image/png');
+        onCapture(dataUrl);
+      }
+    }
+  };
+
+  return (
+    <div
+      className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-ink/85 p-4 backdrop-blur-md"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <Panel className="w-full max-w-2xl overflow-hidden p-8" >
+        <div onClick={e => e.stopPropagation()}>
+          <h3 className="font-display text-3xl text-bone">Live camera feed</h3>
+          <div className="relative mt-6 aspect-video overflow-hidden rounded-xl border border-line bg-ink">
+            <video ref={videoRef} autoPlay playsInline className="h-full w-full object-cover" />
+            {cameraError && (
+              <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-gold">
+                {cameraError}
+              </div>
+            )}
+          </div>
+          <canvas ref={canvasRef} className="hidden" />
+          <div className="mt-8 flex justify-end gap-3">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button onClick={takePicture} disabled={!!cameraError}>Take picture</Button>
+          </div>
         </div>
-    );
+      </Panel>
+    </div>
+  );
 };
 
-const SettingsSection: React.FC<{ title: string, children: React.ReactNode, border?: boolean }> = ({ title, children, border = true }) => (
-    <div className={`space-y-4 ${border ? 'border-t border-gray-200 dark:border-gray-700/50 pt-6' : ''}`}>
-        <h3 className="text-xl font-bold text-cyan-600 dark:text-cyan-300 tracking-wider">{title}</h3>
-        <div className="space-y-4">{children}</div>
-    </div>
+const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+  <section className="border-t border-line pt-8">
+    <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">{title}</h2>
+    <div className="mt-5 space-y-3">{children}</div>
+  </section>
 );
 
-const ToggleSwitch: React.FC<{ label: string, enabled: boolean, onToggle: (enabled: boolean) => void }> = ({ label, enabled, onToggle }) => (
-    <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg">
-        <span className="text-gray-700 dark:text-gray-300">{label}</span>
-        <button
-            onClick={() => onToggle(!enabled)}
-            className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${enabled ? 'bg-cyan-500' : 'bg-gray-400 dark:bg-gray-600'}`}
-        >
-            <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`}/>
-        </button>
-    </div>
-);
+const rowClasses =
+  'flex w-full items-center justify-between gap-4 rounded-xl border border-line bg-elev p-4 text-left';
 
+const ToggleSwitch: React.FC<{ label: string; enabled: boolean; onToggle: (enabled: boolean) => void }> = ({ label, enabled, onToggle }) => (
+  <div className={rowClasses}>
+    <span className="text-sm text-muted">{label}</span>
+    <button
+      onClick={() => onToggle(!enabled)}
+      role="switch"
+      aria-checked={enabled}
+      aria-label={label}
+      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors ${
+        enabled ? 'bg-gold' : 'bg-line'
+      }`}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-bone transition-transform ${
+          enabled ? 'translate-x-6' : 'translate-x-1'
+        }`}
+      />
+    </button>
+  </div>
+);
 
 interface UserProfilePageProps {
-    walletAddress: string | null;
-    handleLogout: () => void;
+  walletAddress: string | null;
+  handleLogout: () => void;
 }
 
 const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handleLogout }) => {
-    const userEmail = "visitor@bonaparks.com";
-    const [profilePicture, setProfilePicture] = useState<string | null>(null);
-    const [logo, setLogo] = useState<string | null>(null);
-    const [username, setUsername] = useState('DigitalVoyager');
-    const [isCameraOpen, setIsCameraOpen] = useState(false);
-    const [copySuccess, setCopySuccess] = useState('');
-    const [notifications, setNotifications] = useState({
-        events: true,
-        promos: false,
-        security: true
-    });
+  const userEmail = "visitor@bonaparks.com";
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [logo, setLogo] = useState<string | null>(null);
+  const [username, setUsername] = useState('DigitalVoyager');
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [copySuccess, setCopySuccess] = useState('');
+  const [notifications, setNotifications] = useState({
+    events: true,
+    promos: false,
+    security: true,
+  });
 
-    useEffect(() => {
-        const savedLogo = localStorage.getItem('user-logo');
-        if (savedLogo) {
-            setLogo(savedLogo);
-        }
-    }, []);
+  useEffect(() => {
+    const savedLogo = localStorage.getItem('user-logo');
+    if (savedLogo) {
+      setLogo(savedLogo);
+    }
+  }, []);
 
-    const handleCapture = (dataUrl: string) => {
-        setProfilePicture(dataUrl);
-        setIsCameraOpen(false);
-    };
+  const handleCapture = (dataUrl: string) => {
+    setProfilePicture(dataUrl);
+    setIsCameraOpen(false);
+  };
 
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result as string;
-                localStorage.setItem('user-logo', base64String);
-                setLogo(base64String);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        localStorage.setItem('user-logo', base64String);
+        setLogo(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-    const removeLogo = () => {
-        localStorage.removeItem('user-logo');
-        setLogo(null);
-    };
-    
-    const copyToClipboard = () => {
-        if (walletAddress) {
-            navigator.clipboard.writeText(walletAddress).then(() => {
-                setCopySuccess('Copied!');
-                setTimeout(() => setCopySuccess(''), 2000);
-            });
-        }
-    };
-    
-    const handleNotificationToggle = (key: keyof typeof notifications) => {
-        setNotifications(prev => ({...prev, [key]: !prev[key]}));
-    };
+  const removeLogo = () => {
+    localStorage.removeItem('user-logo');
+    setLogo(null);
+  };
 
-    return (
-        <div className="w-full max-w-3xl animate-fade-in">
-            <div className="bg-white/70 dark:bg-black/50 backdrop-blur-lg rounded-xl shadow-2xl shadow-cyan-500/10 border border-gray-200 dark:border-gray-700/50 overflow-hidden p-8">
-                <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white tracking-wider mb-8">
-                    My Profile
-                </h2>
-                
-                <div className="space-y-8">
-                    {/* Profile Section */}
-                    <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-                        <div className="relative flex-shrink-0">
-                            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 border-2 border-cyan-500/50 flex items-center justify-center overflow-hidden">
-                                {profilePicture ? (
-                                    <img src={profilePicture} alt="User profile" className="w-full h-full object-cover" />
-                                ) : (
-                                    <UserIcon />
-                                )}
-                            </div>
-                            <button onClick={() => setIsCameraOpen(true)} className="absolute bottom-0 right-0 bg-cyan-500 text-white p-2 rounded-full hover:bg-cyan-400 transition-colors">
-                                <CameraIcon />
-                            </button>
-                        </div>
-                        <div className="text-center md:text-left flex-grow">
-                             <div className="flex items-center space-x-2">
-                                <input 
-                                    type="text" 
-                                    value={username} 
-                                    onChange={(e) => setUsername(e.target.value)} 
-                                    className="text-2xl bg-transparent font-bold text-gray-900 dark:text-white border-b-2 border-transparent focus:outline-none focus:border-cyan-400"
-                                />
-                            </div>
-                            {walletAddress ? (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Wallet Connected</p>
-                            ) : (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 font-mono">{userEmail}</p>
-                            )}
-                        </div>
-                    </div>
-                    
-                    {/* Wallet Details Section */}
-                    {walletAddress && (
-                        <SettingsSection title="Wallet Details" border={false}>
-                             <div className="bg-gray-100 dark:bg-gray-800/50 p-4 rounded-lg space-y-3">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">Address</span>
-                                    <div className="flex items-center space-x-2">
-                                        <span className="font-mono text-fuchsia-600 dark:text-fuchsia-300 text-sm">{`${walletAddress.slice(0, 10)}...${walletAddress.slice(-8)}`}</span>
-                                        <button onClick={copyToClipboard} className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white">
-                                            <ClipboardIcon />
-                                        </button>
-                                        {copySuccess && <span className="text-cyan-500 dark:text-cyan-300 text-xs">{copySuccess}</span>}
-                                    </div>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">Network</span>
-                                    <span className="font-mono text-sm text-gray-800 dark:text-white">BonaChain (Testnet)</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">Balance</span>
-                                    <span className="font-mono text-sm text-gray-800 dark:text-white">0.42 ETH</span>
-                                </div>
-                            </div>
-                        </SettingsSection>
-                    )}
+  const copyToClipboard = () => {
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress).then(() => {
+        setCopySuccess('Copied');
+        setTimeout(() => setCopySuccess(''), 2000);
+      });
+    }
+  };
 
-                    {/* Business Assets */}
-                    <SettingsSection title="Business Assets">
-                        <div className="bg-gray-100 dark:bg-gray-800/50 p-4 rounded-lg flex items-center justify-between">
-                            <div>
-                                <h4 className="font-semibold text-gray-800 dark:text-white">Company Logo</h4>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Used for branding AI-generated content.</p>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                {logo && (
-                                    <>
-                                        <img src={logo} alt="Company logo" className="h-12 w-12 object-contain bg-white dark:bg-gray-700 p-1 rounded" />
-                                        <button onClick={removeLogo} className="text-sm text-red-500 hover:underline">Remove</button>
-                                    </>
-                                )}
-                                <input type="file" id="logo-upload" className="hidden" accept="image/png, image/jpeg" onChange={handleLogoUpload} />
-                                <label htmlFor="logo-upload" className="cursor-pointer text-sm font-semibold bg-cyan-500 text-white px-4 py-2 rounded-lg hover:bg-cyan-400 transition-colors">
-                                    {logo ? 'Change' : 'Upload'}
-                                </label>
-                            </div>
-                        </div>
-                    </SettingsSection>
+  const handleNotificationToggle = (key: keyof typeof notifications) => {
+    setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
-                    {/* Notification Settings */}
-                    <SettingsSection title="Notification Settings">
-                        <ToggleSwitch label="Event Reminders & Updates" enabled={notifications.events} onToggle={() => handleNotificationToggle('events')} />
-                        <ToggleSwitch label="Promotional Updates" enabled={notifications.promos} onToggle={() => handleNotificationToggle('promos')} />
-                        <ToggleSwitch label="Security Alerts" enabled={notifications.security} onToggle={() => handleNotificationToggle('security')} />
-                    </SettingsSection>
+  return (
+    <>
+      <PageShell className="max-w-3xl">
+        <PageHeader eyebrow="My account" title="My profile" />
 
-                    {/* Security */}
-                     <SettingsSection title="Security">
-                        {!walletAddress && (
-                            <button className="w-full flex justify-between items-center text-left bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800/80 transition-colors">
-                                <span className="text-gray-700 dark:text-gray-300">Change Password</span>
-                                <LockClosedIcon />
-                            </button>
-                        )}
-                         <button className="w-full flex justify-between items-center text-left bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800/80 transition-colors">
-                            <span className="text-gray-700 dark:text-gray-300">Two-Factor Authentication</span>
-                            <span className="text-xs font-bold text-yellow-700 dark:text-yellow-400 bg-yellow-200 dark:bg-yellow-900/50 px-2 py-1 rounded">Not Enabled</span>
-                        </button>
-                    </SettingsSection>
-
-                    {/* Danger Zone */}
-                    <div className="border-t border-red-500/30 pt-6 space-y-4">
-                        <h3 className="text-xl font-bold text-red-500 dark:text-red-400 tracking-wider">Danger Zone</h3>
-                        <div className="space-y-3">
-                            <button onClick={handleLogout} className="w-full flex justify-between items-center text-left bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
-                                <span className="text-gray-700 dark:text-gray-300">{walletAddress ? "Disconnect Wallet" : "Log Out"}</span>
-                                <LogoutIcon />
-                            </button>
-                             <button className="w-full flex justify-between items-center text-left bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 p-3 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/80 transition-colors">
-                                <span>Delete Account</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <Panel className="mt-12 p-8 md:p-10">
+          {/* Identity */}
+          <div className="flex flex-col items-center gap-8 md:flex-row md:items-start">
+            <div className="relative flex-shrink-0">
+              <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border border-line bg-elev text-muted">
+                {profilePicture ? (
+                  <img src={profilePicture} alt="User profile" className="h-full w-full object-cover" />
+                ) : (
+                  <UserIcon />
+                )}
+              </div>
+              <button
+                onClick={() => setIsCameraOpen(true)}
+                className="absolute bottom-0 right-0 rounded-full bg-gold p-2 text-ink transition-colors hover:bg-bone"
+                aria-label="Take a profile picture"
+              >
+                <CameraIcon />
+              </button>
             </div>
-            {isCameraOpen && (
-                <CameraModal 
-                    onClose={() => setIsCameraOpen(false)}
-                    onCapture={handleCapture}
-                />
+
+            <div className="flex-grow text-center md:text-left">
+              <label htmlFor="username" className="text-[11px] font-semibold uppercase tracking-widest2 text-muted">
+                Display name
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="mt-2 w-full border-b border-line bg-transparent pb-2 font-display text-3xl text-bone focus:border-gold focus:outline-none"
+              />
+              <p className="mt-3 text-sm text-muted">
+                {walletAddress ? 'Wallet connected' : userEmail}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 space-y-8">
+            {walletAddress && (
+              <SettingsSection title="Wallet details">
+                <div className="space-y-3 rounded-xl border border-line bg-elev p-5">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm text-muted">Address</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gold">{`${walletAddress.slice(0, 10)}...${walletAddress.slice(-8)}`}</span>
+                      <button
+                        onClick={copyToClipboard}
+                        className="text-muted transition-colors hover:text-bone"
+                        aria-label="Copy wallet address"
+                      >
+                        <ClipboardIcon />
+                      </button>
+                      {copySuccess && <span className="text-xs text-gold">{copySuccess}</span>}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm text-muted">Network</span>
+                    <span className="text-sm text-bone">BonaChain (Testnet)</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm text-muted">Balance</span>
+                    <span className="text-sm text-bone">0.42 ETH</span>
+                  </div>
+                </div>
+              </SettingsSection>
             )}
-        </div>
-    );
+
+            <SettingsSection title="Business assets">
+              <div className={rowClasses}>
+                <div>
+                  <h3 className="text-sm font-semibold text-bone">Company logo</h3>
+                  <p className="mt-1 text-xs text-muted">Used for branding AI-generated content.</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  {logo && (
+                    <>
+                      <img src={logo} alt="Company logo" className="h-12 w-12 rounded bg-bone object-contain p-1" />
+                      <button onClick={removeLogo} className="text-xs text-muted transition-colors hover:text-gold">
+                        Remove
+                      </button>
+                    </>
+                  )}
+                  <input type="file" id="logo-upload" className="hidden" accept="image/png, image/jpeg" onChange={handleLogoUpload} />
+                  <label
+                    htmlFor="logo-upload"
+                    className="cursor-pointer rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors hover:border-gold hover:text-gold"
+                  >
+                    {logo ? 'Change' : 'Upload'}
+                  </label>
+                </div>
+              </div>
+            </SettingsSection>
+
+            <SettingsSection title="Notifications">
+              <ToggleSwitch label="Event reminders and updates" enabled={notifications.events} onToggle={() => handleNotificationToggle('events')} />
+              <ToggleSwitch label="Promotional updates" enabled={notifications.promos} onToggle={() => handleNotificationToggle('promos')} />
+              <ToggleSwitch label="Security alerts" enabled={notifications.security} onToggle={() => handleNotificationToggle('security')} />
+            </SettingsSection>
+
+            <SettingsSection title="Security">
+              {!walletAddress && (
+                <button className={`${rowClasses} transition-colors hover:border-gold/40`}>
+                  <span className="text-sm text-muted">Change password</span>
+                  <LockClosedIcon />
+                </button>
+              )}
+              <button className={`${rowClasses} transition-colors hover:border-gold/40`}>
+                <span className="text-sm text-muted">Two-factor authentication</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest2 text-gold">Not enabled</span>
+              </button>
+            </SettingsSection>
+
+            <SettingsSection title="Danger zone">
+              <button
+                onClick={handleLogout}
+                className={`${rowClasses} transition-colors hover:border-gold/40`}
+              >
+                <span className="text-sm text-muted">{walletAddress ? 'Disconnect wallet' : 'Log out'}</span>
+                <LogoutIcon />
+              </button>
+              <button className={`${rowClasses} border-gold/30 transition-colors hover:border-gold`}>
+                <span className="text-sm text-gold">Delete account</span>
+              </button>
+            </SettingsSection>
+          </div>
+        </Panel>
+      </PageShell>
+
+      {isCameraOpen && (
+        <CameraModal
+          onClose={() => setIsCameraOpen(false)}
+          onCapture={handleCapture}
+        />
+      )}
+    </>
+  );
 };
 
 export default UserProfilePage;

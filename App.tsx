@@ -3,6 +3,7 @@ import HomePage from './components/pages/HomePage';
 import DigitalTwinsPage from './components/pages/DigitalTwinsPage';
 import ProofOfWorkPage from './components/pages/ProofOfWorkPage';
 import AISolutionsPage from './components/pages/AISolutionsPage';
+import B2BHubPage from './components/pages/B2BHubPage';
 import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import ControlRoomPage from './components/pages/ControlRoomPage';
@@ -23,6 +24,17 @@ declare global {
   }
 }
 
+const CONTACT_EMAIL = 'contact@bonaparks.com';
+
+/** Main navigation, always visible. */
+const NAV_LINKS: { page: Page; label: string }[] = [
+  { page: 'home', label: 'Tours' },
+  { page: 'proof-of-work', label: 'Gallery' },
+  { page: 'digital-twins', label: 'Venues' },
+  { page: 'ai-solutions', label: 'Technology' },
+  { page: 'business-studio', label: 'For business' },
+];
+
 const App: React.FC = () => {
   const [page, setPage] = useState<Page>('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,12 +46,13 @@ const App: React.FC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAccessOptions, setShowAccessOptions] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const storedWalletAddress = localStorage.getItem('walletAddress');
-    
+
     if (token || storedWalletAddress) {
       setIsLoggedIn(true);
       const storedBookings = localStorage.getItem('bona-parks-bookings');
@@ -87,6 +100,8 @@ const App: React.FC = () => {
 
   const navigate = (p: Page) => {
     setPage(p);
+    setShowMobileNav(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const handleLogin = () => {
@@ -104,7 +119,7 @@ const App: React.FC = () => {
   const connectWallet = async () => {
     setWalletConnectionStatus('connecting');
     setWalletError(null);
-    
+
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     if (typeof window.ethereum === 'undefined') {
@@ -137,154 +152,205 @@ const App: React.FC = () => {
     navigate('home');
   };
 
-  const getPageTitle = () => {
-    switch (page) {
-      case 'home': return 'VIRTUAL EXPERIENCES';
-      case 'ai-assistant': return 'AI BUSINESS ASSISTANT';
-      case 'digital-twins': return 'IMMERSIVE VENUES';
-      case 'proof-of-work': return 'EXPERIENCE GALLERY';
-      case 'ai-solutions': return 'BEHIND THE MAGIC';
-      case 'login': return 'ACCOUNT LOGIN';
-      case 'signup': return 'CREATE ACCOUNT';
-      case 'control-room': return 'MY BOOKINGS';
-      case 'user-profile': return 'MY PROFILE';
-      case 'avatar-studio': return 'AVATAR STUDIO';
-      case 'business-studio': return 'BUSINESS STUDIO';
-      default: return 'BONA PARKS';
-    }
-  }
-  
   const truncateAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-slate-800 dark:text-slate-200 font-sans flex flex-col relative overflow-hidden">
 
-      <header className="absolute top-0 left-0 right-0 p-6 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1
-            className="text-2xl font-bold text-slate-800 dark:text-slate-100 tracking-tight cursor-pointer transition-colors hover:text-amber-600 dark:hover:text-amber-500"
+  const accountMenuItems: { page: Page; label: string }[] = [
+    { page: 'user-profile', label: 'My profile' },
+    { page: 'avatar-studio', label: 'Avatar Studio' },
+    { page: 'business-studio', label: 'Business Studio' },
+    { page: 'control-room', label: 'My bookings' },
+  ];
+
+  const renderAccountMenu = (id: string, close: () => void, logoutLabel: string) => (
+    <div
+      id={id}
+      className="absolute right-0 top-full z-30 mt-3 w-52 overflow-hidden rounded-xl border border-line bg-surface shadow-2xl shadow-black/60 animate-fade-in"
+      style={{ animationDuration: '0.2s' }}
+      role="menu"
+      aria-orientation="vertical"
+    >
+      {accountMenuItems.map((entry) => (
+        <button
+          key={entry.page}
+          onClick={() => { navigate(entry.page); close(); }}
+          className="block w-full px-5 py-3 text-left text-sm text-muted transition-colors hover:bg-elev hover:text-bone"
+          role="menuitem"
+        >
+          {entry.label}
+        </button>
+      ))}
+      <div className="mx-5 border-t border-line" />
+      <button
+        onClick={() => { handleLogout(); close(); }}
+        className="block w-full px-5 py-3 text-left text-sm text-muted transition-colors hover:bg-elev hover:text-gold"
+        role="menuitem"
+      >
+        {logoutLabel}
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="relative flex min-h-screen flex-col bg-ink font-sans text-bone">
+
+      <header className="sticky top-0 z-40 border-b border-line bg-ink/85 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 md:px-10">
+          <button
             onClick={() => navigate('home')}
+            className="font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
             aria-label="Back to home"
           >
             Bona Parks
-          </h1>
-          <div className="flex items-center space-x-4 md:space-x-6">
-            <div className="text-sm font-medium text-slate-600 dark:text-slate-400 tracking-wide hidden sm:block">
-              {getPageTitle()}
-            </div>
+          </button>
+
+          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
+            {NAV_LINKS.map((link) => (
+              <button
+                key={link.page}
+                onClick={() => navigate(link.page)}
+                className={`text-xs font-semibold uppercase tracking-widest2 transition-colors ${
+                  page === link.page ? 'text-gold' : 'text-muted hover:text-bone'
+                }`}
+                aria-current={page === link.page ? 'page' : undefined}
+              >
+                {link.label}
+              </button>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <div className="relative" ref={menuRef}>
                 {walletAddress ? (
-                    <>
-                        <button 
-                            id="wallet-menu-button"
-                            onClick={() => setShowWalletMenu(prev => !prev)} 
-                            className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-fuchsia-500 dark:hover:text-fuchsia-400 transition-colors duration-300"
-                            aria-haspopup="true"
-                            aria-expanded={showWalletMenu}
-                            aria-controls="wallet-menu"
-                        >
-                            <WalletIcon />
-                            <span className="text-fuchsia-500 dark:text-fuchsia-300">{truncateAddress(walletAddress)}</span>
-                        </button>
-                        {showWalletMenu && (
-                            <div 
-                                id="wallet-menu"
-                                className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-30 animate-fade-in" 
-                                style={{ animationDuration: '0.2s' }}
-                                role="menu"
-                                aria-orientation="vertical"
-                                aria-labelledby="wallet-menu-button"
-                            >
-                                <button onClick={() => { navigate('user-profile'); setShowWalletMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  My Profile
-                                </button>
-                                <button onClick={() => { navigate('avatar-studio'); setShowWalletMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  Avatar Studio
-                                </button>
-                                <button onClick={() => { navigate('business-studio'); setShowWalletMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  Business Studio
-                                </button>
-                                <button onClick={() => { navigate('control-room'); setShowWalletMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  My Bookings
-                                </button>
-                                <div className="border-t border-gray-200/50 dark:border-gray-700/50 mx-2"></div>
-                                <button 
-                                    onClick={() => { handleLogout(); setShowWalletMenu(false); }} 
-                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-fuchsia-500 dark:hover:text-fuchsia-400 transition-colors" role="menuitem">
-                                  Disconnect Wallet
-                                </button>
-                            </div>
-                        )}
-                    </>
-                ) : ( // Regular login
-                     <>
-                        <button 
-                            id="user-menu-button"
-                            onClick={() => setShowUserMenu(prev => !prev)} 
-                            className="flex items-center space-x-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors duration-300"
-                            aria-haspopup="true"
-                            aria-expanded={showUserMenu}
-                            aria-controls="user-menu"
-                        >
-                            <UserIcon />
-                            <span>My Account</span>
-                        </button>
-                         {showUserMenu && (
-                            <div 
-                                id="user-menu"
-                                className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-30 animate-fade-in" 
-                                style={{ animationDuration: '0.2s' }}
-                                role="menu"
-                                aria-orientation="vertical"
-                                aria-labelledby="user-menu-button"
-                            >
-                                <button onClick={() => { navigate('user-profile'); setShowUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  My Profile
-                                </button>
-                                <button onClick={() => { navigate('avatar-studio'); setShowUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  Avatar Studio
-                                </button>
-                                <button onClick={() => { navigate('business-studio'); setShowUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  Business Studio
-                                </button>
-                                <button onClick={() => { navigate('control-room'); setShowUserMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors" role="menuitem">
-                                  My Bookings
-                                </button>
-                                <div className="border-t border-gray-200/50 dark:border-gray-700/50 mx-2"></div>
-                                <button 
-                                    onClick={() => { handleLogout(); setShowUserMenu(false); }} 
-                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-fuchsia-500 dark:hover:text-fuchsia-400 transition-colors" role="menuitem">
-                                  Logout
-                                </button>
-                            </div>
-                        )}
-                     </>
+                  <>
+                    <button
+                      id="wallet-menu-button"
+                      onClick={() => setShowWalletMenu(prev => !prev)}
+                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-gold"
+                      aria-haspopup="true"
+                      aria-expanded={showWalletMenu}
+                      aria-controls="wallet-menu"
+                    >
+                      <WalletIcon />
+                      <span className="text-gold">{truncateAddress(walletAddress)}</span>
+                    </button>
+                    {showWalletMenu && renderAccountMenu('wallet-menu', () => setShowWalletMenu(false), 'Disconnect wallet')}
+                  </>
+                ) : (
+                  <>
+                    <button
+                      id="user-menu-button"
+                      onClick={() => setShowUserMenu(prev => !prev)}
+                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-gold"
+                      aria-haspopup="true"
+                      aria-expanded={showUserMenu}
+                      aria-controls="user-menu"
+                    >
+                      <UserIcon />
+                      <span className="hidden sm:inline">My account</span>
+                    </button>
+                    {showUserMenu && renderAccountMenu('user-menu', () => setShowUserMenu(false), 'Log out')}
+                  </>
                 )}
               </div>
             ) : (
               <button
                 onClick={() => setShowAccessOptions(true)}
-                className="text-sm font-semibold bg-slate-800 dark:bg-slate-700 text-white px-4 py-2 rounded-md hover:bg-amber-600 dark:hover:bg-amber-600 transition-colors duration-300 transform hover:scale-105"
+                className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-gold hover:text-gold"
               >
-                LOGIN / ACCESS
+                Login
               </button>
             )}
+
+            <button
+              onClick={() => setShowMobileNav(prev => !prev)}
+              className="text-muted transition-colors hover:text-bone lg:hidden"
+              aria-expanded={showMobileNav}
+              aria-controls="mobile-nav"
+              aria-label="Toggle navigation"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
+                {showMobileNav
+                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 7.5h16.5M3.75 16.5h16.5" />}
+              </svg>
+            </button>
           </div>
         </div>
+
+        {showMobileNav && (
+          <nav id="mobile-nav" className="border-t border-line px-6 py-4 lg:hidden" aria-label="Main mobile">
+            {NAV_LINKS.map((link) => (
+              <button
+                key={link.page}
+                onClick={() => navigate(link.page)}
+                className={`block w-full py-3 text-left text-sm font-semibold uppercase tracking-widest2 ${
+                  page === link.page ? 'text-gold' : 'text-muted'
+                }`}
+              >
+                {link.label}
+              </button>
+            ))}
+          </nav>
+        )}
       </header>
 
-      <main className="flex-grow flex items-center justify-center p-4 pt-24 pb-8">
+      <main className="relative z-10 flex-grow py-16 md:py-24">
         {page === 'home' && <HomePage onNavigate={navigate} isLoggedIn={isLoggedIn} />}
         {page === 'digital-twins' && <DigitalTwinsPage isLoggedIn={isLoggedIn} />}
         {page === 'proof-of-work' && <ProofOfWorkPage isLoggedIn={isLoggedIn} />}
         {page === 'ai-solutions' && <AISolutionsPage onNavigate={navigate} />}
+        {page === 'business-studio' && <B2BHubPage />}
         {page === 'login' && <LoginPage onLogin={handleLogin} onNavigate={navigate} />}
         {page === 'signup' && <SignUpPage onSignUp={handleSignUp} onNavigate={navigate} />}
         {page === 'control-room' && <ControlRoomPage bookings={bookings} onNavigate={navigate}/>}
         {page === 'user-profile' && <UserProfilePage walletAddress={walletAddress} handleLogout={handleLogout} />}
         {page === 'avatar-studio' && <AvatarStudioPage />}
       </main>
+
+      <footer className="relative z-10 border-t border-line">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3 md:px-10">
+          <div>
+            <p className="font-display text-2xl text-bone">Bona Parks</p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
+              Immersive 3D tours and digital twins of the places that deserve to be walked
+              through, from anywhere.
+            </p>
+          </div>
+
+          <nav aria-label="Footer">
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">Explore</p>
+            <div className="mt-4 space-y-2">
+              {NAV_LINKS.map((link) => (
+                <button
+                  key={link.page}
+                  onClick={() => navigate(link.page)}
+                  className="block text-sm text-muted transition-colors hover:text-bone"
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">Get in touch</p>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-4 block text-sm text-muted transition-colors hover:text-bone"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <p className="mt-2 text-sm text-muted">Sardinia, Italy</p>
+          </div>
+        </div>
+
+        <div className="border-t border-line px-6 py-6 text-center md:px-10">
+          <p className="text-xs text-muted">
+            &copy; {new Date().getFullYear()} Bona Parks. All rights reserved.
+          </p>
+        </div>
+      </footer>
 
       {showAccessOptions && !isLoggedIn && (
         <LoginOptionsModal

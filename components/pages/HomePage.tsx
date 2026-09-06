@@ -1,148 +1,153 @@
 import React, { useState } from 'react';
 import { ExperienceItem } from '../../types';
+import { Page } from '../../App';
 import ImmersiveView from '../ImmersiveView';
+import TourCard from '../TourCard';
+import { Eyebrow, Button, LinkButton, PageShell } from '../ui';
+import { tourItems, tourThumbUrl, tours } from '../../data/tours';
 
 interface HomePageProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: Page) => void;
   isLoggedIn: boolean;
 }
 
-const portfolioItems: ExperienceItem[] = [
+const capabilities = [
   {
-    title: 'Portofino Penthouse',
-    category: 'Luxury Real Estate',
-    description: 'An exquisite penthouse showcasing premium architectural design and panoramic views, captured in stunning 3D detail.',
-    imageUrl: 'https://my.matterport.com/api/v1/player/models/WFbpmYeHDm6/thumb',
-    matterportUrl: 'https://my.matterport.com/show/?m=WFbpmYeHDm6',
+    title: 'Scan',
+    body: 'We capture the space with millimetre-accurate 3D scanning — every room, every surface, in one pass.',
   },
   {
-    title: 'Baroom',
-    category: 'Commercial Space',
-    description: 'A sophisticated bar and lounge space featuring modern design elements and immersive atmosphere.',
-    imageUrl: 'https://my.matterport.com/api/v1/player/models/FAaxa1f7Z8A/thumb',
-    matterportUrl: 'https://my.matterport.com/show/?m=FAaxa1f7Z8A',
+    title: 'Build',
+    body: 'The scan becomes a navigable digital twin: measurable, annotated, and ready to embed anywhere.',
   },
   {
-    title: '728 Miami',
-    category: 'Nightclub',
-    description: 'A vibrant nightclub venue in the heart of Miami, featuring cutting-edge design and electrifying entertainment spaces.',
-    imageUrl: 'https://my.matterport.com/api/v1/player/models/R6kNQefu9nQ/thumb',
-    matterportUrl: 'https://my.matterport.com/show/?m=R6kNQefu9nQ',
-  },
-  {
-    title: 'Mr Jones',
-    category: 'Nightclub',
-    description: 'An upscale nightclub experience with premium interior design and world-class entertainment facilities.',
-    imageUrl: 'https://my.matterport.com/api/v1/player/models/dSJ6ko28ARr/thumb',
-    matterportUrl: 'https://my.matterport.com/show/?m=dSJ6ko28ARr',
-  },
-  {
-    title: 'Selargius Residence',
-    category: 'Residential',
-    description: 'A beautifully designed residential property showcasing elegant living spaces and thoughtful architectural details.',
-    imageUrl: 'https://my.matterport.com/api/v1/player/models/3hBsCXGyTmX/thumb',
-    matterportUrl: 'https://my.matterport.com/show/?m=3hBsCXGyTmX',
-  },
-  {
-    title: 'Palestra Max',
-    category: 'Sports & Fitness',
-    description: 'A state-of-the-art boxing gym equipped with professional training facilities and modern workout spaces.',
-    imageUrl: 'https://my.matterport.com/api/v1/player/models/6o9yCk49EjN/thumb',
-    matterportUrl: 'https://my.matterport.com/show/?m=6o9yCk49EjN',
+    title: 'Share',
+    body: 'One link puts your venue in front of anyone, on any device, with no app to install.',
   },
 ];
 
-const HomePage: React.FC<HomePageProps> = ({ onNavigate, isLoggedIn }) => {
+const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const [selectedItem, setSelectedItem] = useState<ExperienceItem | null>(null);
 
+  const featured = tours[0];
+
   return (
-    <div className="container mx-auto animate-fade-in px-4 w-full">
-      {/* Hero Section */}
-      <section className="hero-section text-center mb-16">
-        <div className="hero-text">
-          <h1 className="text-5xl md:text-7xl font-bold text-slate-800 dark:text-slate-100 mb-8 tracking-tight leading-tight">
-            Step Into a New Dimension of Discovery
+    <>
+      <PageShell>
+        {/* Hero */}
+        <section className="animate-rise">
+          <Eyebrow>Immersive 3D tours &middot; Sardinia</Eyebrow>
+          <h1 className="mt-8 max-w-4xl font-display text-6xl leading-[1.02] text-bone md:text-8xl">
+            Walk through the place before you ever get there.
           </h1>
-          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-4xl mx-auto leading-relaxed mb-8">
-            Bona Parks creates high-resolution immersive virtual experiences that bring Sardinia's heritage, landscapes,
-            and culture to life, connecting audiences worldwide to authentic and innovative tourism.
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted">
+            Bona Parks turns real spaces into high-resolution virtual tours. Venues, homes and
+            cultural heritage, captured in 3D and open to anyone with a link.
           </p>
-          <div className="max-w-3xl mx-auto mb-12">
-            <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-              Bona Parks was born from a vision: To fuse the heritage of the past with the innovation of the future.
-              We believe that spaces tell stories, and through immersive digital experiences, we preserve and share
-              these narratives with the world.
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <Button onClick={() => onNavigate('proof-of-work')}>See the gallery</Button>
+            <LinkButton variant="outline" href="mailto:contact@bonaparks.com">
+              Get your space scanned
+            </LinkButton>
+          </div>
+        </section>
+
+        {/* Featured tour */}
+        {featured && (
+          <section className="mt-24 animate-rise" style={{ animationDelay: '120ms' }}>
+            <button
+              type="button"
+              onClick={() => setSelectedItem(tourItems[0])}
+              className="group relative block aspect-[16/9] w-full overflow-hidden rounded-3xl border border-line bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              aria-label={`Enter the tour — ${featured.title}`}
+            >
+              <img
+                src={featured.imageUrl ?? tourThumbUrl(featured.id)}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+              />
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"
+                aria-hidden="true"
+              />
+              <div className="absolute inset-x-0 bottom-0 p-8 text-left md:p-12">
+                <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
+                  Featured tour &middot; {featured.category}
+                </p>
+                <h2 className="mt-3 font-display text-4xl text-bone md:text-5xl">
+                  {featured.title}
+                </h2>
+                <span className="mt-5 inline-flex items-center gap-3 text-sm font-semibold text-bone">
+                  Enter the tour
+                  <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
+                    &rarr;
+                  </span>
+                </span>
+              </div>
+            </button>
+          </section>
+        )}
+
+        {/* All tours */}
+        <section className="mt-28">
+          <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+            <div>
+              <Eyebrow>The collection</Eyebrow>
+              <h2 className="mt-5 font-display text-4xl text-bone md:text-5xl">
+                Spaces you can step into
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm leading-relaxed text-muted">
+              Every tour below is a real 3D capture. Move freely, look up, measure, explore.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* Portfolio Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {portfolioItems.map((item) => (
-          <div
-            key={item.title}
-            className="group bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-slate-400/20 dark:hover:shadow-slate-950/40 hover:-translate-y-1"
-          >
-            <div className="relative h-56 overflow-hidden bg-slate-100 dark:bg-slate-900">
-              <img
-                src={item.imageUrl}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                onError={(e) => {
-                  e.currentTarget.src = 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
-                }}
-              />
-              <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full border border-slate-700">
-                {item.category}
+          {tourItems.length > 0 ? (
+            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {tourItems.map((item) => (
+                <TourCard key={item.title} item={item} onOpen={() => setSelectedItem(item)} />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-12 text-sm text-muted">New tours are being published shortly.</p>
+          )}
+        </section>
+
+        {/* How it works */}
+        <section className="mt-28">
+          <Eyebrow>How it works</Eyebrow>
+          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+            {capabilities.map((step, index) => (
+              <div key={step.title} className="bg-surface p-9">
+                <span className="font-display text-3xl text-gold">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-5 font-display text-2xl text-bone">{step.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{step.body}</p>
               </div>
-            </div>
-
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-3">
-                {item.title}
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-                {item.description}
-              </p>
-
-              <button
-                onClick={() => setSelectedItem(item)}
-                className="w-full bg-slate-800 dark:bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg hover:bg-amber-600 dark:hover:bg-amber-600 transition-all duration-300 transform hover:scale-[1.02] shadow-sm hover:shadow-md"
-              >
-                View 3D Tour
-              </button>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </section>
 
-      {/* Call to Action */}
-      <section className="cta-section mt-20 text-center pb-8">
-        <div className="max-w-3xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 p-12 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-6">
-            Transform Your Space Into an Experience
+        {/* CTA */}
+        <section className="mt-28 rounded-3xl border border-line bg-surface px-8 py-16 text-center md:px-16 md:py-20">
+          <h2 className="mx-auto max-w-2xl font-display text-4xl leading-tight text-bone md:text-5xl">
+            Turn your space into an experience.
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-            Whether you are showcasing real estate, promoting a venue, or preserving cultural heritage,
-            we bring your vision to life through immersive digital experiences.
+          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted">
+            Real estate, venues, museums or hotels — if people need to see it, we can let them
+            walk through it.
           </p>
-          <a
-            href="mailto:contact@bonaparks.com"
-            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold px-10 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl text-lg"
-          >
-            Start Your Project
-          </a>
-        </div>
-      </section>
+          <LinkButton className="mt-10" href="mailto:contact@bonaparks.com">
+            Start your project
+          </LinkButton>
+        </section>
+      </PageShell>
 
       {selectedItem && (
-        <ImmersiveView
-          item={selectedItem}
-          onExit={() => setSelectedItem(null)}
-        />
+        <ImmersiveView item={selectedItem} onExit={() => setSelectedItem(null)} />
       )}
-    </div>
+    </>
   );
 };
 

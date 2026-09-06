@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Page } from '../../App';
 import { GoogleIcon } from '../IconComponents';
+import { Button, Field, Panel } from '../ui';
 
 interface SignUpPageProps {
   onSignUp: () => void;
@@ -11,6 +12,8 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onSignUp, onNavigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const passwordsMismatch = Boolean(password && confirmPassword && password !== confirmPassword);
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,99 +29,80 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onSignUp, onNavigate }) => {
   };
 
   return (
-    <div className="w-full max-w-md animate-fade-in">
-      <div className="bg-white/70 dark:bg-black/50 backdrop-blur-lg rounded-xl shadow-2xl shadow-cyan-500/10 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
-        <div className="p-8">
-          <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white tracking-wider mb-2">
-            Create Account
-          </h2>
-          <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-            Join the world of virtual experiences.
-          </p>
+    <div className="animate-fade-in mx-auto w-full max-w-md px-6">
+      <Panel className="overflow-hidden">
+        <div className="p-8 md:p-10">
+          <h1 className="font-display text-4xl leading-tight text-bone">Create account</h1>
+          <p className="mt-3 text-sm text-muted">Join the world of virtual experiences.</p>
+
           <button
             onClick={handleGoogleSignUp}
-            className="w-full flex items-center justify-center space-x-3 py-3 mb-6 rounded-lg font-semibold bg-white/90 text-gray-800 hover:bg-white border border-gray-300 dark:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-cyan-400 transition-all duration-300"
+            className="mt-8 flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
           >
             <GoogleIcon />
             <span>Sign up with Google</span>
           </button>
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
-            <span className="flex-shrink mx-4 text-gray-500 dark:text-gray-400 text-xs uppercase">Or with email</span>
-            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+
+          <div className="my-8 flex items-center gap-4">
+            <span className="h-px flex-grow bg-line" />
+            <span className="text-[10px] uppercase tracking-widest2 text-muted">Or with email</span>
+            <span className="h-px flex-grow bg-line" />
           </div>
-          <form onSubmit={handleSignUp} className="space-y-6 mt-4">
+
+          <form onSubmit={handleSignUp} className="space-y-6">
+            <Field
+              id="email-signup"
+              label="Email address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+            />
+            <Field
+              id="password-signup"
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+            />
             <div>
-              <label htmlFor="email-signup" className="text-sm font-bold text-gray-700 dark:text-gray-300 block mb-2">
-                Email Address
-              </label>
-              <input
-                id="email-signup"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 focus:outline-none transition-all duration-300"
-                placeholder="you@example.com"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="password-signup"
-                className="text-sm font-bold text-gray-700 dark:text-gray-300 block mb-2"
-              >
-                Password
-              </label>
-              <input
-                id="password-signup"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 focus:outline-none transition-all duration-300"
-                placeholder="••••••••"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="confirm-password-signup"
-                className="text-sm font-bold text-gray-700 dark:text-gray-300 block mb-2"
-              >
-                Confirm Password
-              </label>
-              <input
+              <Field
                 id="confirm-password-signup"
+                label="Confirm password"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-white placeholder-gray-500 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 focus:outline-none transition-all duration-300"
                 placeholder="••••••••"
               />
-              {password && confirmPassword && password !== confirmPassword && (
-                <p className="text-red-500 dark:text-red-400 text-xs mt-2">Passwords do not match.</p>
+              {passwordsMismatch && (
+                <p className="mt-2 text-xs text-gold">Passwords do not match.</p>
               )}
             </div>
-            <button
+            <Button
               type="submit"
               disabled={!email || !password || password !== confirmPassword}
-              className="w-full py-3 rounded-lg font-semibold bg-cyan-500 text-white hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 focus:ring-cyan-400 transition-all duration-300 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
+              className="w-full"
             >
-              CREATE ACCOUNT
-            </button>
+              Create account
+            </Button>
           </form>
         </div>
-        <div className="bg-gray-100 dark:bg-gray-900/50 px-8 py-4 text-center text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
+
+        <div className="border-t border-line bg-elev px-8 py-5 text-center text-sm md:px-10">
+          <span className="text-muted">Already have an account? </span>
           <button
             type="button"
             onClick={() => onNavigate('login')}
-            className="font-medium text-cyan-500 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300"
+            className="font-semibold text-gold transition-colors hover:text-bone"
           >
             Sign in
           </button>
         </div>
-      </div>
+      </Panel>
     </div>
   );
 };

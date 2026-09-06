@@ -1,21 +1,89 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bona Parks - 3D Virtual Tours</title>
+    <title>Bona Parks — Immersive 3D Tours</title>
+    <meta name="description" content="Bona Parks builds high-resolution digital twins and immersive 3D virtual tours of venues, real estate and cultural heritage in Sardinia." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink:     '#0A0A0B',
+              surface: '#121214',
+              elev:    '#1A1A1D',
+              line:    '#26262B',
+              bone:    '#F2EFE9',
+              muted:   '#9C978E',
+              gold:    '#C8A96A',
+              'gold-deep': '#A98A46',
+            },
+            fontFamily: {
+              display: ['"Instrument Serif"', 'Georgia', 'serif'],
+              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            },
+            letterSpacing: {
+              widest2: '0.22em',
+            },
+          },
+        },
+      };
+    </script>
+
     <style>
+        :root { color-scheme: dark; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: #0A0A0B;
+            color: #F2EFE9;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Grain + vignette so large flat blacks keep some depth */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: radial-gradient(circle at 50% 0%, rgba(200, 169, 106, 0.07), transparent 55%);
+        }
+
+        ::selection { background: #C8A96A; color: #0A0A0B; }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: #0A0A0B; }
+        ::-webkit-scrollbar-thumb { background: #26262B; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a3a41; }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(14px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
+        .animate-fade-in { animation: fadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-rise { animation: riseIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .animate-fade-in, .animate-rise { animation: none; }
+            html { scroll-behavior: auto; }
         }
     </style>
 </head>
-<body class="">
+<body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>
