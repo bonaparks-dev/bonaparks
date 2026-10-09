@@ -342,6 +342,9 @@ const App: React.FC = () => {
               {CONTACT_EMAIL}
             </a>
             <p className="mt-2 text-sm text-muted">Sardinia, Italy</p>
+            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-gold">Bonaparks app</p>
+            <a href="/confidentialite" lang="fr" className="mt-3 block text-sm text-muted transition-colors hover:text-bone">Confidentialité</a>
+            <a href="/support" lang="fr" className="mt-2 block text-sm text-muted transition-colors hover:text-bone">Support</a>
           </div>
         </div>
 

@@ -2,6 +2,18 @@
   command = "npm run build"
   publish = "dist"
 
+# Static pages of the Bonaparks iOS app (public/), served before the SPA fallback.
+# App Store Connect links to these URLs: keep them stable.
+[[redirects]]
+  from = "/confidentialite"
+  to = "/confidentialite/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/support"
+  to = "/support/index.html"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
