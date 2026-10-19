@@ -11,7 +11,7 @@ import type { Dictionary } from './i18n/dictionary';
 
 export type Page = 'home' | 'ai-assistant' | 'digital-twins' | 'proof-of-work' | 'ai-solutions' | 'business-studio';
 
-const CONTACT_EMAIL = 'contact@bonaparks.com';
+const CONTACT_EMAIL = 'bonaparks@icloud.com';
 
 /**
  * Keys written by the old demo login, Web3 wallet and fake bookings.

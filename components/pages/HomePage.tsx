@@ -34,7 +34,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Button onClick={() => onNavigate('proof-of-work')}>{t.home.seeGallery}</Button>
-            <LinkButton variant="outline" href="mailto:contact@bonaparks.com">
+            <LinkButton variant="outline" href="mailto:bonaparks@icloud.com">
               {t.home.getScanned}
             </LinkButton>
           </div>
@@ -126,7 +126,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted">
             {t.home.ctaBody}
           </p>
-          <LinkButton className="mt-10" href="mailto:contact@bonaparks.com">
+          <LinkButton className="mt-10" href="mailto:bonaparks@icloud.com">
             {t.home.ctaButton}
           </LinkButton>
         </section>

@@ -54,7 +54,7 @@ const ProofOfWorkPage: React.FC = () => {
               {t.gallery.ctaBody}
             </p>
           </div>
-          <LinkButton href="mailto:contact@bonaparks.com">{t.gallery.ctaButton}</LinkButton>
+          <LinkButton href="mailto:bonaparks@icloud.com">{t.gallery.ctaButton}</LinkButton>
         </section>
       </PageShell>
 
