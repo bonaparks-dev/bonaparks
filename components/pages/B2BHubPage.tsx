@@ -254,7 +254,7 @@ const RfpUpload: React.FC = () => {
         <p className="mt-2 text-sm text-muted">
           <span className="font-semibold text-accent">Click to upload</span> or drag and drop
         </p>
-        <p className="text-xs text-muted/70">PDF, DOC or DOCX &middot; max 10MB</p>
+        <p className="text-xs text-muted">PDF, DOC or DOCX &middot; max 10MB</p>
       </div>
 
       {error && <p className="mt-3 text-center text-xs text-accent">{error}</p>}
