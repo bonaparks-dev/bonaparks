@@ -134,7 +134,7 @@ const PersonalizationDemo: React.FC = () => {
 const InteractiveWorldDemo: React.FC = () => {
   const { t } = useLanguage();
   return (
-  <div className="group relative h-full min-h-[220px] overflow-hidden rounded-lg border border-line">
+  <div data-theme="dark" className="group relative h-full min-h-[220px] overflow-hidden rounded-lg border border-line">
     <img
       src="https://images.pexels.com/photos/2114365/pexels-photo-2114365.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
       alt=""

@@ -106,7 +106,7 @@ const ToggleSwitch: React.FC<{ label: string; enabled: boolean; onToggle: (enabl
       }`}
     >
       <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-bone transition-transform ${
+        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
           enabled ? 'translate-x-6' : 'translate-x-1'
         }`}
       />
@@ -257,7 +257,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
                 <div className="flex items-center gap-4">
                   {logo && (
                     <>
-                      <img src={logo} alt={t.profile.companyLogo} className="h-12 w-12 rounded bg-bone object-contain p-1" />
+                      <img src={logo} alt={t.profile.companyLogo} className="h-12 w-12 rounded bg-white object-contain p-1 ring-1 ring-line" />
                       <button onClick={removeLogo} className="text-xs text-muted transition-colors hover:text-accent">
                         {t.profile.remove}
                       </button>

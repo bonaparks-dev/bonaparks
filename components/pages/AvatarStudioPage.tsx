@@ -183,8 +183,8 @@ const AvatarStudioPage: React.FC = () => {
                     }`}
                   >
                     <img src={template.imageUrl} alt={template.name} className="h-24 w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
-                    <p className="absolute bottom-1.5 left-2 text-xs font-semibold text-bone">
+                    <div data-theme="dark" className="absolute inset-0 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
+                    <p data-theme="dark" className="absolute bottom-1.5 left-2 text-xs font-semibold text-bone">
                       {template.name}
                     </p>
                   </button>

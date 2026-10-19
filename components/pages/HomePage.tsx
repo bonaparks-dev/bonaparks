@@ -47,6 +47,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => setSelectedItem(featuredItem)}
+              data-theme="dark"
               className="group relative block aspect-[16/9] w-full overflow-hidden rounded-3xl border border-line bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               aria-label={`${t.tourCard.enter} — ${featuredItem.title}`}
             >

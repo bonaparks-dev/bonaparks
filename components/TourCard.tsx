@@ -31,6 +31,7 @@ const TourCard: React.FC<TourCardProps> = ({
         type="button"
         onClick={onOpen}
         disabled={locked}
+        data-theme="dark"
         className="relative block aspect-[4/3] w-full overflow-hidden bg-elev focus:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed"
         aria-label={`${action} — ${item.title}`}
       >
