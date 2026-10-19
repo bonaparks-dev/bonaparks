@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { LoadingIcon } from './IconComponents';
 import { tourEmbedUrl } from '../data/tours';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -35,7 +36,8 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
   const modelId = modelIdFrom(item.matterportUrl);
   const embedUrl = modelId ? tourEmbedUrl(modelId) : null;
 
-  return (
+  // Portal to <body>: inside <main> (its own z-10 stacking context) the sticky header covered the viewer's top bar.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex flex-col bg-ink animate-fade-in"
       role="dialog"
@@ -117,7 +119,8 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
           {t.viewer.hint}
         </p>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
