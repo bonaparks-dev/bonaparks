@@ -22,25 +22,6 @@ export interface ExperienceItem {
     matterportUrl?: string;
 }
 
-// FIX: Define and export BookableItem and Booking interfaces to resolve import errors.
-export interface BookableItem {
-  title: string;
-  description: string;
-  imageUrl: string;
-  price: number;
-}
-
-export interface Booking {
-  id: string;
-  title: string;
-  status: 'Active' | 'Redeemed' | 'Pending';
-  lastUpdate: string;
-  imageUrl: string;
-  description: string;
-  type: 'Nightclub' | 'Exhibition';
-  bookingDate: string;
-}
-
 export interface Project {
   id:string;
   title: string;
