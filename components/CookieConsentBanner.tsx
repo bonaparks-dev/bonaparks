@@ -17,13 +17,13 @@ const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({ onAccept, onD
       <div className="flex flex-shrink-0 items-center gap-3">
         <button
           onClick={onAccept}
-          className="rounded-full bg-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest2 text-ink transition-colors duration-300 hover:bg-bone"
+          className="rounded-full bg-accent px-6 py-2.5 text-xs font-semibold uppercase tracking-widest2 text-on-accent transition-colors duration-300 hover:bg-bone"
         >
           {t.cookies.accept}
         </button>
         <button
           onClick={onDecline}
-          className="rounded-full border border-line px-6 py-2.5 text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors duration-300 hover:border-gold hover:text-gold"
+          className="rounded-full border border-line px-6 py-2.5 text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors duration-300 hover:border-accent hover:text-accent"
         >
           {t.cookies.decline}
         </button>

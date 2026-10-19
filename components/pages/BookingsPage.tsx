@@ -24,7 +24,7 @@ const BookingsPage: React.FC<BookingsPageProps> = ({ bookings, onNavigate }) => 
                 {bookings.map((booking) => (
                 <div 
                     key={booking.id} 
-                    className="group bg-black/40 backdrop-blur-md rounded-xl border border-yellow-500/50 shadow-lg shadow-yellow-500/10 overflow-hidden"
+                    className="group bg-black/40 backdrop-blur-md rounded-xl border border-accent/50 shadow-lg shadow-accent/10 overflow-hidden"
                 >
                     <div className="relative">
                     <img src={booking.imageUrl} alt={booking.title} className="w-full h-48 object-cover opacity-80" />

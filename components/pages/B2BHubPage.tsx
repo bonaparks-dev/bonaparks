@@ -6,7 +6,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 const sectionTitle = 'font-display text-3xl md:text-4xl text-bone';
 const sectionIntro = 'mt-3 max-w-2xl text-sm leading-relaxed text-muted';
 const textareaClasses =
-  'w-full rounded-lg border border-line bg-ink px-4 py-3 text-bone placeholder-muted/60 transition-colors duration-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold';
+  'w-full rounded-lg border border-line bg-ink px-4 py-3 text-bone placeholder-muted/60 transition-colors duration-300 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
 
 /** Green-tinted confirmation block shared by the three forms. */
 const SuccessPanel: React.FC<{
@@ -16,14 +16,14 @@ const SuccessPanel: React.FC<{
   onReset: () => void;
 }> = ({ title, body, actionLabel, onReset }) => (
   <Panel className="p-10 text-center">
-    <div className="flex justify-center text-gold">
+    <div className="flex justify-center text-accent">
       <CheckCircleIcon />
     </div>
     <h4 className="mt-5 font-display text-2xl text-bone">{title}</h4>
     <p className="mt-3 text-sm text-muted">{body}</p>
     <button
       onClick={onReset}
-      className="mt-6 text-xs font-semibold uppercase tracking-widest2 text-gold transition-colors hover:text-bone"
+      className="mt-6 text-xs font-semibold uppercase tracking-widest2 text-accent transition-colors hover:text-bone"
     >
       {actionLabel}
     </button>
@@ -41,7 +41,7 @@ const NpcDemo: React.FC = () => {
     <div className="flex h-full flex-col">
       <div className="flex flex-grow items-start gap-3">
         <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-line bg-ink">
-          <AIIcon className="h-4 w-4 text-gold" />
+          <AIIcon className="h-4 w-4 text-accent" />
         </div>
         <p className="rounded-lg border border-line bg-ink p-3 text-xs leading-relaxed text-muted">
           {npcResponse}
@@ -52,7 +52,7 @@ const NpcDemo: React.FC = () => {
           <button
             key={index}
             onClick={() => setAnswered(index)}
-            className="block w-full rounded-lg border border-line px-3 py-2 text-left text-xs text-muted transition-colors hover:border-gold/40 hover:text-bone"
+            className="block w-full rounded-lg border border-line px-3 py-2 text-left text-xs text-muted transition-colors hover:border-accent/40 hover:text-bone"
           >
             {question}
           </button>
@@ -98,7 +98,7 @@ const PersonalizationDemo: React.FC = () => {
             onClick={() => toggleTag(tag)}
             className={`rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest2 transition-colors ${
               activeTags.has(tag)
-                ? 'border-gold bg-gold text-ink'
+                ? 'border-accent bg-accent text-on-accent'
                 : 'border-line text-muted hover:text-bone'
             }`}
           >
@@ -113,13 +113,13 @@ const PersonalizationDemo: React.FC = () => {
             <div
               key={item.key}
               className={`flex items-center gap-3 rounded-lg border p-2 transition-colors duration-300 ${
-                isRecommended ? 'border-gold bg-ink' : 'border-line bg-ink'
+                isRecommended ? 'border-accent bg-ink' : 'border-line bg-ink'
               }`}
             >
               <img src={item.img} alt="" className="h-9 w-9 rounded object-cover" />
               <span className="text-xs text-muted">{t.business.events[item.key]}</span>
               {isRecommended && (
-                <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest2 text-gold">
+                <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest2 text-accent">
                   {t.business.recommended}
                 </span>
               )}
@@ -142,13 +142,13 @@ const InteractiveWorldDemo: React.FC = () => {
     />
     <div className="absolute inset-0 bg-ink/50" aria-hidden="true" />
     <div className="absolute left-1/3 top-1/4 animate-pulse">
-      <div className="h-3 w-3 cursor-pointer rounded-full bg-gold" />
+      <div className="h-3 w-3 cursor-pointer rounded-full bg-accent" />
       <div className="absolute bottom-full left-1/2 mb-2 hidden w-max -translate-x-1/2 rounded bg-ink px-2 py-1 text-[10px] text-bone group-hover:block">
         {t.business.hotspotDj}
       </div>
     </div>
     <div className="absolute bottom-1/4 right-1/4 animate-pulse" style={{ animationDelay: '0.5s' }}>
-      <div className="h-3 w-3 cursor-pointer rounded-full bg-gold" />
+      <div className="h-3 w-3 cursor-pointer rounded-full bg-accent" />
       <div className="absolute bottom-full left-1/2 mb-2 hidden w-max -translate-x-1/2 rounded bg-ink px-2 py-1 text-[10px] text-bone group-hover:block">
         {t.business.hotspotVisuals}
       </div>
@@ -160,7 +160,7 @@ const InteractiveWorldDemo: React.FC = () => {
 const DemoCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <Panel className="flex flex-col">
     <div className="border-b border-line px-6 py-4">
-      <h4 className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">{title}</h4>
+      <h4 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{title}</h4>
     </div>
     <div className="flex-grow p-6">{children}</div>
   </Panel>
@@ -252,7 +252,7 @@ const RfpUpload: React.FC = () => {
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
         className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-12 text-center transition-colors ${
-          isDragging ? 'border-gold bg-gold/5' : 'border-line hover:border-gold/50'
+          isDragging ? 'border-accent bg-accent/5' : 'border-line hover:border-accent/50'
         }`}
       >
         <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx" />
@@ -260,12 +260,12 @@ const RfpUpload: React.FC = () => {
           <UploadCloudIcon />
         </span>
         <p className="mt-2 text-sm text-muted">
-          <span className="font-semibold text-gold">{t.business.rfpClick}</span> {t.business.rfpDrag}
+          <span className="font-semibold text-accent">{t.business.rfpClick}</span> {t.business.rfpDrag}
         </p>
-        <p className="text-xs text-muted/70">{t.business.rfpFormats}</p>
+        <p className="text-xs text-muted">{t.business.rfpFormats}</p>
       </div>
 
-      {error && <p className="mt-3 text-center text-xs text-gold">{t.business[error]}</p>}
+      {error && <p className="mt-3 text-center text-xs text-accent">{t.business[error]}</p>}
 
       {file && (
         <div className="mt-4 flex items-center justify-between rounded-lg border border-line bg-ink p-3">
@@ -280,7 +280,7 @@ const RfpUpload: React.FC = () => {
           </div>
           <button
             onClick={removeFile}
-            className="text-muted transition-colors hover:text-gold"
+            className="text-muted transition-colors hover:text-accent"
             aria-label={t.business.remove(file.name)}
           >
             <TrashIcon />

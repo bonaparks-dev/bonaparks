@@ -16,7 +16,7 @@ const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => 
             <img
               src={selection}
               alt={t.avatar.templateAlt}
-              className="mx-auto mb-5 h-40 w-40 rounded-full border border-gold object-cover"
+              className="mx-auto mb-5 h-40 w-40 rounded-full border border-accent object-cover"
             />
           ) : (
             <div className="flex justify-center">
@@ -58,7 +58,7 @@ const CustomizationPanel: React.FC = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-3 text-[11px] font-semibold uppercase tracking-widest2 transition-colors ${
               activeTab === tab
-                ? 'border-b border-gold text-gold'
+                ? 'border-b border-accent text-accent'
                 : 'text-muted hover:text-bone'
             }`}
           >
@@ -76,7 +76,7 @@ const CustomizationPanel: React.FC = () => {
             <input
               type="range"
               aria-label={t.avatar.parameter(i + 1)}
-              className="h-1 w-full cursor-pointer appearance-none rounded-lg bg-line accent-gold"
+              className="h-1 w-full cursor-pointer appearance-none rounded-lg bg-line accent-accent"
             />
           </div>
         ))}
@@ -144,7 +144,7 @@ const AvatarStudioPage: React.FC = () => {
         <div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left: foundation + generative clothing */}
           <Panel className="flex flex-col p-6 md:p-8">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
+            <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">
               {t.avatar.foundation}
             </h2>
 
@@ -154,8 +154,8 @@ const AvatarStudioPage: React.FC = () => {
                 onClick={() => setIsScanModalOpen(true)}
                 className={`mt-3 flex w-full items-center justify-center gap-3 rounded-full py-3 text-sm font-semibold transition-colors duration-300 ${
                   scanStatus === 'complete'
-                    ? 'cursor-default bg-gold text-ink'
-                    : 'border border-line text-bone hover:border-gold hover:text-gold'
+                    ? 'cursor-default bg-accent text-on-accent'
+                    : 'border border-line text-bone hover:border-accent hover:text-accent'
                 }`}
               >
                 {scanStatus === 'complete' ? <CheckCircleIcon /> : <CameraIcon />}
@@ -178,8 +178,8 @@ const AvatarStudioPage: React.FC = () => {
                     onClick={() => handleSelectTemplate(template)}
                     className={`relative overflow-hidden rounded-lg border transition-colors duration-300 ${
                       selectedTemplate?.name === template.name
-                        ? 'border-gold'
-                        : 'border-line hover:border-gold/50'
+                        ? 'border-accent'
+                        : 'border-line hover:border-accent/50'
                     }`}
                   >
                     <img src={template.imageUrl} alt={template.name} className="h-24 w-full object-cover" />
@@ -193,7 +193,7 @@ const AvatarStudioPage: React.FC = () => {
             </div>
 
             <div className="mt-auto space-y-3 border-t border-line pt-6">
-              <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
+              <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">
                 {t.avatar.clothing}
               </h2>
               <textarea
@@ -202,7 +202,7 @@ const AvatarStudioPage: React.FC = () => {
                 value={clothingPrompt}
                 onChange={(e) => setClothingPrompt(e.target.value)}
                 placeholder={t.avatar.clothingPlaceholder}
-                className="w-full rounded-lg border border-line bg-ink px-4 py-3 text-sm text-bone placeholder-muted/60 transition-colors duration-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                className="w-full rounded-lg border border-line bg-ink px-4 py-3 text-sm text-bone placeholder-muted/60 transition-colors duration-300 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               />
               <Button
                 onClick={handleGenerateClothing}

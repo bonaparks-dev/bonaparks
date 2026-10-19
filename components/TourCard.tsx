@@ -26,12 +26,12 @@ const TourCard: React.FC<TourCardProps> = ({
   const locked = Boolean(lockedMessage);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors duration-500 hover:border-gold/40">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors duration-500 hover:border-accent/40">
       <button
         type="button"
         onClick={onOpen}
         disabled={locked}
-        className="relative block aspect-[4/3] w-full overflow-hidden bg-elev focus:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-not-allowed"
+        className="relative block aspect-[4/3] w-full overflow-hidden bg-elev focus:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed"
         aria-label={`${action} — ${item.title}`}
       >
         <img
@@ -59,7 +59,7 @@ const TourCard: React.FC<TourCardProps> = ({
             {item.metrics.map((metric) => (
               <div key={metric.label} className="flex items-baseline justify-between">
                 <dt className="text-xs uppercase tracking-widest2 text-muted">{metric.label}</dt>
-                <dd className="font-display text-xl text-gold">{metric.value}</dd>
+                <dd className="font-display text-xl text-accent">{metric.value}</dd>
               </div>
             ))}
           </dl>
@@ -71,7 +71,7 @@ const TourCard: React.FC<TourCardProps> = ({
           <button
             type="button"
             onClick={onOpen}
-            className="mt-7 flex items-center gap-3 self-start text-sm font-semibold text-bone transition-colors duration-300 hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="mt-7 flex items-center gap-3 self-start text-sm font-semibold text-bone transition-colors duration-300 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {action}
             <span

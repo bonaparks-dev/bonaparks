@@ -45,7 +45,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
       <div className="flex items-center justify-between gap-6 border-b border-line px-6 py-4 md:px-10">
         <div className="min-w-0">
           {item.category && (
-            <p className="text-[10px] font-semibold uppercase tracking-widest2 text-gold">
+            <p className="text-[10px] font-semibold uppercase tracking-widest2 text-accent">
               {item.category}
             </p>
           )}
@@ -63,14 +63,14 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
               href={item.matterportUrl}
               target="_blank"
               rel="noreferrer"
-              className="hidden text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors hover:text-gold sm:block"
+              className="hidden text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors hover:text-accent sm:block"
             >
               {t.viewer.fullScreen}
             </a>
           )}
           <button
             onClick={onExit}
-            className="rounded-full border border-line px-6 py-2 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="rounded-full border border-line px-6 py-2 text-sm font-semibold text-bone transition-colors duration-300 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             aria-label={t.viewer.closeLabel}
           >
             {t.viewer.close}

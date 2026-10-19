@@ -81,10 +81,10 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
                     <div className="relative mt-6 aspect-video overflow-hidden rounded-xl border border-line bg-ink">
                         <video ref={videoRef} autoPlay playsInline className="h-full w-full scale-x-[-1] object-cover" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="h-5/6 w-2/3 animate-pulse rounded-[50%] border-2 border-dashed border-gold/50" />
+                            <div className="h-5/6 w-2/3 animate-pulse rounded-[50%] border-2 border-dashed border-accent/50" />
                         </div>
                         {cameraError && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-ink/80 p-6 text-center text-sm text-gold">
+                            <div className="absolute inset-0 flex items-center justify-center bg-ink/80 p-6 text-center text-sm text-accent">
                                 {t.faceScan.cameraError}
                             </div>
                         )}
@@ -94,14 +94,14 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
                         <p className="text-sm text-muted">{scanStep === null ? t.faceScan.initial : t.faceScan.steps[scanStep]}</p>
                         <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-line">
                             <div
-                                className="h-full rounded-full bg-gold transition-all duration-500"
+                                className="h-full rounded-full bg-accent transition-all duration-500"
                                 style={{ width: `${scanProgress}%` }}
                             />
                         </div>
                     </div>
 
                     {scanProgress >= 100 && (
-                        <div className="mt-5 flex items-center gap-3 text-gold">
+                        <div className="mt-5 flex items-center gap-3 text-accent">
                             <LoadingIcon />
                             <span className="text-xs uppercase tracking-widest2">{t.faceScan.processing}</span>
                         </div>

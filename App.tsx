@@ -188,7 +188,7 @@ const App: React.FC = () => {
       <div className="mx-5 border-t border-line" />
       <button
         onClick={() => { handleLogout(); close(); }}
-        className="block w-full px-5 py-3 text-left text-sm text-muted transition-colors hover:bg-elev hover:text-gold"
+        className="block w-full px-5 py-3 text-left text-sm text-muted transition-colors hover:bg-elev hover:text-accent"
         role="menuitem"
       >
         {logoutLabel}
@@ -203,9 +203,10 @@ const App: React.FC = () => {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 md:px-10">
           <button
             onClick={() => navigate('home')}
-            className="font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="inline-flex items-center gap-3 rounded-lg font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-ink"
             aria-label={t.nav.backHome}
           >
+            <img src="/brand/bonaparks-icon.svg" alt="" width={36} height={36} className="h-9 w-9 rounded-[22.5%] ring-1 ring-line" />
             Bona Parks
           </button>
 
@@ -215,7 +216,7 @@ const App: React.FC = () => {
                 key={link.page}
                 onClick={() => navigate(link.page)}
                 className={`text-xs font-semibold uppercase tracking-widest2 transition-colors ${
-                  page === link.page ? 'text-gold' : 'text-muted hover:text-bone'
+                  page === link.page ? 'text-accent' : 'text-muted hover:text-bone'
                 }`}
                 aria-current={page === link.page ? 'page' : undefined}
               >
@@ -252,13 +253,13 @@ const App: React.FC = () => {
                     <button
                       id="wallet-menu-button"
                       onClick={() => setShowWalletMenu(prev => !prev)}
-                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-gold"
+                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-accent"
                       aria-haspopup="true"
                       aria-expanded={showWalletMenu}
                       aria-controls="wallet-menu"
                     >
                       <WalletIcon />
-                      <span className="text-gold">{truncateAddress(walletAddress)}</span>
+                      <span className="text-accent">{truncateAddress(walletAddress)}</span>
                     </button>
                     {showWalletMenu && renderAccountMenu('wallet-menu', () => setShowWalletMenu(false), t.account.disconnectWallet)}
                   </>
@@ -267,7 +268,7 @@ const App: React.FC = () => {
                     <button
                       id="user-menu-button"
                       onClick={() => setShowUserMenu(prev => !prev)}
-                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-gold"
+                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-accent"
                       aria-haspopup="true"
                       aria-expanded={showUserMenu}
                       aria-controls="user-menu"
@@ -282,7 +283,7 @@ const App: React.FC = () => {
             ) : (
               <button
                 onClick={() => setShowAccessOptions(true)}
-                className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-gold hover:text-gold"
+                className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-accent hover:text-accent"
               >
                 {t.account.login}
               </button>
@@ -311,7 +312,7 @@ const App: React.FC = () => {
                 key={link.page}
                 onClick={() => navigate(link.page)}
                 className={`block w-full py-3 text-left text-sm font-semibold uppercase tracking-widest2 ${
-                  page === link.page ? 'text-gold' : 'text-muted'
+                  page === link.page ? 'text-accent' : 'text-muted'
                 }`}
               >
                 {link.label}
@@ -337,14 +338,17 @@ const App: React.FC = () => {
       <footer className="relative z-10 border-t border-line">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3 md:px-10">
           <div>
-            <p className="font-display text-2xl text-bone">Bona Parks</p>
+            <p className="flex items-center gap-3 font-display text-2xl text-bone">
+              <img src="/brand/bonaparks-icon.svg" alt="" width={36} height={36} className="h-9 w-9 rounded-[22.5%] ring-1 ring-line" />
+              Bona Parks
+            </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
               {t.footer.tagline}
             </p>
           </div>
 
           <nav aria-label={t.footer.label}>
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">{t.footer.explore}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{t.footer.explore}</p>
             <div className="mt-4 space-y-2">
               {NAV_LINKS.map((link) => (
                 <button
@@ -359,7 +363,7 @@ const App: React.FC = () => {
           </nav>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">{t.footer.contact}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{t.footer.contact}</p>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="mt-4 block text-sm text-muted transition-colors hover:text-bone"
@@ -367,7 +371,7 @@ const App: React.FC = () => {
               {CONTACT_EMAIL}
             </a>
             <p className="mt-2 text-sm text-muted">{t.footer.location}</p>
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-gold">{t.footer.app}</p>
+            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-accent">{t.footer.app}</p>
             <a href={t.footer.appPrivacyHref} className="mt-3 block text-sm text-muted transition-colors hover:text-bone">{t.footer.appPrivacy}</a>
             <a href={t.footer.appSupportHref} className="mt-2 block text-sm text-muted transition-colors hover:text-bone">{t.footer.appSupport}</a>
           </div>
