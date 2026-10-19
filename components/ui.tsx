@@ -6,9 +6,9 @@ export const Eyebrow: React.FC<{ children: React.ReactNode; className?: string }
   className = '',
 }) => (
   <span
-    className={`inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-widest2 text-gold ${className}`}
+    className={`inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-widest2 text-accent ${className}`}
   >
-    <span className="h-px w-8 bg-gold/50" aria-hidden="true" />
+    <span className="h-px w-8 bg-accent/50" aria-hidden="true" />
     {children}
   </span>
 );
@@ -40,11 +40,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const buttonBase =
-  'inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold tracking-wide transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold tracking-wide transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:cursor-not-allowed disabled:opacity-40';
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: 'bg-gold text-ink hover:bg-bone',
-  outline: 'border border-line text-bone hover:border-gold hover:text-gold',
+  primary: 'bg-accent text-on-accent hover:bg-bone',
+  outline: 'border border-line text-bone hover:border-accent hover:text-accent',
   ghost: 'text-muted hover:text-bone',
 };
 
@@ -75,7 +75,7 @@ export const Panel: React.FC<{
 }> = ({ children, className = '', hover = false }) => (
   <div
     className={`rounded-2xl border border-line bg-surface ${
-      hover ? 'transition-colors duration-300 hover:border-gold/40' : ''
+      hover ? 'transition-colors duration-300 hover:border-accent/40' : ''
     } ${className}`}
   >
     {children}
@@ -108,7 +108,7 @@ export const Field: React.FC<FieldProps> = ({ label, action, id, className = '',
     </div>
     <input
       id={id}
-      className={`w-full rounded-lg border border-line bg-ink px-4 py-3 text-bone placeholder-muted/60 transition-colors duration-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold ${className}`}
+      className={`w-full rounded-lg border border-line bg-ink px-4 py-3 text-bone placeholder-muted/60 transition-colors duration-300 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent ${className}`}
       {...rest}
     />
   </div>

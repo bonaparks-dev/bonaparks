@@ -13,7 +13,7 @@ interface LoginOptionsModalProps {
 }
 
 const optionClasses =
-  'flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3.5 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-wait disabled:opacity-60';
+  'flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3.5 text-sm font-semibold text-bone transition-colors duration-300 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-wait disabled:opacity-60';
 
 const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
   onClose,
@@ -80,7 +80,7 @@ const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
             </button>
 
             {walletStatus === 'error' && walletError && (
-              <p className="text-center text-xs leading-relaxed text-gold">{walletError}</p>
+              <p className="text-center text-xs leading-relaxed text-accent">{walletError}</p>
             )}
 
             <button onClick={() => handleNavigation('login')} className={optionClasses}>

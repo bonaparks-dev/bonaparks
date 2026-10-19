@@ -42,7 +42,7 @@ const LoginPage: React.FC<{
 
               <button
                 onClick={handleGoogleLogin}
-                className="mt-8 flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                className="mt-8 flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3 text-sm font-semibold text-bone transition-colors duration-300 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <GoogleIcon />
                 <span>Continue with Google</span>
@@ -76,7 +76,7 @@ const LoginPage: React.FC<{
                     <button
                       type="button"
                       onClick={() => setView('forgot')}
-                      className="text-[11px] font-semibold uppercase tracking-widest2 text-gold hover:text-bone"
+                      className="text-[11px] font-semibold uppercase tracking-widest2 text-accent hover:text-bone"
                     >
                       Forgot?
                     </button>
@@ -112,7 +112,7 @@ const LoginPage: React.FC<{
               <button
                 type="button"
                 onClick={() => setView('login')}
-                className="mt-6 text-sm text-muted transition-colors hover:text-gold"
+                className="mt-6 text-sm text-muted transition-colors hover:text-accent"
               >
                 &larr; Back to login
               </button>
@@ -129,7 +129,7 @@ const LoginPage: React.FC<{
               <button
                 type="button"
                 onClick={() => setView('login')}
-                className="mt-8 text-sm text-muted transition-colors hover:text-gold"
+                className="mt-8 text-sm text-muted transition-colors hover:text-accent"
               >
                 &larr; Back to login
               </button>
@@ -143,7 +143,7 @@ const LoginPage: React.FC<{
             <button
               type="button"
               onClick={() => onNavigate('signup')}
-              className="font-semibold text-gold transition-colors hover:text-bone"
+              className="font-semibold text-accent transition-colors hover:text-bone"
             >
               Create one
             </button>

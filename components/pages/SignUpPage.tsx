@@ -37,7 +37,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onSignUp, onNavigate }) => {
 
           <button
             onClick={handleGoogleSignUp}
-            className="mt-8 flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="mt-8 flex w-full items-center justify-center gap-3 rounded-full border border-line bg-elev py-3 text-sm font-semibold text-bone transition-colors duration-300 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <GoogleIcon />
             <span>Sign up with Google</span>
@@ -79,7 +79,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onSignUp, onNavigate }) => {
                 placeholder="••••••••"
               />
               {passwordsMismatch && (
-                <p className="mt-2 text-xs text-gold">Passwords do not match.</p>
+                <p className="mt-2 text-xs text-accent">Passwords do not match.</p>
               )}
             </div>
             <Button
@@ -97,7 +97,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onSignUp, onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate('login')}
-            className="font-semibold text-gold transition-colors hover:text-bone"
+            className="font-semibold text-accent transition-colors hover:text-bone"
           >
             Sign in
           </button>

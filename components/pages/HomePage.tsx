@@ -58,7 +58,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => setSelectedItem(tourItems[0])}
-              className="group relative block aspect-[16/9] w-full overflow-hidden rounded-3xl border border-line bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              className="group relative block aspect-[16/9] w-full overflow-hidden rounded-3xl border border-line bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               aria-label={`Enter the tour — ${featured.title}`}
             >
               <img
@@ -71,7 +71,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 aria-hidden="true"
               />
               <div className="absolute inset-x-0 bottom-0 p-8 text-left md:p-12">
-                <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
+                <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">
                   Featured tour &middot; {featured.category}
                 </p>
                 <h2 className="mt-3 font-display text-4xl text-bone md:text-5xl">
@@ -119,7 +119,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
             {capabilities.map((step, index) => (
               <div key={step.title} className="bg-surface p-9">
-                <span className="font-display text-3xl text-gold">
+                <span className="font-display text-3xl text-accent">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-5 font-display text-2xl text-bone">{step.title}</h3>

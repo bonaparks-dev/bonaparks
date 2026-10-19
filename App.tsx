@@ -182,7 +182,7 @@ const App: React.FC = () => {
       <div className="mx-5 border-t border-line" />
       <button
         onClick={() => { handleLogout(); close(); }}
-        className="block w-full px-5 py-3 text-left text-sm text-muted transition-colors hover:bg-elev hover:text-gold"
+        className="block w-full px-5 py-3 text-left text-sm text-muted transition-colors hover:bg-elev hover:text-accent"
         role="menuitem"
       >
         {logoutLabel}
@@ -197,7 +197,7 @@ const App: React.FC = () => {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 md:px-10">
           <button
             onClick={() => navigate('home')}
-            className="font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             aria-label="Back to home"
           >
             Bona Parks
@@ -209,7 +209,7 @@ const App: React.FC = () => {
                 key={link.page}
                 onClick={() => navigate(link.page)}
                 className={`text-xs font-semibold uppercase tracking-widest2 transition-colors ${
-                  page === link.page ? 'text-gold' : 'text-muted hover:text-bone'
+                  page === link.page ? 'text-accent' : 'text-muted hover:text-bone'
                 }`}
                 aria-current={page === link.page ? 'page' : undefined}
               >
@@ -226,13 +226,13 @@ const App: React.FC = () => {
                     <button
                       id="wallet-menu-button"
                       onClick={() => setShowWalletMenu(prev => !prev)}
-                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-gold"
+                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-accent"
                       aria-haspopup="true"
                       aria-expanded={showWalletMenu}
                       aria-controls="wallet-menu"
                     >
                       <WalletIcon />
-                      <span className="text-gold">{truncateAddress(walletAddress)}</span>
+                      <span className="text-accent">{truncateAddress(walletAddress)}</span>
                     </button>
                     {showWalletMenu && renderAccountMenu('wallet-menu', () => setShowWalletMenu(false), 'Disconnect wallet')}
                   </>
@@ -241,7 +241,7 @@ const App: React.FC = () => {
                     <button
                       id="user-menu-button"
                       onClick={() => setShowUserMenu(prev => !prev)}
-                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-gold"
+                      className="flex items-center gap-2 text-sm font-semibold text-muted transition-colors hover:text-accent"
                       aria-haspopup="true"
                       aria-expanded={showUserMenu}
                       aria-controls="user-menu"
@@ -256,7 +256,7 @@ const App: React.FC = () => {
             ) : (
               <button
                 onClick={() => setShowAccessOptions(true)}
-                className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-gold hover:text-gold"
+                className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-accent hover:text-accent"
               >
                 Login
               </button>
@@ -285,7 +285,7 @@ const App: React.FC = () => {
                 key={link.page}
                 onClick={() => navigate(link.page)}
                 className={`block w-full py-3 text-left text-sm font-semibold uppercase tracking-widest2 ${
-                  page === link.page ? 'text-gold' : 'text-muted'
+                  page === link.page ? 'text-accent' : 'text-muted'
                 }`}
               >
                 {link.label}
@@ -319,7 +319,7 @@ const App: React.FC = () => {
           </div>
 
           <nav aria-label="Footer">
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">Explore</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">Explore</p>
             <div className="mt-4 space-y-2">
               {NAV_LINKS.map((link) => (
                 <button
@@ -334,7 +334,7 @@ const App: React.FC = () => {
           </nav>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">Get in touch</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">Get in touch</p>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="mt-4 block text-sm text-muted transition-colors hover:text-bone"
@@ -342,7 +342,7 @@ const App: React.FC = () => {
               {CONTACT_EMAIL}
             </a>
             <p className="mt-2 text-sm text-muted">Sardinia, Italy</p>
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-gold">Bonaparks app</p>
+            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-accent">Bonaparks app</p>
             <a href="/confidentialite" lang="fr" className="mt-3 block text-sm text-muted transition-colors hover:text-bone">Confidentialité</a>
             <a href="/support" lang="fr" className="mt-2 block text-sm text-muted transition-colors hover:text-bone">Support</a>
           </div>

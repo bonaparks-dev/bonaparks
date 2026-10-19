@@ -9,7 +9,7 @@ interface ControlRoomPageProps {
 }
 
 const statusStyles: Record<Booking['status'], string> = {
-  Active: 'border-gold/50 text-gold',
+  Active: 'border-accent/50 text-accent',
   Redeemed: 'border-line text-muted',
   Pending: 'border-bone/30 text-bone',
 };

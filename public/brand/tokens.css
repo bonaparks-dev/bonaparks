@@ -1,0 +1,26 @@
+/* Bonaparks design tokens: the single source of truth for site colors.
+   Palette of the Bonaparks iOS app (AppIcon.svg, app tint #B8D9FF).
+   Values are space-separated RGB channels so Tailwind opacity modifiers work,
+   e.g. rgb(var(--c-bg) / 0.8). Used by index.html (Tailwind theme) and
+   app-pages.css (static app pages). */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --c-bg:      10 17 20;    /* #0A1114 app backdrop */
+  --c-surface: 18 28 36;    /* #121C24 app panel */
+  --c-elev:    23 38 51;    /* #172633 raised panel, hovered rows */
+  --c-deep:    11 24 35;    /* #0B1823 deep navy: text on accent */
+  --c-navy:    29 58 87;    /* #1D3A57 navy: borders, dividers */
+  --c-glow:    58 108 146;  /* #3A6C92 icon glow: page backdrop light */
+
+  /* Text */
+  --c-text:    238 247 255; /* #EEF7FF primary text (17.6:1 on bg) */
+  --c-muted:   141 163 181; /* #8DA3B5 secondary text (7.3:1 on bg) */
+
+  /* Accent = app tint */
+  --c-accent:  184 217 255; /* #B8D9FF buttons, links, focus (13.1:1 on bg) */
+
+  /* Borders: navy at low alpha */
+  --line-alpha: 0.6;
+}
