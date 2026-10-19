@@ -36,6 +36,12 @@ const en = {
     notDetected: 'Web3 wallet not detected. Please install a browser extension like MetaMask.',
     failed: 'Wallet connection failed. Please ensure your wallet is unlocked and try again.',
   },
+  theme: {
+    group: 'Appearance',
+    light: 'Light',
+    dark: 'Dark',
+    auto: 'Auto',
+  },
   footer: {
     tagline:
       'Immersive 3D tours and digital twins of the places that deserve to be walked through, from anywhere.',
@@ -392,6 +398,12 @@ const fr: Dictionary = {
       'Aucun wallet Web3 détecté. Veuillez installer une extension de navigateur comme MetaMask.',
     failed:
       'La connexion au wallet a échoué. Vérifiez que votre wallet est déverrouillé, puis réessayez.',
+  },
+  theme: {
+    group: 'Apparence',
+    light: 'Clair',
+    dark: 'Sombre',
+    auto: 'Auto',
   },
   footer: {
     tagline:

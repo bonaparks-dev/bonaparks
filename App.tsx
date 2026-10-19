@@ -13,6 +13,7 @@ import { Booking } from './types';
 import { WalletIcon, UserIcon } from './components/IconComponents';
 import LoginOptionsModal from './components/LoginOptionsModal';
 import CookieConsentBanner from './components/CookieConsentBanner';
+import ThemeSwitch from './components/ThemeSwitch';
 import { useLanguage, Lang } from './i18n/LanguageContext';
 import type { Dictionary } from './i18n/dictionary';
 
@@ -170,7 +171,7 @@ const App: React.FC = () => {
   const renderAccountMenu = (id: string, close: () => void, logoutLabel: string) => (
     <div
       id={id}
-      className="absolute right-0 top-full z-30 mt-3 w-52 overflow-hidden rounded-xl border border-line bg-surface shadow-2xl shadow-black/60 animate-fade-in"
+      className="absolute right-0 top-full z-30 mt-3 w-52 overflow-hidden rounded-xl border border-line bg-surface shadow-[0_25px_50px_-12px_rgb(0_0_0/var(--shadow-alpha))] animate-fade-in"
       style={{ animationDuration: '0.2s' }}
       role="menu"
       aria-orientation="vertical"
@@ -318,6 +319,9 @@ const App: React.FC = () => {
                 {link.label}
               </button>
             ))}
+            <div className="mt-3 border-t border-line pt-4">
+              <ThemeSwitch />
+            </div>
           </nav>
         )}
       </header>
@@ -377,10 +381,13 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-line px-6 py-6 text-center md:px-10">
-          <p className="text-xs text-muted">
-            &copy; {new Date().getFullYear()} Bona Parks. {t.footer.rights}
-          </p>
+        <div className="border-t border-line">
+          <div className="mx-auto flex max-w-7xl flex-col-reverse items-center justify-between gap-4 px-6 py-6 sm:flex-row md:px-10">
+            <p className="text-xs text-muted">
+              &copy; {new Date().getFullYear()} Bona Parks. {t.footer.rights}
+            </p>
+            <ThemeSwitch />
+          </div>
         </div>
       </footer>
 
