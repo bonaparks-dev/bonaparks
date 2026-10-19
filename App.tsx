@@ -200,10 +200,10 @@ const App: React.FC = () => {
     <div className="relative flex min-h-screen flex-col bg-ink font-sans text-bone">
 
       <header className="sticky top-0 z-40 border-b border-line bg-ink/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 md:px-10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 sm:gap-6 sm:px-6 py-5 md:px-10">
           <button
             onClick={() => navigate('home')}
-            className="inline-flex items-center gap-3 rounded-lg font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-ink"
+            className="inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg font-display text-xl leading-none sm:gap-3 sm:text-2xl tracking-tight text-bone transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-ink"
             aria-label={t.nav.backHome}
           >
             <img src="/brand/bonaparks-icon.svg" alt="" width={36} height={36} className="h-9 w-9 rounded-[22.5%] ring-1 ring-line" />
