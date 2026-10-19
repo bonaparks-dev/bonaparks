@@ -197,9 +197,10 @@ const App: React.FC = () => {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 md:px-10">
           <button
             onClick={() => navigate('home')}
-            className="font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="inline-flex items-center gap-3 rounded-lg font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-ink"
             aria-label="Back to home"
           >
+            <img src="/brand/bonaparks-icon.svg" alt="" width={36} height={36} className="h-9 w-9 rounded-[22.5%] ring-1 ring-line" />
             Bona Parks
           </button>
 
@@ -311,7 +312,10 @@ const App: React.FC = () => {
       <footer className="relative z-10 border-t border-line">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3 md:px-10">
           <div>
-            <p className="font-display text-2xl text-bone">Bona Parks</p>
+            <p className="flex items-center gap-3 font-display text-2xl text-bone">
+              <img src="/brand/bonaparks-icon.svg" alt="" width={36} height={36} className="h-9 w-9 rounded-[22.5%] ring-1 ring-line" />
+              Bona Parks
+            </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
               Immersive 3D tours and digital twins of the places that deserve to be walked
               through, from anywhere.

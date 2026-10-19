@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d3a57"/><stop offset="1" stop-color="#0b1823"/></linearGradient>
+<linearGradient id="fin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef7ff"/><stop offset="0.6" stop-color="#c7e4ff"/><stop offset="1" stop-color="#8fb8dc"/></linearGradient>
+<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a5677"/><stop offset="1" stop-color="#0e2131"/></linearGradient>
+<radialGradient id="glow" cx="0.5" cy="0.45" r="0.5"><stop offset="0" stop-color="#3a6c92" stop-opacity="0.45"/><stop offset="1" stop-color="#3a6c92" stop-opacity="0"/></radialGradient>
+<clipPath id="r"><rect width="1024" height="1024" rx="230"/></clipPath>
+</defs>
+<g clip-path="url(#r)">
+<rect width="1024" height="1024" fill="url(#bg)"/>
+<circle cx="512" cy="470" r="400" fill="url(#glow)"/>
+<path fill="url(#fin)" d="M 740 642 C 720 470, 600 290, 400 196 C 470 300, 486 470, 400 642 Z"/>
+<path d="M 0 640 C 120 610, 220 670, 340 640 C 460 610, 560 670, 680 640 C 800 610, 900 670, 1024 640 L 1024 1024 L 0 1024 Z" fill="url(#sea)"/>
+<path d="M 0 640 C 120 610, 220 670, 340 640 C 460 610, 560 670, 680 640 C 800 610, 900 670, 1024 640" stroke="#c7e4ff" stroke-opacity="0.8" stroke-width="14" fill="none" stroke-linecap="round"/>
+<path d="M 250 730 C 330 712, 400 748, 480 730 C 560 712, 630 748, 710 730 C 760 719, 800 728, 830 733" stroke="#c7e4ff" stroke-opacity="0.35" stroke-width="10" fill="none" stroke-linecap="round"/>
+<path d="M 360 810 C 420 796, 480 824, 540 810 C 600 796, 650 818, 690 812" stroke="#c7e4ff" stroke-opacity="0.18" stroke-width="9" fill="none" stroke-linecap="round"/>
+</g>
+</svg>
