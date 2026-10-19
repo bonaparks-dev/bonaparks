@@ -58,7 +58,7 @@ const TourCard: React.FC<TourCardProps> = ({
           <dl className="mt-6 space-y-2 border-t border-line pt-5">
             {item.metrics.map((metric) => (
               <div key={metric.label} className="flex items-baseline justify-between">
-                <dt className="text-xs uppercase tracking-widest2 text-muted">{metric.label}</dt>
+                <dt className="text-xs text-muted">{metric.label}</dt>
                 <dd className="font-display text-xl text-accent">{metric.value}</dd>
               </div>
             ))}
@@ -66,7 +66,7 @@ const TourCard: React.FC<TourCardProps> = ({
         )}
 
         {locked ? (
-          <p className="mt-7 text-xs uppercase tracking-widest2 text-muted">{lockedMessage}</p>
+          <p className="mt-7 text-xs text-muted">{lockedMessage}</p>
         ) : (
           <button
             type="button"

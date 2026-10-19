@@ -11,10 +11,6 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#0A1114" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
     <link rel="stylesheet" href="/brand/tokens.css" />
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,11 +30,8 @@
               'on-accent': 'rgb(var(--c-deep) / <alpha-value>)',    // text on accent
             },
             fontFamily: {
-              display: ['"Instrument Serif"', 'Georgia', 'serif'],
-              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-            },
-            letterSpacing: {
-              widest2: '0.22em',
+              display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Helvetica Neue"', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
+              sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Helvetica Neue"', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
             },
           },
         },
@@ -63,6 +56,9 @@
             z-index: 0;
             background-image: radial-gradient(circle at 50% 0%, rgb(var(--c-glow) / 0.16), transparent 55%);
         }
+
+        /* Apple-style headings: system font (SF Pro on Apple devices), semibold, tight tracking */
+        .font-display { font-weight: 600; letter-spacing: -0.022em; }
 
         ::selection { background: rgb(var(--c-accent)); color: rgb(var(--c-deep)); }
 

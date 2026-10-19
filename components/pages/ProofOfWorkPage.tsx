@@ -31,7 +31,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = () => {
             {categories.map((category) => (
               <span
                 key={category}
-                className="rounded-full border border-line px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest2 text-muted"
+                className="rounded-full border border-line px-4 py-1.5 text-[13px] font-semibold text-muted"
               >
                 {category}
               </span>

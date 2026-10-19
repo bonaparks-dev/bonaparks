@@ -45,7 +45,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
       <div className="flex items-center justify-between gap-6 border-b border-line px-6 py-4 md:px-10">
         <div className="min-w-0">
           {item.category && (
-            <p className="text-[10px] font-semibold uppercase tracking-widest2 text-accent">
+            <p className="text-xs font-semibold text-accent">
               {item.category}
             </p>
           )}
@@ -63,7 +63,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
               href={item.matterportUrl}
               target="_blank"
               rel="noreferrer"
-              className="hidden text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors hover:text-accent sm:block"
+              className="hidden text-xs font-semibold text-muted transition-colors hover:text-accent sm:block"
             >
               {t.viewer.fullScreen}
             </a>
@@ -84,7 +84,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
             {isLoading && (
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-ink">
                 <LoadingIcon />
-                <span className="text-xs font-semibold uppercase tracking-widest2 text-muted">
+                <span className="text-xs font-semibold text-muted">
                   {t.viewer.loading}
                 </span>
               </div>
@@ -113,7 +113,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
       </div>
 
       <div className="border-t border-line px-6 py-3 text-center">
-        <p className="text-[11px] uppercase tracking-widest2 text-muted">
+        <p className="text-[13px] text-muted">
           {t.viewer.hint}
         </p>
       </div>

@@ -215,7 +215,7 @@ const App: React.FC = () => {
               <button
                 key={link.page}
                 onClick={() => navigate(link.page)}
-                className={`text-xs font-semibold uppercase tracking-widest2 transition-colors ${
+                className={`text-xs font-semibold transition-colors ${
                   page === link.page ? 'text-accent' : 'text-muted hover:text-bone'
                 }`}
                 aria-current={page === link.page ? 'page' : undefined}
@@ -227,7 +227,7 @@ const App: React.FC = () => {
 
           <div className="flex items-center gap-4">
             <div
-              className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest2 text-line"
+              className="flex items-center gap-1.5 text-xs font-semibold text-line"
               role="group"
               aria-label={t.nav.language}
             >
@@ -283,7 +283,7 @@ const App: React.FC = () => {
             ) : (
               <button
                 onClick={() => setShowAccessOptions(true)}
-                className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-accent hover:text-accent"
+                className="rounded-full border border-line px-5 py-2 text-xs font-semibold text-bone transition-colors duration-300 hover:border-accent hover:text-accent"
               >
                 {t.account.login}
               </button>
@@ -311,7 +311,7 @@ const App: React.FC = () => {
               <button
                 key={link.page}
                 onClick={() => navigate(link.page)}
-                className={`block w-full py-3 text-left text-sm font-semibold uppercase tracking-widest2 ${
+                className={`block w-full py-3 text-left text-sm font-semibold ${
                   page === link.page ? 'text-accent' : 'text-muted'
                 }`}
               >
@@ -348,7 +348,7 @@ const App: React.FC = () => {
           </div>
 
           <nav aria-label={t.footer.label}>
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{t.footer.explore}</p>
+            <p className="text-[13px] font-semibold text-accent">{t.footer.explore}</p>
             <div className="mt-4 space-y-2">
               {NAV_LINKS.map((link) => (
                 <button
@@ -363,7 +363,7 @@ const App: React.FC = () => {
           </nav>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{t.footer.contact}</p>
+            <p className="text-[13px] font-semibold text-accent">{t.footer.contact}</p>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="mt-4 block text-sm text-muted transition-colors hover:text-bone"
@@ -371,7 +371,7 @@ const App: React.FC = () => {
               {CONTACT_EMAIL}
             </a>
             <p className="mt-2 text-sm text-muted">{t.footer.location}</p>
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-accent">{t.footer.app}</p>
+            <p className="mt-6 text-[13px] font-semibold text-accent">{t.footer.app}</p>
             <a href={t.footer.appPrivacyHref} className="mt-3 block text-sm text-muted transition-colors hover:text-bone">{t.footer.appPrivacy}</a>
             <a href={t.footer.appSupportHref} className="mt-2 block text-sm text-muted transition-colors hover:text-bone">{t.footer.appSupport}</a>
           </div>

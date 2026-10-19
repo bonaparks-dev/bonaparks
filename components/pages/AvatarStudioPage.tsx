@@ -32,7 +32,7 @@ const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => 
           <div className="flex justify-center">
             <UserIcon />
           </div>
-          <p className="mt-3 text-xs uppercase tracking-widest2">{t.avatar.preview}</p>
+          <p className="mt-3 text-xs">{t.avatar.preview}</p>
         </>
       )}
     </div>
@@ -56,7 +56,7 @@ const CustomizationPanel: React.FC = () => {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-3 text-[11px] font-semibold uppercase tracking-widest2 transition-colors ${
+            className={`px-4 py-3 text-[13px] font-semibold transition-colors ${
               activeTab === tab
                 ? 'border-b border-accent text-accent'
                 : 'text-muted hover:text-bone'
@@ -70,7 +70,7 @@ const CustomizationPanel: React.FC = () => {
         {/* Placeholder content for customization options */}
         {[...Array(6)].map((_, i) => (
           <div key={i} className="space-y-2">
-            <label className="text-[11px] uppercase tracking-widest2 text-muted">
+            <label className="text-[13px] text-muted">
               {t.avatar.parameter(i + 1)}
             </label>
             <input
@@ -144,12 +144,12 @@ const AvatarStudioPage: React.FC = () => {
         <div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left: foundation + generative clothing */}
           <Panel className="flex flex-col p-6 md:p-8">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">
+            <h2 className="text-[13px] font-semibold text-accent">
               {t.avatar.foundation}
             </h2>
 
             <div className="mt-5">
-              <label className="text-xs uppercase tracking-widest2 text-muted">{t.avatar.biometricScan}</label>
+              <label className="text-xs text-muted">{t.avatar.biometricScan}</label>
               <button
                 onClick={() => setIsScanModalOpen(true)}
                 className={`mt-3 flex w-full items-center justify-center gap-3 rounded-full py-3 text-sm font-semibold transition-colors duration-300 ${
@@ -165,12 +165,12 @@ const AvatarStudioPage: React.FC = () => {
 
             <div className="my-6 flex items-center gap-4">
               <span className="h-px flex-grow bg-line" />
-              <span className="text-[10px] uppercase tracking-widest2 text-muted">{t.avatar.or}</span>
+              <span className="text-xs text-muted">{t.avatar.or}</span>
               <span className="h-px flex-grow bg-line" />
             </div>
 
             <div>
-              <label className="text-xs uppercase tracking-widest2 text-muted">{t.avatar.baseModel}</label>
+              <label className="text-xs text-muted">{t.avatar.baseModel}</label>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 {avatarTemplates.map(template => (
                   <button
@@ -184,7 +184,7 @@ const AvatarStudioPage: React.FC = () => {
                   >
                     <img src={template.imageUrl} alt={template.name} className="h-24 w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
-                    <p className="absolute bottom-1.5 left-2 text-[10px] font-semibold uppercase tracking-widest2 text-bone">
+                    <p className="absolute bottom-1.5 left-2 text-xs font-semibold text-bone">
                       {template.name}
                     </p>
                   </button>
@@ -193,7 +193,7 @@ const AvatarStudioPage: React.FC = () => {
             </div>
 
             <div className="mt-auto space-y-3 border-t border-line pt-6">
-              <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">
+              <h2 className="text-[13px] font-semibold text-accent">
                 {t.avatar.clothing}
               </h2>
               <textarea
@@ -214,7 +214,7 @@ const AvatarStudioPage: React.FC = () => {
               </Button>
               {generatedClothingUrl && (
                 <div>
-                  <p className="mb-2 text-[10px] uppercase tracking-widest2 text-muted">{t.avatar.generated}</p>
+                  <p className="mb-2 text-xs text-muted">{t.avatar.generated}</p>
                   <img
                     src={generatedClothingUrl}
                     alt={t.avatar.generatedAlt}

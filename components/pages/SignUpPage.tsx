@@ -47,7 +47,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onSignUp, onNavigate }) => {
 
           <div className="my-8 flex items-center gap-4">
             <span className="h-px flex-grow bg-line" />
-            <span className="text-[10px] uppercase tracking-widest2 text-muted">{t.auth.orEmail}</span>
+            <span className="text-xs text-muted">{t.auth.orEmail}</span>
             <span className="h-px flex-grow bg-line" />
           </div>
 

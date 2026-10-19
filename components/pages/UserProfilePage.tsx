@@ -85,7 +85,7 @@ const CameraModal: React.FC<{
 
 const SettingsSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <section className="border-t border-line pt-8">
-    <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{title}</h2>
+    <h2 className="text-[13px] font-semibold text-accent">{title}</h2>
     <div className="mt-5 space-y-3">{children}</div>
   </section>
 );
@@ -202,7 +202,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
             </div>
 
             <div className="flex-grow text-center md:text-left">
-              <label htmlFor="username" className="text-[11px] font-semibold uppercase tracking-widest2 text-muted">
+              <label htmlFor="username" className="text-[13px] font-semibold text-muted">
                 {t.profile.displayName}
               </label>
               <input
@@ -266,7 +266,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
                   <input type="file" id="logo-upload" className="hidden" accept="image/png, image/jpeg" onChange={handleLogoUpload} />
                   <label
                     htmlFor="logo-upload"
-                    className="cursor-pointer rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors hover:border-accent hover:text-accent"
+                    className="cursor-pointer rounded-full border border-line px-5 py-2 text-xs font-semibold text-bone transition-colors hover:border-accent hover:text-accent"
                   >
                     {logo ? t.profile.change : t.profile.upload}
                   </label>
@@ -289,7 +289,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
               )}
               <button className={`${rowClasses} transition-colors hover:border-accent/40`}>
                 <span className="text-sm text-muted">{t.profile.twoFactor}</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest2 text-accent">{t.profile.notEnabled}</span>
+                <span className="text-xs font-semibold text-accent">{t.profile.notEnabled}</span>
               </button>
             </SettingsSection>
 

@@ -103,7 +103,7 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
                     {scanProgress >= 100 && (
                         <div className="mt-5 flex items-center gap-3 text-accent">
                             <LoadingIcon />
-                            <span className="text-xs uppercase tracking-widest2">{t.faceScan.processing}</span>
+                            <span className="text-xs">{t.faceScan.processing}</span>
                         </div>
                     )}
                 </div>

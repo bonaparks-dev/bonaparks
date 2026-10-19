@@ -44,7 +44,7 @@ const ControlRoomPage: React.FC<ControlRoomPageProps> = ({ bookings, onNavigate 
 
             <div className="mt-8 flex items-end justify-between border-t border-line pt-6">
               <div>
-                <p className="text-[11px] uppercase tracking-widest2 text-muted">{t.bookings.acquired}</p>
+                <p className="text-[13px] text-muted">{t.bookings.acquired}</p>
                 <p className="mt-1 text-sm text-bone">
                   {new Date(booking.lastUpdate).toLocaleDateString('en-GB')}
                 </p>

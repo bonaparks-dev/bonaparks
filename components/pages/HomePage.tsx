@@ -60,7 +60,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 aria-hidden="true"
               />
               <div className="absolute inset-x-0 bottom-0 p-8 text-left md:p-12">
-                <p className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">
+                <p className="text-[13px] font-semibold text-accent">
                   {t.home.featured} &middot; {featuredItem.category}
                 </p>
                 <h2 className="mt-3 font-display text-4xl text-bone md:text-5xl">

@@ -23,7 +23,7 @@ const SuccessPanel: React.FC<{
     <p className="mt-3 text-sm text-muted">{body}</p>
     <button
       onClick={onReset}
-      className="mt-6 text-xs font-semibold uppercase tracking-widest2 text-accent transition-colors hover:text-bone"
+      className="mt-6 text-xs font-semibold text-accent transition-colors hover:text-bone"
     >
       {actionLabel}
     </button>
@@ -96,7 +96,7 @@ const PersonalizationDemo: React.FC = () => {
           <button
             key={tag}
             onClick={() => toggleTag(tag)}
-            className={`rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-widest2 transition-colors ${
+            className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
               activeTags.has(tag)
                 ? 'border-accent bg-accent text-on-accent'
                 : 'border-line text-muted hover:text-bone'
@@ -119,7 +119,7 @@ const PersonalizationDemo: React.FC = () => {
               <img src={item.img} alt="" className="h-9 w-9 rounded object-cover" />
               <span className="text-xs text-muted">{t.business.events[item.key]}</span>
               {isRecommended && (
-                <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest2 text-accent">
+                <span className="ml-auto text-xs font-semibold text-accent">
                   {t.business.recommended}
                 </span>
               )}
@@ -160,7 +160,7 @@ const InteractiveWorldDemo: React.FC = () => {
 const DemoCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <Panel className="flex flex-col">
     <div className="border-b border-line px-6 py-4">
-      <h4 className="text-[11px] font-semibold uppercase tracking-widest2 text-accent">{title}</h4>
+      <h4 className="text-[13px] font-semibold text-accent">{title}</h4>
     </div>
     <div className="flex-grow p-6">{children}</div>
   </Panel>
@@ -334,7 +334,7 @@ const ContactForm: React.FC = () => {
         </div>
         <Field id="email" label={t.business.email} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <div>
-          <label htmlFor="message" className="mb-2 block text-xs font-semibold uppercase tracking-widest2 text-muted">
+          <label htmlFor="message" className="mb-2 block text-xs font-semibold text-muted">
             {t.business.message}
           </label>
           <textarea

@@ -1,12 +1,12 @@
 import React from 'react';
 
-/** Small uppercase label that opens a section. */
+/** Small label that opens a section. */
 export const Eyebrow: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
   className = '',
 }) => (
   <span
-    className={`inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-widest2 text-accent ${className}`}
+    className={`inline-flex items-center gap-3 text-[13px] font-semibold text-accent ${className}`}
   >
     <span className="h-px w-8 bg-accent/50" aria-hidden="true" />
     {children}
@@ -87,7 +87,7 @@ export const Badge: React.FC<{ children: React.ReactNode; className?: string }> 
   className = '',
 }) => (
   <span
-    className={`inline-block rounded-full border border-line bg-ink/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest2 text-bone backdrop-blur-sm ${className}`}
+    className={`inline-block rounded-full border border-line bg-ink/70 px-3 py-1 text-xs font-semibold text-bone backdrop-blur-sm ${className}`}
   >
     {children}
   </span>
@@ -101,7 +101,7 @@ interface FieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const Field: React.FC<FieldProps> = ({ label, action, id, className = '', ...rest }) => (
   <div>
     <div className="mb-2 flex items-baseline justify-between">
-      <label htmlFor={id} className="text-xs font-semibold uppercase tracking-widest2 text-muted">
+      <label htmlFor={id} className="text-xs font-semibold text-muted">
         {label}
       </label>
       {action}

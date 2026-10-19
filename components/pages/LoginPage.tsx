@@ -52,7 +52,7 @@ const LoginPage: React.FC<{
 
               <div className="my-8 flex items-center gap-4">
                 <span className="h-px flex-grow bg-line" />
-                <span className="text-[10px] uppercase tracking-widest2 text-muted">{t.auth.orEmail}</span>
+                <span className="text-xs text-muted">{t.auth.orEmail}</span>
                 <span className="h-px flex-grow bg-line" />
               </div>
 
@@ -78,7 +78,7 @@ const LoginPage: React.FC<{
                     <button
                       type="button"
                       onClick={() => setView('forgot')}
-                      className="text-[11px] font-semibold uppercase tracking-widest2 text-accent hover:text-bone"
+                      className="text-[13px] font-semibold text-accent hover:text-bone"
                     >
                       {t.auth.forgot}
                     </button>
