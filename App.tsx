@@ -4,13 +4,12 @@ import DigitalTwinsPage from './components/pages/DigitalTwinsPage';
 import ProofOfWorkPage from './components/pages/ProofOfWorkPage';
 import AISolutionsPage from './components/pages/AISolutionsPage';
 import B2BHubPage from './components/pages/B2BHubPage';
-import AvatarStudioPage from './components/pages/AvatarStudioPage';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import ThemeSwitch from './components/ThemeSwitch';
 import { useLanguage, Lang } from './i18n/LanguageContext';
 import type { Dictionary } from './i18n/dictionary';
 
-export type Page = 'home' | 'ai-assistant' | 'digital-twins' | 'proof-of-work' | 'ai-solutions' | 'avatar-studio' | 'business-studio';
+export type Page = 'home' | 'ai-assistant' | 'digital-twins' | 'proof-of-work' | 'ai-solutions' | 'business-studio';
 
 const CONTACT_EMAIL = 'contact@bonaparks.com';
 
@@ -154,7 +153,6 @@ const App: React.FC = () => {
         {page === 'proof-of-work' && <ProofOfWorkPage />}
         {page === 'ai-solutions' && <AISolutionsPage onNavigate={navigate} />}
         {page === 'business-studio' && <B2BHubPage />}
-        {page === 'avatar-studio' && <AvatarStudioPage />}
       </main>
 
       <footer className="relative z-10 border-t border-line">
