@@ -13,6 +13,8 @@ import { Booking } from './types';
 import { WalletIcon, UserIcon } from './components/IconComponents';
 import LoginOptionsModal from './components/LoginOptionsModal';
 import CookieConsentBanner from './components/CookieConsentBanner';
+import { useLanguage, Lang } from './i18n/LanguageContext';
+import type { Dictionary } from './i18n/dictionary';
 
 export type Page = 'home' | 'ai-assistant' | 'digital-twins' | 'proof-of-work' | 'ai-solutions' | 'login' | 'signup' | 'control-room' | 'user-profile' | 'avatar-studio' | 'business-studio';
 
@@ -27,21 +29,25 @@ declare global {
 const CONTACT_EMAIL = 'contact@bonaparks.com';
 
 /** Main navigation, always visible. */
-const NAV_LINKS: { page: Page; label: string }[] = [
-  { page: 'home', label: 'Tours' },
-  { page: 'proof-of-work', label: 'Gallery' },
-  { page: 'digital-twins', label: 'Venues' },
-  { page: 'ai-solutions', label: 'Technology' },
-  { page: 'business-studio', label: 'For business' },
+const navLinks = (t: Dictionary): { page: Page; label: string }[] => [
+  { page: 'home', label: t.nav.tours },
+  { page: 'proof-of-work', label: t.nav.gallery },
+  { page: 'digital-twins', label: t.nav.venues },
+  { page: 'ai-solutions', label: t.nav.technology },
+  { page: 'business-studio', label: t.nav.business },
 ];
 
+const LANGUAGES: Lang[] = ['fr', 'en'];
+
 const App: React.FC = () => {
+  const { lang, setLang, t } = useLanguage();
+  const NAV_LINKS = navLinks(t);
   const [page, setPage] = useState<Page>('home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [walletConnectionStatus, setWalletConnectionStatus] = useState<WalletConnectionStatus>('idle');
-  const [walletError, setWalletError] = useState<string | null>(null);
+  const [walletError, setWalletError] = useState<keyof Dictionary['wallet'] | null>(null);
   const [showWalletMenu, setShowWalletMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAccessOptions, setShowAccessOptions] = useState(false);
@@ -123,7 +129,7 @@ const App: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     if (typeof window.ethereum === 'undefined') {
-      setWalletError("Web3 wallet not detected. Please install a browser extension like MetaMask.");
+      setWalletError('notDetected');
       setWalletConnectionStatus('error');
       return;
     }
@@ -137,7 +143,7 @@ const App: React.FC = () => {
       setShowAccessOptions(false);
       navigate('home');
     } catch (error) {
-      setWalletError("Wallet connection failed. Please ensure your wallet is unlocked and try again.");
+      setWalletError('failed');
       setWalletConnectionStatus('error');
     }
   };
@@ -155,10 +161,10 @@ const App: React.FC = () => {
   const truncateAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
   const accountMenuItems: { page: Page; label: string }[] = [
-    { page: 'user-profile', label: 'My profile' },
+    { page: 'user-profile', label: t.account.myProfile },
     { page: 'avatar-studio', label: 'Avatar Studio' },
     { page: 'business-studio', label: 'Business Studio' },
-    { page: 'control-room', label: 'My bookings' },
+    { page: 'control-room', label: t.account.myBookings },
   ];
 
   const renderAccountMenu = (id: string, close: () => void, logoutLabel: string) => (
@@ -198,12 +204,12 @@ const App: React.FC = () => {
           <button
             onClick={() => navigate('home')}
             className="font-display text-2xl leading-none tracking-tight text-bone transition-colors hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-            aria-label="Back to home"
+            aria-label={t.nav.backHome}
           >
             Bona Parks
           </button>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
+          <nav className="hidden items-center gap-8 lg:flex" aria-label={t.nav.main}>
             {NAV_LINKS.map((link) => (
               <button
                 key={link.page}
@@ -219,6 +225,26 @@ const App: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-4">
+            <div
+              className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest2 text-line"
+              role="group"
+              aria-label={t.nav.language}
+            >
+              {LANGUAGES.map((code, index) => (
+                <React.Fragment key={code}>
+                  {index > 0 && <span aria-hidden="true">|</span>}
+                  <button
+                    onClick={() => setLang(code)}
+                    lang={code}
+                    className={`transition-colors ${lang === code ? 'text-gold' : 'text-muted hover:text-bone'}`}
+                    aria-pressed={lang === code}
+                  >
+                    {code.toUpperCase()}
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+
             {isLoggedIn ? (
               <div className="relative" ref={menuRef}>
                 {walletAddress ? (
@@ -234,7 +260,7 @@ const App: React.FC = () => {
                       <WalletIcon />
                       <span className="text-gold">{truncateAddress(walletAddress)}</span>
                     </button>
-                    {showWalletMenu && renderAccountMenu('wallet-menu', () => setShowWalletMenu(false), 'Disconnect wallet')}
+                    {showWalletMenu && renderAccountMenu('wallet-menu', () => setShowWalletMenu(false), t.account.disconnectWallet)}
                   </>
                 ) : (
                   <>
@@ -247,9 +273,9 @@ const App: React.FC = () => {
                       aria-controls="user-menu"
                     >
                       <UserIcon />
-                      <span className="hidden sm:inline">My account</span>
+                      <span className="hidden sm:inline">{t.account.myAccount}</span>
                     </button>
-                    {showUserMenu && renderAccountMenu('user-menu', () => setShowUserMenu(false), 'Log out')}
+                    {showUserMenu && renderAccountMenu('user-menu', () => setShowUserMenu(false), t.account.logOut)}
                   </>
                 )}
               </div>
@@ -258,7 +284,7 @@ const App: React.FC = () => {
                 onClick={() => setShowAccessOptions(true)}
                 className="rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors duration-300 hover:border-gold hover:text-gold"
               >
-                Login
+                {t.account.login}
               </button>
             )}
 
@@ -267,7 +293,7 @@ const App: React.FC = () => {
               className="text-muted transition-colors hover:text-bone lg:hidden"
               aria-expanded={showMobileNav}
               aria-controls="mobile-nav"
-              aria-label="Toggle navigation"
+              aria-label={t.nav.toggle}
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                 {showMobileNav
@@ -279,7 +305,7 @@ const App: React.FC = () => {
         </div>
 
         {showMobileNav && (
-          <nav id="mobile-nav" className="border-t border-line px-6 py-4 lg:hidden" aria-label="Main mobile">
+          <nav id="mobile-nav" className="border-t border-line px-6 py-4 lg:hidden" aria-label={t.nav.mainMobile}>
             {NAV_LINKS.map((link) => (
               <button
                 key={link.page}
@@ -313,13 +339,12 @@ const App: React.FC = () => {
           <div>
             <p className="font-display text-2xl text-bone">Bona Parks</p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-              Immersive 3D tours and digital twins of the places that deserve to be walked
-              through, from anywhere.
+              {t.footer.tagline}
             </p>
           </div>
 
-          <nav aria-label="Footer">
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">Explore</p>
+          <nav aria-label={t.footer.label}>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">{t.footer.explore}</p>
             <div className="mt-4 space-y-2">
               {NAV_LINKS.map((link) => (
                 <button
@@ -334,23 +359,23 @@ const App: React.FC = () => {
           </nav>
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">Get in touch</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">{t.footer.contact}</p>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="mt-4 block text-sm text-muted transition-colors hover:text-bone"
             >
               {CONTACT_EMAIL}
             </a>
-            <p className="mt-2 text-sm text-muted">Sardinia, Italy</p>
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-gold">Bonaparks app</p>
-            <a href="/confidentialite" lang="fr" className="mt-3 block text-sm text-muted transition-colors hover:text-bone">Confidentialité</a>
-            <a href="/support" lang="fr" className="mt-2 block text-sm text-muted transition-colors hover:text-bone">Support</a>
+            <p className="mt-2 text-sm text-muted">{t.footer.location}</p>
+            <p className="mt-6 text-[11px] font-semibold uppercase tracking-widest2 text-gold">{t.footer.app}</p>
+            <a href={t.footer.appPrivacyHref} className="mt-3 block text-sm text-muted transition-colors hover:text-bone">{t.footer.appPrivacy}</a>
+            <a href={t.footer.appSupportHref} className="mt-2 block text-sm text-muted transition-colors hover:text-bone">{t.footer.appSupport}</a>
           </div>
         </div>
 
         <div className="border-t border-line px-6 py-6 text-center md:px-10">
           <p className="text-xs text-muted">
-            &copy; {new Date().getFullYear()} Bona Parks. All rights reserved.
+            &copy; {new Date().getFullYear()} Bona Parks. {t.footer.rights}
           </p>
         </div>
       </footer>
@@ -361,7 +386,7 @@ const App: React.FC = () => {
             onNavigate={navigate}
             onConnectWallet={connectWallet}
             walletStatus={walletConnectionStatus}
-            walletError={walletError}
+            walletError={walletError ? t.wallet[walletError] : null}
         />
       )}
       {showCookieBanner && (

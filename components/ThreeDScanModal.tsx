@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { LoadingIcon } from './IconComponents';
 import { Panel } from './ui';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ThreeDScanModalProps {
     onClose: () => void;
@@ -8,11 +9,14 @@ interface ThreeDScanModalProps {
 }
 
 const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }) => {
+    const { t } = useLanguage();
     const videoRef = useRef<HTMLVideoElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
-    const [cameraError, setCameraError] = useState<string | null>(null);
+    const [cameraError, setCameraError] = useState(false);
     const [scanProgress, setScanProgress] = useState(0);
-    const [scanMessage, setScanMessage] = useState("Position your face in the oval.");
+    /** Index into t.faceScan.steps, or null for the initial instruction. */
+    const [scanStep, setScanStep] = useState<number | null>(null);
+    const stepCount = t.faceScan.steps.length;
 
     const startCamera = useCallback(async () => {
         try {
@@ -24,10 +28,10 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
             }
-            setCameraError(null);
+            setCameraError(false);
         } catch (err) {
             console.error("Error accessing camera:", err);
-            setCameraError("Could not access camera. Please check browser permissions.");
+            setCameraError(true);
         }
     }, []);
 
@@ -43,21 +47,13 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
     useEffect(() => {
         if (cameraError) return;
 
-        const messages = [
-            "Slowly turn your head to the right.",
-            "Now, slowly turn your head to the left.",
-            "Tilt your head slightly up.",
-            "Finally, look straight ahead.",
-            "Scan complete. Processing...",
-        ];
-
         const interval = setInterval(() => {
             setScanProgress(prev => {
                 const nextProgress = prev + 20;
                 if (nextProgress <= 100) {
                     const messageIndex = Math.floor(nextProgress / 25);
-                    if (messages[messageIndex]) {
-                        setScanMessage(messages[messageIndex]);
+                    if (messageIndex < stepCount) {
+                        setScanStep(messageIndex);
                     }
                     return nextProgress;
                 } else {
@@ -69,7 +65,7 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
         }, 1200);
 
         return () => clearInterval(interval);
-    }, [cameraError, onComplete]);
+    }, [cameraError, onComplete, stepCount]);
 
     return (
         <div
@@ -80,7 +76,7 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
         >
             <Panel className="w-full max-w-2xl overflow-hidden p-8">
                 <div onClick={e => e.stopPropagation()}>
-                    <h3 className="font-display text-3xl text-bone">3D face scan</h3>
+                    <h3 className="font-display text-3xl text-bone">{t.faceScan.title}</h3>
 
                     <div className="relative mt-6 aspect-video overflow-hidden rounded-xl border border-line bg-ink">
                         <video ref={videoRef} autoPlay playsInline className="h-full w-full scale-x-[-1] object-cover" />
@@ -89,13 +85,13 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
                         </div>
                         {cameraError && (
                             <div className="absolute inset-0 flex items-center justify-center bg-ink/80 p-6 text-center text-sm text-gold">
-                                {cameraError}
+                                {t.faceScan.cameraError}
                             </div>
                         )}
                     </div>
 
                     <div className="mt-8">
-                        <p className="text-sm text-muted">{scanMessage}</p>
+                        <p className="text-sm text-muted">{scanStep === null ? t.faceScan.initial : t.faceScan.steps[scanStep]}</p>
                         <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-line">
                             <div
                                 className="h-full rounded-full bg-gold transition-all duration-500"
@@ -107,7 +103,7 @@ const ThreeDScanModal: React.FC<ThreeDScanModalProps> = ({ onClose, onComplete }
                     {scanProgress >= 100 && (
                         <div className="mt-5 flex items-center gap-3 text-gold">
                             <LoadingIcon />
-                            <span className="text-xs uppercase tracking-widest2">Processing scan data</span>
+                            <span className="text-xs uppercase tracking-widest2">{t.faceScan.processing}</span>
                         </div>
                     )}
                 </div>

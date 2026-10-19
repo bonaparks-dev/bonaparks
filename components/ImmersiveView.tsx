@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LoadingIcon } from './IconComponents';
 import { tourEmbedUrl } from '../data/tours';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface ImmersiveViewProps {
   item: {
@@ -16,6 +17,7 @@ interface ImmersiveViewProps {
 const modelIdFrom = (url?: string) => url?.match(/m=([a-zA-Z0-9]+)/)?.[1] ?? null;
 
 const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -63,15 +65,15 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
               rel="noreferrer"
               className="hidden text-xs font-semibold uppercase tracking-widest2 text-muted transition-colors hover:text-gold sm:block"
             >
-              Open full screen
+              {t.viewer.fullScreen}
             </a>
           )}
           <button
             onClick={onExit}
             className="rounded-full border border-line px-6 py-2 text-sm font-semibold text-bone transition-colors duration-300 hover:border-gold hover:text-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-            aria-label="Close viewer"
+            aria-label={t.viewer.closeLabel}
           >
-            Close
+            {t.viewer.close}
           </button>
         </div>
       </div>
@@ -83,7 +85,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-ink">
                 <LoadingIcon />
                 <span className="text-xs font-semibold uppercase tracking-widest2 text-muted">
-                  Loading the tour
+                  {t.viewer.loading}
                 </span>
               </div>
             )}
@@ -92,7 +94,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
               className="h-full w-full border-0"
               allow="autoplay; fullscreen; web-share; xr-spatial-tracking; vr; accelerometer; gyroscope"
               allowFullScreen
-              title={`3D tour of ${item.title}`}
+              title={t.viewer.iframeTitle(item.title)}
               onLoad={() => setIsLoading(false)}
             />
           </>
@@ -104,7 +106,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
               className="max-h-[50vh] w-auto rounded-2xl border border-line object-contain"
             />
             <p className="text-sm text-muted">
-              This space has no 3D tour published yet.
+              {t.viewer.noTour}
             </p>
           </div>
         )}
@@ -112,7 +114,7 @@ const ImmersiveView: React.FC<ImmersiveViewProps> = ({ item, onExit }) => {
 
       <div className="border-t border-line px-6 py-3 text-center">
         <p className="text-[11px] uppercase tracking-widest2 text-muted">
-          Drag to look around &middot; Scroll to zoom &middot; Esc to close
+          {t.viewer.hint}
         </p>
       </div>
     </div>

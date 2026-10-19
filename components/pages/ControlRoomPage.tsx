@@ -2,6 +2,7 @@ import React from 'react';
 import { Booking } from '../../types';
 import { Page } from '../../App';
 import { PageHeader, PageShell, Panel, Button, Badge } from '../ui';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface ControlRoomPageProps {
   bookings: Booking[];
@@ -14,52 +15,58 @@ const statusStyles: Record<Booking['status'], string> = {
   Pending: 'border-bone/30 text-bone',
 };
 
-const ControlRoomPage: React.FC<ControlRoomPageProps> = ({ bookings, onNavigate }) => (
+const ControlRoomPage: React.FC<ControlRoomPageProps> = ({ bookings, onNavigate }) => {
+  const { t } = useLanguage();
+  return (
   <PageShell>
     <PageHeader
-      eyebrow="My account"
-      title="My bookings"
+      eyebrow={t.account.myAccount}
+      title={t.account.myBookings}
       intro={
         bookings.length > 0
-          ? 'Your access passes and tickets for Bona Parks experiences.'
+          ? t.bookings.intro
           : undefined
       }
     />
 
     {bookings.length > 0 ? (
       <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2">
-        {bookings.map((booking) => (
+        {bookings.map((booking) => {
+          const demo = t.bookings.demo[booking.id];
+          return (
           <Panel key={booking.id} hover className="p-8">
             <div className="flex items-start justify-between gap-4">
-              <h2 className="font-display text-2xl leading-tight text-bone">{booking.title}</h2>
-              <Badge className={statusStyles[booking.status]}>{booking.status}</Badge>
+              <h2 className="font-display text-2xl leading-tight text-bone">{demo?.title ?? booking.title}</h2>
+              <Badge className={statusStyles[booking.status]}>{t.bookings.status[booking.status]}</Badge>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-muted">{booking.description}</p>
+            <p className="mt-4 text-sm leading-relaxed text-muted">{demo?.description ?? booking.description}</p>
 
             <div className="mt-8 flex items-end justify-between border-t border-line pt-6">
               <div>
-                <p className="text-[11px] uppercase tracking-widest2 text-muted">Acquired</p>
+                <p className="text-[11px] uppercase tracking-widest2 text-muted">{t.bookings.acquired}</p>
                 <p className="mt-1 text-sm text-bone">
                   {new Date(booking.lastUpdate).toLocaleDateString('en-GB')}
                 </p>
               </div>
-              <Button variant="outline">View access pass</Button>
+              <Button variant="outline">{t.bookings.viewPass}</Button>
             </div>
           </Panel>
-        ))}
+          );
+        })}
       </div>
     ) : (
       <div className="mt-12">
         <p className="max-w-lg text-base leading-relaxed text-muted">
-          You have no bookings yet. Explore our venues to get started.
+          {t.bookings.empty}
         </p>
         <Button className="mt-8" onClick={() => onNavigate('home')}>
-          Explore experiences
+          {t.bookings.explore}
         </Button>
       </div>
     )}
   </PageShell>
-);
+  );
+};
 
 export default ControlRoomPage;

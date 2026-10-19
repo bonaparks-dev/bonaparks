@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Page } from '../App';
 import { WalletIcon, LoadingIcon, EmailIcon, UserPlusIcon } from './IconComponents';
+import { useLanguage } from '../i18n/LanguageContext';
 
 type WalletConnectionStatus = 'idle' | 'connecting' | 'error';
 
@@ -22,6 +23,7 @@ const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
   walletStatus,
   walletError,
 }) => {
+  const { t } = useLanguage();
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -52,7 +54,7 @@ const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
         <button
           onClick={onClose}
           className="absolute right-5 top-5 text-muted transition-colors hover:text-bone"
-          aria-label="Close modal"
+          aria-label={t.access.close}
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -61,9 +63,9 @@ const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
 
         <div className="p-8 md:p-10">
           <h2 id="login-options-title" className="font-display text-4xl leading-tight text-bone">
-            Bona Parks access
+            {t.access.title}
           </h2>
-          <p className="mt-3 text-sm text-muted">Choose how you want to enter.</p>
+          <p className="mt-3 text-sm text-muted">{t.access.intro}</p>
 
           <div className="mt-8 space-y-3">
             <button onClick={onConnectWallet} disabled={isConnecting} className={optionClasses}>
@@ -71,9 +73,9 @@ const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
               <span>
                 {
                   {
-                    idle: 'Connect with Web3',
-                    connecting: 'Connecting...',
-                    error: 'Retry connection',
+                    idle: t.access.walletIdle,
+                    connecting: t.access.walletConnecting,
+                    error: t.access.walletRetry,
                   }[walletStatus]
                 }
               </span>
@@ -85,12 +87,12 @@ const LoginOptionsModal: React.FC<LoginOptionsModalProps> = ({
 
             <button onClick={() => handleNavigation('login')} className={optionClasses}>
               <EmailIcon />
-              <span>Login with email</span>
+              <span>{t.access.email}</span>
             </button>
 
             <button onClick={() => handleNavigation('signup')} className={optionClasses}>
               <UserPlusIcon className="h-5 w-5" />
-              <span>Create an account</span>
+              <span>{t.access.signup}</span>
             </button>
           </div>
         </div>

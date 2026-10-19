@@ -4,62 +4,51 @@ import { Page } from '../../App';
 import ImmersiveView from '../ImmersiveView';
 import TourCard from '../TourCard';
 import { Eyebrow, Button, LinkButton, PageShell } from '../ui';
-import { tourItems, tourThumbUrl, tours } from '../../data/tours';
+import { tourItemsFor, tourThumbUrl, tours } from '../../data/tours';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface HomePageProps {
   onNavigate: (page: Page) => void;
   isLoggedIn: boolean;
 }
 
-const capabilities = [
-  {
-    title: 'Scan',
-    body: 'We capture the space with millimetre-accurate 3D scanning — every room, every surface, in one pass.',
-  },
-  {
-    title: 'Build',
-    body: 'The scan becomes a navigable digital twin: measurable, annotated, and ready to embed anywhere.',
-  },
-  {
-    title: 'Share',
-    body: 'One link puts your venue in front of anyone, on any device, with no app to install.',
-  },
-];
-
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+  const { lang, t } = useLanguage();
   const [selectedItem, setSelectedItem] = useState<ExperienceItem | null>(null);
 
+  const tourItems = tourItemsFor(lang);
   const featured = tours[0];
+  const featuredItem = tourItems[0];
+  const capabilities = t.home.steps;
 
   return (
     <>
       <PageShell>
         {/* Hero */}
         <section className="animate-rise">
-          <Eyebrow>Immersive 3D tours &middot; Sardinia</Eyebrow>
+          <Eyebrow>{t.home.eyebrow}</Eyebrow>
           <h1 className="mt-8 max-w-4xl font-display text-6xl leading-[1.02] text-bone md:text-8xl">
-            Walk through the place before you ever get there.
+            {t.home.title}
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted">
-            Bona Parks turns real spaces into high-resolution virtual tours. Venues, homes and
-            cultural heritage, captured in 3D and open to anyone with a link.
+            {t.home.intro}
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Button onClick={() => onNavigate('proof-of-work')}>See the gallery</Button>
+            <Button onClick={() => onNavigate('proof-of-work')}>{t.home.seeGallery}</Button>
             <LinkButton variant="outline" href="mailto:contact@bonaparks.com">
-              Get your space scanned
+              {t.home.getScanned}
             </LinkButton>
           </div>
         </section>
 
         {/* Featured tour */}
-        {featured && (
+        {featured && featuredItem && (
           <section className="mt-24 animate-rise" style={{ animationDelay: '120ms' }}>
             <button
               type="button"
-              onClick={() => setSelectedItem(tourItems[0])}
+              onClick={() => setSelectedItem(featuredItem)}
               className="group relative block aspect-[16/9] w-full overflow-hidden rounded-3xl border border-line bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-              aria-label={`Enter the tour — ${featured.title}`}
+              aria-label={`${t.tourCard.enter} — ${featuredItem.title}`}
             >
               <img
                 src={featured.imageUrl ?? tourThumbUrl(featured.id)}
@@ -72,13 +61,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               />
               <div className="absolute inset-x-0 bottom-0 p-8 text-left md:p-12">
                 <p className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
-                  Featured tour &middot; {featured.category}
+                  {t.home.featured} &middot; {featuredItem.category}
                 </p>
                 <h2 className="mt-3 font-display text-4xl text-bone md:text-5xl">
-                  {featured.title}
+                  {featuredItem.title}
                 </h2>
                 <span className="mt-5 inline-flex items-center gap-3 text-sm font-semibold text-bone">
-                  Enter the tour
+                  {t.tourCard.enter}
                   <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">
                     &rarr;
                   </span>
@@ -92,13 +81,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <section className="mt-28">
           <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
             <div>
-              <Eyebrow>The collection</Eyebrow>
+              <Eyebrow>{t.home.collectionEyebrow}</Eyebrow>
               <h2 className="mt-5 font-display text-4xl text-bone md:text-5xl">
-                Spaces you can step into
+                {t.home.collectionTitle}
               </h2>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-muted">
-              Every tour below is a real 3D capture. Move freely, look up, measure, explore.
+              {t.home.collectionIntro}
             </p>
           </div>
 
@@ -109,13 +98,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               ))}
             </div>
           ) : (
-            <p className="mt-12 text-sm text-muted">New tours are being published shortly.</p>
+            <p className="mt-12 text-sm text-muted">{t.home.empty}</p>
           )}
         </section>
 
         {/* How it works */}
         <section className="mt-28">
-          <Eyebrow>How it works</Eyebrow>
+          <Eyebrow>{t.home.howEyebrow}</Eyebrow>
           <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
             {capabilities.map((step, index) => (
               <div key={step.title} className="bg-surface p-9">
@@ -132,14 +121,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         {/* CTA */}
         <section className="mt-28 rounded-3xl border border-line bg-surface px-8 py-16 text-center md:px-16 md:py-20">
           <h2 className="mx-auto max-w-2xl font-display text-4xl leading-tight text-bone md:text-5xl">
-            Turn your space into an experience.
+            {t.home.ctaTitle}
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted">
-            Real estate, venues, museums or hotels — if people need to see it, we can let them
-            walk through it.
+            {t.home.ctaBody}
           </p>
           <LinkButton className="mt-10" href="mailto:contact@bonaparks.com">
-            Start your project
+            {t.home.ctaButton}
           </LinkButton>
         </section>
       </PageShell>

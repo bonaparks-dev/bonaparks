@@ -1,15 +1,17 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { UserIcon, CameraIcon, ClipboardIcon, LockClosedIcon, LogoutIcon } from '../IconComponents';
 import { Button, PageHeader, PageShell, Panel } from '../ui';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 const CameraModal: React.FC<{
   onClose: () => void;
   onCapture: (dataUrl: string) => void;
 }> = ({ onClose, onCapture }) => {
+  const { t } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraError, setCameraError] = useState(false);
 
   const startCamera = useCallback(async () => {
     try {
@@ -21,10 +23,10 @@ const CameraModal: React.FC<{
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-      setCameraError(null);
+      setCameraError(false);
     } catch (err) {
       console.error("Error accessing camera:", err);
-      setCameraError("Could not access the camera. Please check your browser permissions.");
+      setCameraError(true);
     }
   }, []);
 
@@ -61,19 +63,19 @@ const CameraModal: React.FC<{
     >
       <Panel className="w-full max-w-2xl overflow-hidden p-8" >
         <div onClick={e => e.stopPropagation()}>
-          <h3 className="font-display text-3xl text-bone">Live camera feed</h3>
+          <h3 className="font-display text-3xl text-bone">{t.profile.cameraTitle}</h3>
           <div className="relative mt-6 aspect-video overflow-hidden rounded-xl border border-line bg-ink">
             <video ref={videoRef} autoPlay playsInline className="h-full w-full object-cover" />
             {cameraError && (
               <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-gold">
-                {cameraError}
+                {t.profile.cameraError}
               </div>
             )}
           </div>
           <canvas ref={canvasRef} className="hidden" />
           <div className="mt-8 flex justify-end gap-3">
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={takePicture} disabled={!!cameraError}>Take picture</Button>
+            <Button variant="outline" onClick={onClose}>{t.profile.cancel}</Button>
+            <Button onClick={takePicture} disabled={cameraError}>{t.profile.takePicture}</Button>
           </div>
         </div>
       </Panel>
@@ -118,12 +120,13 @@ interface UserProfilePageProps {
 }
 
 const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handleLogout }) => {
+  const { t } = useLanguage();
   const userEmail = "visitor@bonaparks.com";
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [logo, setLogo] = useState<string | null>(null);
   const [username, setUsername] = useState('DigitalVoyager');
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const [copySuccess, setCopySuccess] = useState('');
+  const [copySuccess, setCopySuccess] = useState(false);
   const [notifications, setNotifications] = useState({
     events: true,
     promos: false,
@@ -163,8 +166,8 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
   const copyToClipboard = () => {
     if (walletAddress) {
       navigator.clipboard.writeText(walletAddress).then(() => {
-        setCopySuccess('Copied');
-        setTimeout(() => setCopySuccess(''), 2000);
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
       });
     }
   };
@@ -176,7 +179,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
   return (
     <>
       <PageShell className="max-w-3xl">
-        <PageHeader eyebrow="My account" title="My profile" />
+        <PageHeader eyebrow={t.account.myAccount} title={t.account.myProfile} />
 
         <Panel className="mt-12 p-8 md:p-10">
           {/* Identity */}
@@ -184,7 +187,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
             <div className="relative flex-shrink-0">
               <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border border-line bg-elev text-muted">
                 {profilePicture ? (
-                  <img src={profilePicture} alt="User profile" className="h-full w-full object-cover" />
+                  <img src={profilePicture} alt={t.profile.pictureAlt} className="h-full w-full object-cover" />
                 ) : (
                   <UserIcon />
                 )}
@@ -192,7 +195,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
               <button
                 onClick={() => setIsCameraOpen(true)}
                 className="absolute bottom-0 right-0 rounded-full bg-gold p-2 text-ink transition-colors hover:bg-bone"
-                aria-label="Take a profile picture"
+                aria-label={t.profile.takeProfilePicture}
               >
                 <CameraIcon />
               </button>
@@ -200,7 +203,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
 
             <div className="flex-grow text-center md:text-left">
               <label htmlFor="username" className="text-[11px] font-semibold uppercase tracking-widest2 text-muted">
-                Display name
+                {t.profile.displayName}
               </label>
               <input
                 id="username"
@@ -210,53 +213,53 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
                 className="mt-2 w-full border-b border-line bg-transparent pb-2 font-display text-3xl text-bone focus:border-gold focus:outline-none"
               />
               <p className="mt-3 text-sm text-muted">
-                {walletAddress ? 'Wallet connected' : userEmail}
+                {walletAddress ? t.profile.walletConnected : userEmail}
               </p>
             </div>
           </div>
 
           <div className="mt-10 space-y-8">
             {walletAddress && (
-              <SettingsSection title="Wallet details">
+              <SettingsSection title={t.profile.walletDetails}>
                 <div className="space-y-3 rounded-xl border border-line bg-elev p-5">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-sm text-muted">Address</span>
+                    <span className="text-sm text-muted">{t.profile.address}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gold">{`${walletAddress.slice(0, 10)}...${walletAddress.slice(-8)}`}</span>
                       <button
                         onClick={copyToClipboard}
                         className="text-muted transition-colors hover:text-bone"
-                        aria-label="Copy wallet address"
+                        aria-label={t.profile.copyAddress}
                       >
                         <ClipboardIcon />
                       </button>
-                      {copySuccess && <span className="text-xs text-gold">{copySuccess}</span>}
+                      {copySuccess && <span className="text-xs text-gold">{t.profile.copied}</span>}
                     </div>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-sm text-muted">Network</span>
+                    <span className="text-sm text-muted">{t.profile.network}</span>
                     <span className="text-sm text-bone">BonaChain (Testnet)</span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-sm text-muted">Balance</span>
+                    <span className="text-sm text-muted">{t.profile.balance}</span>
                     <span className="text-sm text-bone">0.42 ETH</span>
                   </div>
                 </div>
               </SettingsSection>
             )}
 
-            <SettingsSection title="Business assets">
+            <SettingsSection title={t.profile.businessAssets}>
               <div className={rowClasses}>
                 <div>
-                  <h3 className="text-sm font-semibold text-bone">Company logo</h3>
-                  <p className="mt-1 text-xs text-muted">Used for branding AI-generated content.</p>
+                  <h3 className="text-sm font-semibold text-bone">{t.profile.companyLogo}</h3>
+                  <p className="mt-1 text-xs text-muted">{t.profile.logoHelp}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   {logo && (
                     <>
-                      <img src={logo} alt="Company logo" className="h-12 w-12 rounded bg-bone object-contain p-1" />
+                      <img src={logo} alt={t.profile.companyLogo} className="h-12 w-12 rounded bg-bone object-contain p-1" />
                       <button onClick={removeLogo} className="text-xs text-muted transition-colors hover:text-gold">
-                        Remove
+                        {t.profile.remove}
                       </button>
                     </>
                   )}
@@ -265,41 +268,41 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ walletAddress, handle
                     htmlFor="logo-upload"
                     className="cursor-pointer rounded-full border border-line px-5 py-2 text-xs font-semibold uppercase tracking-widest2 text-bone transition-colors hover:border-gold hover:text-gold"
                   >
-                    {logo ? 'Change' : 'Upload'}
+                    {logo ? t.profile.change : t.profile.upload}
                   </label>
                 </div>
               </div>
             </SettingsSection>
 
-            <SettingsSection title="Notifications">
-              <ToggleSwitch label="Event reminders and updates" enabled={notifications.events} onToggle={() => handleNotificationToggle('events')} />
-              <ToggleSwitch label="Promotional updates" enabled={notifications.promos} onToggle={() => handleNotificationToggle('promos')} />
-              <ToggleSwitch label="Security alerts" enabled={notifications.security} onToggle={() => handleNotificationToggle('security')} />
+            <SettingsSection title={t.profile.notifications}>
+              <ToggleSwitch label={t.profile.notifEvents} enabled={notifications.events} onToggle={() => handleNotificationToggle('events')} />
+              <ToggleSwitch label={t.profile.notifPromos} enabled={notifications.promos} onToggle={() => handleNotificationToggle('promos')} />
+              <ToggleSwitch label={t.profile.notifSecurity} enabled={notifications.security} onToggle={() => handleNotificationToggle('security')} />
             </SettingsSection>
 
-            <SettingsSection title="Security">
+            <SettingsSection title={t.profile.security}>
               {!walletAddress && (
                 <button className={`${rowClasses} transition-colors hover:border-gold/40`}>
-                  <span className="text-sm text-muted">Change password</span>
+                  <span className="text-sm text-muted">{t.profile.changePassword}</span>
                   <LockClosedIcon />
                 </button>
               )}
               <button className={`${rowClasses} transition-colors hover:border-gold/40`}>
-                <span className="text-sm text-muted">Two-factor authentication</span>
-                <span className="text-[10px] font-semibold uppercase tracking-widest2 text-gold">Not enabled</span>
+                <span className="text-sm text-muted">{t.profile.twoFactor}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest2 text-gold">{t.profile.notEnabled}</span>
               </button>
             </SettingsSection>
 
-            <SettingsSection title="Danger zone">
+            <SettingsSection title={t.profile.danger}>
               <button
                 onClick={handleLogout}
                 className={`${rowClasses} transition-colors hover:border-gold/40`}
               >
-                <span className="text-sm text-muted">{walletAddress ? 'Disconnect wallet' : 'Log out'}</span>
+                <span className="text-sm text-muted">{walletAddress ? t.account.disconnectWallet : t.account.logOut}</span>
                 <LogoutIcon />
               </button>
               <button className={`${rowClasses} border-gold/30 transition-colors hover:border-gold`}>
-                <span className="text-sm text-gold">Delete account</span>
+                <span className="text-sm text-gold">{t.profile.deleteAccount}</span>
               </button>
             </SettingsSection>
           </div>

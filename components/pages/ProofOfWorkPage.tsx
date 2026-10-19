@@ -3,14 +3,17 @@ import { ExperienceItem } from '../../types';
 import ImmersiveView from '../ImmersiveView';
 import TourCard from '../TourCard';
 import { PageHeader, PageShell, LinkButton } from '../ui';
-import { tourItems } from '../../data/tours';
+import { tourItemsFor } from '../../data/tours';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface ProofOfWorkPageProps {
   isLoggedIn: boolean;
 }
 
 const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = () => {
+  const { lang, t } = useLanguage();
   const [immersiveItem, setImmersiveItem] = useState<ExperienceItem | null>(null);
+  const tourItems = tourItemsFor(lang);
 
   const categories = Array.from(new Set(tourItems.map((item) => item.category)));
 
@@ -18,9 +21,9 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = () => {
     <>
       <PageShell>
         <PageHeader
-          eyebrow="Gallery"
-          title="Every space we have captured"
-          intro="A complete archive of our 3D captures. Open any one of them and explore it as if you were standing inside."
+          eyebrow={t.gallery.eyebrow}
+          title={t.gallery.title}
+          intro={t.gallery.intro}
         />
 
         {categories.length > 0 && (
@@ -43,20 +46,19 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = () => {
             ))}
           </div>
         ) : (
-          <p className="mt-14 text-sm text-muted">No tours published yet.</p>
+          <p className="mt-14 text-sm text-muted">{t.gallery.empty}</p>
         )}
 
         <section className="mt-28 flex flex-wrap items-center justify-between gap-8 rounded-3xl border border-line bg-surface p-10 md:p-14">
           <div>
             <h2 className="font-display text-3xl leading-tight text-bone md:text-4xl">
-              Your space belongs in here.
+              {t.gallery.ctaTitle}
             </h2>
             <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted">
-              Tell us what you want to show and we will handle the capture, the editing and the
-              hosting.
+              {t.gallery.ctaBody}
             </p>
           </div>
-          <LinkButton href="mailto:contact@bonaparks.com">Book a scan</LinkButton>
+          <LinkButton href="mailto:contact@bonaparks.com">{t.gallery.ctaButton}</LinkButton>
         </section>
       </PageShell>
 

@@ -2,9 +2,12 @@ import React, { useState, useCallback } from 'react';
 import { AIIcon, CameraIcon, LoadingIcon, UserIcon, CheckCircleIcon } from '../IconComponents';
 import ThreeDScanModal from '../ThreeDScanModal';
 import { Button, PageHeader, PageShell, Panel } from '../ui';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 // Mock 3D Viewer Component
-const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => (
+const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => {
+  const { t } = useLanguage();
+  return (
   <div className="flex h-full min-h-[320px] items-center justify-center rounded-2xl border border-line bg-surface">
     <div className="text-center text-muted">
       {selection ? (
@@ -12,7 +15,7 @@ const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => 
           {selection.startsWith('https://') ? (
             <img
               src={selection}
-              alt="Selected template"
+              alt={t.avatar.templateAlt}
               className="mx-auto mb-5 h-40 w-40 rounded-full border border-gold object-cover"
             />
           ) : (
@@ -21,7 +24,7 @@ const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => 
             </div>
           )}
           <p className="mt-3 font-display text-2xl text-bone">
-            {selection.startsWith('https://') ? 'Template selected' : selection}
+            {selection.startsWith('https://') ? t.avatar.templateSelected : selection}
           </p>
         </div>
       ) : (
@@ -29,17 +32,22 @@ const Mock3DViewer: React.FC<{ selection: string | null }> = ({ selection }) => 
           <div className="flex justify-center">
             <UserIcon />
           </div>
-          <p className="mt-3 text-xs uppercase tracking-widest2">3D avatar preview</p>
+          <p className="mt-3 text-xs uppercase tracking-widest2">{t.avatar.preview}</p>
         </>
       )}
     </div>
   </div>
-);
+  );
+};
 
 // Customization Panel Component
+type CustomizationTab = 'Body' | 'Head' | 'Clothing' | 'Accessories';
+const CUSTOMIZATION_TABS: CustomizationTab[] = ['Body', 'Head', 'Clothing', 'Accessories'];
+
 const CustomizationPanel: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('Body');
-  const tabs = ['Body', 'Head', 'Clothing', 'Accessories'];
+  const { t } = useLanguage();
+  const [activeTab, setActiveTab] = useState<CustomizationTab>('Body');
+  const tabs = CUSTOMIZATION_TABS;
 
   return (
     <Panel className="flex h-full flex-col p-6">
@@ -54,7 +62,7 @@ const CustomizationPanel: React.FC = () => {
                 : 'text-muted hover:text-bone'
             }`}
           >
-            {tab}
+            {t.avatar.tabs[tab]}
           </button>
         ))}
       </div>
@@ -63,11 +71,11 @@ const CustomizationPanel: React.FC = () => {
         {[...Array(6)].map((_, i) => (
           <div key={i} className="space-y-2">
             <label className="text-[11px] uppercase tracking-widest2 text-muted">
-              Parameter {i + 1}
+              {t.avatar.parameter(i + 1)}
             </label>
             <input
               type="range"
-              aria-label={`Parameter ${i + 1}`}
+              aria-label={t.avatar.parameter(i + 1)}
               className="h-1 w-full cursor-pointer appearance-none rounded-lg bg-line accent-gold"
             />
           </div>
@@ -84,6 +92,7 @@ const avatarTemplates = [
 ];
 
 const AvatarStudioPage: React.FC = () => {
+  const { t } = useLanguage();
   const [scanStatus, setScanStatus] = useState<'idle' | 'complete'>('idle');
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<typeof avatarTemplates[0] | null>(avatarTemplates[0]);
@@ -118,7 +127,7 @@ const AvatarStudioPage: React.FC = () => {
   }, [clothingPrompt]);
 
   const getViewerSelection = () => {
-    if (scanStatus === 'complete') return 'Biometric scan complete';
+    if (scanStatus === 'complete') return t.avatar.scanComplete;
     if (selectedTemplate) return selectedTemplate.imageUrl;
     return null;
   };
@@ -128,19 +137,19 @@ const AvatarStudioPage: React.FC = () => {
       <PageShell>
         <PageHeader
           eyebrow="Avatar Studio"
-          title="Craft your digital identity"
-          intro="Use our AI-powered tools to create a lifelike avatar for the virtual world."
+          title={t.avatar.title}
+          intro={t.avatar.intro}
         />
 
         <div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left: foundation + generative clothing */}
           <Panel className="flex flex-col p-6 md:p-8">
             <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
-              1 &middot; Avatar foundation
+              {t.avatar.foundation}
             </h2>
 
             <div className="mt-5">
-              <label className="text-xs uppercase tracking-widest2 text-muted">Biometric scan</label>
+              <label className="text-xs uppercase tracking-widest2 text-muted">{t.avatar.biometricScan}</label>
               <button
                 onClick={() => setIsScanModalOpen(true)}
                 className={`mt-3 flex w-full items-center justify-center gap-3 rounded-full py-3 text-sm font-semibold transition-colors duration-300 ${
@@ -150,18 +159,18 @@ const AvatarStudioPage: React.FC = () => {
                 }`}
               >
                 {scanStatus === 'complete' ? <CheckCircleIcon /> : <CameraIcon />}
-                <span>{scanStatus === 'complete' ? 'Scan complete' : 'Start 3D face scan'}</span>
+                <span>{scanStatus === 'complete' ? t.avatar.scanDone : t.avatar.startScan}</span>
               </button>
             </div>
 
             <div className="my-6 flex items-center gap-4">
               <span className="h-px flex-grow bg-line" />
-              <span className="text-[10px] uppercase tracking-widest2 text-muted">Or</span>
+              <span className="text-[10px] uppercase tracking-widest2 text-muted">{t.avatar.or}</span>
               <span className="h-px flex-grow bg-line" />
             </div>
 
             <div>
-              <label className="text-xs uppercase tracking-widest2 text-muted">Choose a base model</label>
+              <label className="text-xs uppercase tracking-widest2 text-muted">{t.avatar.baseModel}</label>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 {avatarTemplates.map(template => (
                   <button
@@ -185,14 +194,14 @@ const AvatarStudioPage: React.FC = () => {
 
             <div className="mt-auto space-y-3 border-t border-line pt-6">
               <h2 className="text-[11px] font-semibold uppercase tracking-widest2 text-gold">
-                2 &middot; Generative clothing
+                {t.avatar.clothing}
               </h2>
               <textarea
                 id="clothing-prompt"
                 rows={2}
                 value={clothingPrompt}
                 onChange={(e) => setClothingPrompt(e.target.value)}
-                placeholder="e.g. a futuristic cyberpunk jacket with neon trim"
+                placeholder={t.avatar.clothingPlaceholder}
                 className="w-full rounded-lg border border-line bg-ink px-4 py-3 text-sm text-bone placeholder-muted/60 transition-colors duration-300 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
               />
               <Button
@@ -201,14 +210,14 @@ const AvatarStudioPage: React.FC = () => {
                 className="w-full"
               >
                 {isGenerating ? <LoadingIcon /> : <AIIcon className="h-4 w-4" />}
-                <span>{isGenerating ? 'Generating...' : 'Generate texture'}</span>
+                <span>{isGenerating ? t.avatar.generating : t.avatar.generate}</span>
               </Button>
               {generatedClothingUrl && (
                 <div>
-                  <p className="mb-2 text-[10px] uppercase tracking-widest2 text-muted">Generated texture</p>
+                  <p className="mb-2 text-[10px] uppercase tracking-widest2 text-muted">{t.avatar.generated}</p>
                   <img
                     src={generatedClothingUrl}
-                    alt="Generated clothing texture"
+                    alt={t.avatar.generatedAlt}
                     className="h-20 w-full rounded-lg border border-line object-cover"
                   />
                 </div>

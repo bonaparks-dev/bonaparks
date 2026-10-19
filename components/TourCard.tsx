@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExperienceItem } from '../types';
 import { Badge } from './ui';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const FALLBACK_IMAGE =
   'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
@@ -8,7 +9,7 @@ const FALLBACK_IMAGE =
 interface TourCardProps {
   item: ExperienceItem;
   onOpen: () => void;
-  /** Label for the action button. */
+  /** Label for the action button; defaults to "Enter the tour" in the current language. */
   action?: string;
   /** When set, the card is locked and the reason is shown instead of the action. */
   lockedMessage?: string;
@@ -17,9 +18,11 @@ interface TourCardProps {
 const TourCard: React.FC<TourCardProps> = ({
   item,
   onOpen,
-  action = 'Enter the tour',
+  action: actionLabel,
   lockedMessage,
 }) => {
+  const { t } = useLanguage();
+  const action = actionLabel ?? t.tourCard.enter;
   const locked = Boolean(lockedMessage);
 
   return (

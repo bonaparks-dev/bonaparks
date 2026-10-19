@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { UploadCloudIcon, FileIcon, TrashIcon, AIIcon, CheckCircleIcon, LoadingIcon } from '../IconComponents';
 import { Button, Eyebrow, Field, PageHeader, PageShell, Panel } from '../ui';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 const sectionTitle = 'font-display text-3xl md:text-4xl text-bone';
 const sectionIntro = 'mt-3 max-w-2xl text-sm leading-relaxed text-muted';
@@ -30,12 +31,11 @@ const SuccessPanel: React.FC<{
 );
 
 const NpcDemo: React.FC = () => {
-  const [npcResponse, setNpcResponse] = useState('Hello! Ask me about our capabilities.');
-  const questions = {
-    'What is your latency?': 'Our AI is optimized for real-time interaction, with response times under 200ms.',
-    'Can you be customized?': 'Absolutely. My personality, knowledge base, and appearance are fully customizable to fit your brand.',
-    'Do you support multiple languages?': 'Yes, I can be configured to interact in over 50 languages.',
-  };
+  const { t } = useLanguage();
+  /** Index of the question answered, or null for the greeting (so a language switch re-renders it). */
+  const [answered, setAnswered] = useState<number | null>(null);
+  const questions = t.business.npcQuestions;
+  const npcResponse = answered === null ? t.business.npcGreeting : questions[answered].a;
 
   return (
     <div className="flex h-full flex-col">
@@ -48,10 +48,10 @@ const NpcDemo: React.FC = () => {
         </p>
       </div>
       <div className="mt-4 space-y-2">
-        {Object.entries(questions).map(([question, answer]) => (
+        {questions.map(({ q: question }, index) => (
           <button
-            key={question}
-            onClick={() => setNpcResponse(answer)}
+            key={index}
+            onClick={() => setAnswered(index)}
             className="block w-full rounded-lg border border-line px-3 py-2 text-left text-xs text-muted transition-colors hover:border-gold/40 hover:text-bone"
           >
             {question}
@@ -62,11 +62,15 @@ const NpcDemo: React.FC = () => {
   );
 };
 
+type DemoTag = 'Music' | 'Art' | 'Social' | 'Gaming';
+const DEMO_TAGS: DemoTag[] = ['Music', 'Art', 'Social', 'Gaming'];
+
 const PersonalizationDemo: React.FC = () => {
-  const allItems = [
-    { title: 'Live DJ Set', tags: ['Music', 'Social'], img: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { title: 'Art Gallery Opening', tags: ['Art', 'Culture'], img: 'https://images.pexels.com/photos/1578332/pexels-photo-1578332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { title: 'VR Escape Room', tags: ['Gaming', 'Social'], img: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+  const { t } = useLanguage();
+  const allItems: { key: 'dj' | 'art' | 'escape'; tags: string[]; img: string }[] = [
+    { key: 'dj', tags: ['Music', 'Social'], img: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+    { key: 'art', tags: ['Art', 'Culture'], img: 'https://images.pexels.com/photos/1578332/pexels-photo-1578332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+    { key: 'escape', tags: ['Gaming', 'Social'], img: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
   ];
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
 
@@ -88,7 +92,7 @@ const PersonalizationDemo: React.FC = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-wrap justify-center gap-2">
-        {['Music', 'Art', 'Social', 'Gaming'].map((tag) => (
+        {DEMO_TAGS.map((tag) => (
           <button
             key={tag}
             onClick={() => toggleTag(tag)}
@@ -98,7 +102,7 @@ const PersonalizationDemo: React.FC = () => {
                 : 'border-line text-muted hover:text-bone'
             }`}
           >
-            {tag}
+            {t.business.tags[tag]}
           </button>
         ))}
       </div>
@@ -107,16 +111,16 @@ const PersonalizationDemo: React.FC = () => {
           const isRecommended = item.tags.some((t) => activeTags.has(t)) && activeTags.size > 0;
           return (
             <div
-              key={item.title}
+              key={item.key}
               className={`flex items-center gap-3 rounded-lg border p-2 transition-colors duration-300 ${
                 isRecommended ? 'border-gold bg-ink' : 'border-line bg-ink'
               }`}
             >
               <img src={item.img} alt="" className="h-9 w-9 rounded object-cover" />
-              <span className="text-xs text-muted">{item.title}</span>
+              <span className="text-xs text-muted">{t.business.events[item.key]}</span>
               {isRecommended && (
                 <span className="ml-auto text-[10px] font-semibold uppercase tracking-widest2 text-gold">
-                  Rec
+                  {t.business.recommended}
                 </span>
               )}
             </div>
@@ -127,7 +131,9 @@ const PersonalizationDemo: React.FC = () => {
   );
 };
 
-const InteractiveWorldDemo: React.FC = () => (
+const InteractiveWorldDemo: React.FC = () => {
+  const { t } = useLanguage();
+  return (
   <div className="group relative h-full min-h-[220px] overflow-hidden rounded-lg border border-line">
     <img
       src="https://images.pexels.com/photos/2114365/pexels-photo-2114365.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
@@ -138,17 +144,18 @@ const InteractiveWorldDemo: React.FC = () => (
     <div className="absolute left-1/3 top-1/4 animate-pulse">
       <div className="h-3 w-3 cursor-pointer rounded-full bg-gold" />
       <div className="absolute bottom-full left-1/2 mb-2 hidden w-max -translate-x-1/2 rounded bg-ink px-2 py-1 text-[10px] text-bone group-hover:block">
-        Interactive DJ booth
+        {t.business.hotspotDj}
       </div>
     </div>
     <div className="absolute bottom-1/4 right-1/4 animate-pulse" style={{ animationDelay: '0.5s' }}>
       <div className="h-3 w-3 cursor-pointer rounded-full bg-gold" />
       <div className="absolute bottom-full left-1/2 mb-2 hidden w-max -translate-x-1/2 rounded bg-ink px-2 py-1 text-[10px] text-bone group-hover:block">
-        Player-triggered visuals
+        {t.business.hotspotVisuals}
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const DemoCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <Panel className="flex flex-col">
@@ -160,10 +167,11 @@ const DemoCard: React.FC<{ title: string; children: React.ReactNode }> = ({ titl
 );
 
 const RfpUpload: React.FC = () => {
+  const { lang, t } = useLanguage();
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<'rfpTooLarge' | 'rfpBadType' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -179,11 +187,11 @@ const RfpUpload: React.FC = () => {
   const handleFile = (selectedFile: File | null) => {
     if (selectedFile) {
       if (selectedFile.size > 10 * 1024 * 1024) { // 10MB limit
-        setError('File size cannot exceed 10MB.');
+        setError('rfpTooLarge');
         return;
       }
       if (!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(selectedFile.type)) {
-        setError('Invalid file type. Please upload PDF or DOCX.');
+        setError('rfpBadType');
         return;
       }
       setFile(selectedFile);
@@ -227,9 +235,9 @@ const RfpUpload: React.FC = () => {
   if (uploadStatus === 'success') {
     return (
       <SuccessPanel
-        title="RFP submitted"
-        body="Our team will review your document and be in touch shortly."
-        actionLabel="Submit another RFP"
+        title={t.business.rfpDoneTitle}
+        body={t.business.rfpDoneBody}
+        actionLabel={t.business.rfpDoneAction}
         onReset={() => setUploadStatus('idle')}
       />
     );
@@ -252,12 +260,12 @@ const RfpUpload: React.FC = () => {
           <UploadCloudIcon />
         </span>
         <p className="mt-2 text-sm text-muted">
-          <span className="font-semibold text-gold">Click to upload</span> or drag and drop
+          <span className="font-semibold text-gold">{t.business.rfpClick}</span> {t.business.rfpDrag}
         </p>
-        <p className="text-xs text-muted/70">PDF, DOC or DOCX &middot; max 10MB</p>
+        <p className="text-xs text-muted/70">{t.business.rfpFormats}</p>
       </div>
 
-      {error && <p className="mt-3 text-center text-xs text-gold">{error}</p>}
+      {error && <p className="mt-3 text-center text-xs text-gold">{t.business[error]}</p>}
 
       {file && (
         <div className="mt-4 flex items-center justify-between rounded-lg border border-line bg-ink p-3">
@@ -267,13 +275,13 @@ const RfpUpload: React.FC = () => {
             </span>
             <div>
               <p className="text-sm text-bone">{file.name}</p>
-              <p className="text-xs text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              <p className="text-xs text-muted">{(file.size / 1024 / 1024).toLocaleString(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {t.business.megabytes}</p>
             </div>
           </div>
           <button
             onClick={removeFile}
             className="text-muted transition-colors hover:text-gold"
-            aria-label={`Remove ${file.name}`}
+            aria-label={t.business.remove(file.name)}
           >
             <TrashIcon />
           </button>
@@ -286,13 +294,14 @@ const RfpUpload: React.FC = () => {
         className="mt-8 w-full"
       >
         {uploadStatus === 'uploading' && <LoadingIcon />}
-        <span>{uploadStatus === 'uploading' ? 'Submitting...' : 'Submit securely'}</span>
+        <span>{uploadStatus === 'uploading' ? t.business.rfpSubmitting : t.business.rfpSubmit}</span>
       </Button>
     </Panel>
   );
 };
 
 const ContactForm: React.FC = () => {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
@@ -308,9 +317,9 @@ const ContactForm: React.FC = () => {
   if (isSubmitted) {
     return (
       <SuccessPanel
-        title="Message sent"
-        body="Thank you. We will get back to you soon."
-        actionLabel="Send another message"
+        title={t.business.sentTitle}
+        body={t.business.sentBody}
+        actionLabel={t.business.sentAction}
         onReset={() => setIsSubmitted(false)}
       />
     );
@@ -320,13 +329,13 @@ const ContactForm: React.FC = () => {
     <Panel className="p-8 md:p-10">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Field id="name" label="Full name" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Field id="company" label="Company" type="text" value={company} onChange={(e) => setCompany(e.target.value)} required />
+          <Field id="name" label={t.business.fullName} type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Field id="company" label={t.business.company} type="text" value={company} onChange={(e) => setCompany(e.target.value)} required />
         </div>
-        <Field id="email" label="Email address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <Field id="email" label={t.business.email} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <div>
           <label htmlFor="message" className="mb-2 block text-xs font-semibold uppercase tracking-widest2 text-muted">
-            Message
+            {t.business.message}
           </label>
           <textarea
             id="message"
@@ -338,7 +347,7 @@ const ContactForm: React.FC = () => {
           />
         </div>
         <Button type="submit" disabled={!name || !company || !email || !message} className="w-full">
-          Send message
+          {t.business.send}
         </Button>
       </form>
     </Panel>
@@ -346,6 +355,7 @@ const ContactForm: React.FC = () => {
 };
 
 const MatterportIntegration: React.FC = () => {
+  const { t } = useLanguage();
   const [link, setLink] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
 
@@ -360,9 +370,9 @@ const MatterportIntegration: React.FC = () => {
   if (status === 'success') {
     return (
       <SuccessPanel
-        title="Scan link submitted"
-        body="Your digital twin is being processed for integration."
-        actionLabel="Submit another link"
+        title={t.business.scanDoneTitle}
+        body={t.business.scanDoneBody}
+        actionLabel={t.business.scanDoneAction}
         onReset={() => setStatus('idle')}
       />
     );
@@ -373,7 +383,7 @@ const MatterportIntegration: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <Field
           id="matterport-link"
-          label="3D scan public URL"
+          label={t.business.scanUrlLabel}
           type="url"
           value={link}
           onChange={(e) => setLink(e.target.value)}
@@ -382,40 +392,41 @@ const MatterportIntegration: React.FC = () => {
         />
         <Button type="submit" disabled={!link || status === 'submitting'} className="w-full">
           {status === 'submitting' && <LoadingIcon />}
-          <span>{status === 'submitting' ? 'Verifying link...' : 'Submit for integration'}</span>
+          <span>{status === 'submitting' ? t.business.scanVerifying : t.business.scanSubmit}</span>
         </Button>
       </form>
     </Panel>
   );
 };
 
-const B2BHubPage: React.FC = () => (
+const B2BHubPage: React.FC = () => {
+  const { t } = useLanguage();
+  return (
   <PageShell>
     <PageHeader
-      eyebrow="For business"
+      eyebrow={t.business.eyebrow}
       title="Business Studio"
-      intro="Explore our enterprise solutions and partner with us to build the future of digital interaction."
+      intro={t.business.intro}
     />
 
     <section id="demos" className="mt-20">
-      <Eyebrow>Interactive demos</Eyebrow>
-      <h2 className={`mt-5 ${sectionTitle}`}>See the technology work</h2>
+      <Eyebrow>{t.business.demosEyebrow}</Eyebrow>
+      <h2 className={`mt-5 ${sectionTitle}`}>{t.business.demosTitle}</h2>
       <p className={sectionIntro}>
-        Experience the power of our AI and simulation technology firsthand.
+        {t.business.demosIntro}
       </p>
       <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <DemoCard title="Dynamic NPCs"><NpcDemo /></DemoCard>
-        <DemoCard title="Personalized experiences"><PersonalizationDemo /></DemoCard>
-        <DemoCard title="Interactive worlds"><InteractiveWorldDemo /></DemoCard>
+        <DemoCard title={t.business.demoNpc}><NpcDemo /></DemoCard>
+        <DemoCard title={t.business.demoPersonalization}><PersonalizationDemo /></DemoCard>
+        <DemoCard title={t.business.demoWorld}><InteractiveWorldDemo /></DemoCard>
       </div>
     </section>
 
     <section id="integrate-scan" className="mt-24">
-      <Eyebrow>Integration</Eyebrow>
-      <h2 className={`mt-5 ${sectionTitle}`}>Integrate your digital twin</h2>
+      <Eyebrow>{t.business.integrationEyebrow}</Eyebrow>
+      <h2 className={`mt-5 ${sectionTitle}`}>{t.business.integrationTitle}</h2>
       <p className={sectionIntro}>
-        Already have a 3D scan of your venue? Link your Matterport, GeoCV, or other digital twin
-        platform to integrate it directly into the Bona Parks ecosystem.
+        {t.business.integrationIntro}
       </p>
       <div className="mt-10 max-w-2xl">
         <MatterportIntegration />
@@ -423,11 +434,10 @@ const B2BHubPage: React.FC = () => (
     </section>
 
     <section id="rfp-upload" className="mt-24">
-      <Eyebrow>Request for proposal</Eyebrow>
-      <h2 className={`mt-5 ${sectionTitle}`}>Send us your brief</h2>
+      <Eyebrow>{t.business.rfpEyebrow}</Eyebrow>
+      <h2 className={`mt-5 ${sectionTitle}`}>{t.business.rfpTitle}</h2>
       <p className={sectionIntro}>
-        Have a project in mind? Securely upload your RFP document. Our solutions architects will
-        review it and respond within 48 business hours.
+        {t.business.rfpIntro}
       </p>
       <div className="mt-10 max-w-2xl">
         <RfpUpload />
@@ -435,17 +445,17 @@ const B2BHubPage: React.FC = () => (
     </section>
 
     <section id="contact-us" className="mt-24">
-      <Eyebrow>Contact</Eyebrow>
-      <h2 className={`mt-5 ${sectionTitle}`}>Talk to our team</h2>
+      <Eyebrow>{t.business.contactEyebrow}</Eyebrow>
+      <h2 className={`mt-5 ${sectionTitle}`}>{t.business.contactTitle}</h2>
       <p className={sectionIntro}>
-        Have a general inquiry or need more information? Fill out the form below and our
-        partnership team will get in touch.
+        {t.business.contactIntro}
       </p>
       <div className="mt-10 max-w-2xl">
         <ContactForm />
       </div>
     </section>
   </PageShell>
-);
+  );
+};
 
 export default B2BHubPage;
