@@ -166,12 +166,31 @@ const DemoCard: React.FC<{ title: string; children: React.ReactNode }> = ({ titl
   </Panel>
 );
 
+/** Posts to Netlify Forms (forms declared statically in index.html). Throws when the submission is not accepted. */
+const submitNetlifyForm = async (formName: string, fields: Record<string, string | File>) => {
+  const hasFile = Object.values(fields).some((v) => v instanceof File);
+  let body: BodyInit;
+  const headers: Record<string, string> = {};
+  if (hasFile) {
+    const data = new FormData();
+    data.append('form-name', formName);
+    Object.entries(fields).forEach(([k, v]) => data.append(k, v));
+    body = data;
+  } else {
+    body = new URLSearchParams({ 'form-name': formName, ...(fields as Record<string, string>) }).toString();
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+  }
+  const res = await fetch('/', { method: 'POST', headers, body });
+  if (!res.ok) throw new Error(`Form submission failed: ${res.status}`);
+};
+
 const RfpUpload: React.FC = () => {
   const { lang, t } = useLanguage();
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
-  const [error, setError] = useState<'rfpTooLarge' | 'rfpBadType' | null>(null);
+  const [error, setError] = useState<'rfpTooLarge' | 'rfpBadType' | 'sendError' | null>(null);
+  const [email, setEmail] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -186,7 +205,7 @@ const RfpUpload: React.FC = () => {
 
   const handleFile = (selectedFile: File | null) => {
     if (selectedFile) {
-      if (selectedFile.size > 10 * 1024 * 1024) { // 10MB limit
+      if (selectedFile.size > 8 * 1024 * 1024) { // Netlify Forms accepts up to 8 MB per submission
         setError('rfpTooLarge');
         return;
       }
@@ -215,14 +234,19 @@ const RfpUpload: React.FC = () => {
     }
   };
 
-  const handleUpload = () => {
-    if (!file) return;
+  const handleUpload = async () => {
+    if (!file || !email) return;
     setUploadStatus('uploading');
     setError(null);
-    setTimeout(() => {
+    try {
+      await submitNetlifyForm('rfp', { lang, email, file });
       setUploadStatus('success');
       setFile(null);
-    }, 2000);
+      setEmail('');
+    } catch {
+      setUploadStatus('error');
+      setError('sendError');
+    }
   };
 
   const removeFile = () => {
@@ -288,9 +312,13 @@ const RfpUpload: React.FC = () => {
         </div>
       )}
 
+      <div className="mt-6">
+        <Field id="rfp-email" label={t.business.replyEmail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+      </div>
+
       <Button
         onClick={handleUpload}
-        disabled={!file || uploadStatus === 'uploading'}
+        disabled={!file || !email || uploadStatus === 'uploading'}
         className="mt-8 w-full"
       >
         {uploadStatus === 'uploading' && <LoadingIcon />}
@@ -301,17 +329,28 @@ const RfpUpload: React.FC = () => {
 };
 
 const ContactForm: React.FC = () => {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This is for display only. In a real app, this would trigger an API call.
-    setIsSubmitted(true);
+    setSending(true);
+    setFailed(false);
+    try {
+      await submitNetlifyForm('contact', { lang, name, company, email, message });
+      setIsSubmitted(true);
+      setName(''); setCompany(''); setEmail(''); setMessage('');
+    } catch {
+      setFailed(true);
+    } finally {
+      setSending(false);
+    }
   };
 
   if (isSubmitted) {
@@ -346,8 +385,10 @@ const ContactForm: React.FC = () => {
             className={textareaClasses}
           />
         </div>
-        <Button type="submit" disabled={!name || !company || !email || !message} className="w-full">
-          {t.business.send}
+        {failed && <p role="alert" className="text-center text-sm text-accent">{t.business.sendError}</p>}
+        <Button type="submit" disabled={!name || !company || !email || !message || sending} className="w-full">
+          {sending && <LoadingIcon />}
+          <span>{t.business.send}</span>
         </Button>
       </form>
     </Panel>
@@ -355,16 +396,21 @@ const ContactForm: React.FC = () => {
 };
 
 const MatterportIntegration: React.FC = () => {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [link, setLink] = useState('');
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    setTimeout(() => {
+    try {
+      await submitNetlifyForm('scan-link', { lang, email, link });
       setStatus('success');
-    }, 1500);
+      setLink(''); setEmail('');
+    } catch {
+      setStatus('error');
+    }
   };
 
   if (status === 'success') {
@@ -390,7 +436,9 @@ const MatterportIntegration: React.FC = () => {
           required
           placeholder="https://my.matterport.com/show/?m=XXXXXXXXXXX"
         />
-        <Button type="submit" disabled={!link || status === 'submitting'} className="w-full">
+        <Field id="scan-email" label={t.business.replyEmail} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+        {status === 'error' && <p role="alert" className="text-center text-sm text-accent">{t.business.sendError}</p>}
+        <Button type="submit" disabled={!link || !email || status === 'submitting'} className="w-full">
           {status === 'submitting' && <LoadingIcon />}
           <span>{status === 'submitting' ? t.business.scanVerifying : t.business.scanSubmit}</span>
         </Button>
