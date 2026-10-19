@@ -11,28 +11,23 @@ interface TourCardProps {
   onOpen: () => void;
   /** Label for the action button; defaults to "Enter the tour" in the current language. */
   action?: string;
-  /** When set, the card is locked and the reason is shown instead of the action. */
-  lockedMessage?: string;
 }
 
 const TourCard: React.FC<TourCardProps> = ({
   item,
   onOpen,
   action: actionLabel,
-  lockedMessage,
 }) => {
   const { t } = useLanguage();
   const action = actionLabel ?? t.tourCard.enter;
-  const locked = Boolean(lockedMessage);
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-surface transition-colors duration-500 hover:border-accent/40">
       <button
         type="button"
         onClick={onOpen}
-        disabled={locked}
         data-theme="dark"
-        className="relative block aspect-[4/3] w-full overflow-hidden bg-elev focus:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed"
+        className="relative block aspect-[4/3] w-full overflow-hidden bg-elev focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         aria-label={`${action} — ${item.title}`}
       >
         <img
@@ -66,23 +61,19 @@ const TourCard: React.FC<TourCardProps> = ({
           </dl>
         )}
 
-        {locked ? (
-          <p className="mt-7 text-xs text-muted">{lockedMessage}</p>
-        ) : (
-          <button
-            type="button"
-            onClick={onOpen}
-            className="mt-7 flex items-center gap-3 self-start text-sm font-semibold text-bone transition-colors duration-300 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        <button
+          type="button"
+          onClick={onOpen}
+          className="mt-7 flex items-center gap-3 self-start text-sm font-semibold text-bone transition-colors duration-300 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          {action}
+          <span
+            className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+            aria-hidden="true"
           >
-            {action}
-            <span
-              className="inline-block transition-transform duration-300 group-hover:translate-x-1"
-              aria-hidden="true"
-            >
-              &rarr;
-            </span>
-          </button>
-        )}
+            &rarr;
+          </span>
+        </button>
       </div>
     </article>
   );

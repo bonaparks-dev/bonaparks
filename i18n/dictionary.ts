@@ -121,7 +121,6 @@ const en = {
     intro:
       'High-fidelity interactive replicas of real and imagined spaces. Step inside and explore at your own pace.',
     action: 'Explore in VR/AR',
-    locked: 'Log in to explore',
     items: [
       {
         category: 'Nightclub',
@@ -485,7 +484,6 @@ const fr: Dictionary = {
     intro:
       'Des répliques interactives haute fidélité d’espaces réels ou imaginaires. Entrez et explorez à votre rythme.',
     action: 'Explorer en VR/AR',
-    locked: 'Connectez-vous pour explorer',
     items: [
       {
         category: 'Boîte de nuit',

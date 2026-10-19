@@ -9,7 +9,6 @@ import { useLanguage } from '../../i18n/LanguageContext';
 
 interface HomePageProps {
   onNavigate: (page: Page) => void;
-  isLoggedIn: boolean;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {

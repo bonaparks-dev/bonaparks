@@ -21,11 +21,7 @@ const digitalTwinShowcases: Pick<ExperienceItem, 'title' | 'imageUrl'>[] = [
   },
 ];
 
-interface DigitalTwinsPageProps {
-  isLoggedIn: boolean;
-}
-
-const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ isLoggedIn }) => {
+const DigitalTwinsPage: React.FC = () => {
   const { t } = useLanguage();
   const [immersiveItem, setImmersiveItem] = useState<ExperienceItem | null>(null);
   const showcases: ExperienceItem[] = digitalTwinShowcases.map((item, index) => ({
@@ -49,7 +45,6 @@ const DigitalTwinsPage: React.FC<DigitalTwinsPageProps> = ({ isLoggedIn }) => {
               item={item}
               action={t.venues.action}
               onOpen={() => setImmersiveItem(item)}
-              lockedMessage={isLoggedIn ? undefined : t.venues.locked}
             />
           ))}
         </div>

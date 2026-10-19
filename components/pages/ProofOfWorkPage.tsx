@@ -6,11 +6,7 @@ import { PageHeader, PageShell, LinkButton } from '../ui';
 import { tourItemsFor } from '../../data/tours';
 import { useLanguage } from '../../i18n/LanguageContext';
 
-interface ProofOfWorkPageProps {
-  isLoggedIn: boolean;
-}
-
-const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = () => {
+const ProofOfWorkPage: React.FC = () => {
   const { lang, t } = useLanguage();
   const [immersiveItem, setImmersiveItem] = useState<ExperienceItem | null>(null);
   const tourItems = tourItemsFor(lang);

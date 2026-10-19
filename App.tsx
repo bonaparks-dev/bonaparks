@@ -327,9 +327,9 @@ const App: React.FC = () => {
       </header>
 
       <main className="relative z-10 flex-grow py-16 md:py-24">
-        {page === 'home' && <HomePage onNavigate={navigate} isLoggedIn={isLoggedIn} />}
-        {page === 'digital-twins' && <DigitalTwinsPage isLoggedIn={isLoggedIn} />}
-        {page === 'proof-of-work' && <ProofOfWorkPage isLoggedIn={isLoggedIn} />}
+        {page === 'home' && <HomePage onNavigate={navigate} />}
+        {page === 'digital-twins' && <DigitalTwinsPage />}
+        {page === 'proof-of-work' && <ProofOfWorkPage />}
         {page === 'ai-solutions' && <AISolutionsPage onNavigate={navigate} />}
         {page === 'business-studio' && <B2BHubPage />}
         {page === 'login' && <LoginPage onLogin={handleLogin} onNavigate={navigate} />}
