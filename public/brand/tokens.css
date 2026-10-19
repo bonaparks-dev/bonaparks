@@ -2,25 +2,71 @@
    Palette of the Bonaparks iOS app (AppIcon.svg, app tint #B8D9FF).
    Values are space-separated RGB channels so Tailwind opacity modifiers work,
    e.g. rgb(var(--c-bg) / 0.8). Used by index.html (Tailwind theme) and
-   app-pages.css (static app pages). */
-:root {
+   app-pages.css (static app pages).
+
+   Two themes, chosen by data-theme on <html> (set before first paint by the
+   inline script in each page's <head>, see /brand/theme.js). Dark is also the
+   default when scripts are off. Any element can force a theme for its subtree,
+   e.g. data-theme="dark" on text laid over a photo.
+   Contrast ratios (WCAG 2.x) are against bg / surface. */
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
 
   /* Surfaces */
   --c-bg:      10 17 20;    /* #0A1114 app backdrop */
   --c-surface: 18 28 36;    /* #121C24 app panel */
   --c-elev:    23 38 51;    /* #172633 raised panel, hovered rows */
-  --c-deep:    11 24 35;    /* #0B1823 deep navy: text on accent */
+  --c-deep:    11 24 35;    /* #0B1823 deep navy */
   --c-navy:    29 58 87;    /* #1D3A57 navy: borders, dividers */
   --c-glow:    58 108 146;  /* #3A6C92 icon glow: page backdrop light */
 
   /* Text */
-  --c-text:    238 247 255; /* #EEF7FF primary text (17.6:1 on bg) */
-  --c-muted:   141 163 181; /* #8DA3B5 secondary text (7.3:1 on bg) */
+  --c-text:    238 247 255; /* #EEF7FF primary text (17.6 / 15.9:1) */
+  --c-muted:   141 163 181; /* #8DA3B5 secondary text (7.3 / 6.6:1) */
 
   /* Accent = app tint */
-  --c-accent:  184 217 255; /* #B8D9FF buttons, links, focus (13.1:1 on bg) */
+  --c-accent:    184 217 255; /* #B8D9FF buttons, links, focus (13.1 / 11.8:1) */
+  --c-on-accent: 11 24 35;    /* #0B1823 text on accent fills (12.3:1) */
 
-  /* Borders: navy at low alpha */
-  --line-alpha: 0.6;
+  /* Scrollbar */
+  --c-thumb:       29 58 87;   /* #1D3A57 */
+  --c-thumb-hover: 58 108 146; /* #3A6C92 */
+
+  --line-alpha:   0.6;  /* borders: navy at this alpha */
+  --glow-alpha:   0.16; /* body glow strength */
+  --shadow-alpha: 0.6;  /* popover shadows */
+
+  --theme-color: #0A1114; /* <meta name="theme-color">, mirrored in /brand/theme.js */
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --c-bg:      245 247 250; /* #F5F7FA page background */
+  --c-surface: 255 255 255; /* #FFFFFF cards, panels */
+  --c-elev:    234 239 245; /* #EAEFF5 hovered rows, raised panels */
+  --c-deep:    11 24 35;    /* #0B1823 deep navy */
+  --c-navy:    29 58 87;    /* #1D3A57 navy: borders, dividers (at low alpha) */
+  --c-glow:    184 217 255; /* #B8D9FF app tint as a soft top light */
+
+  /* Text */
+  --c-text:    11 24 35;    /* #0B1823 primary text (16.7 / 18.0:1) */
+  --c-muted:   74 95 112;   /* #4A5F70 secondary text (6.2 / 6.6:1) */
+
+  /* Accent: the ice tint fails as text on white (1.5:1), so links and fills
+     use the deeper app blue, with white text on fills. */
+  --c-accent:    29 92 143;   /* #1D5C8F links, buttons, focus (6.6 / 7.1:1) */
+  --c-on-accent: 255 255 255; /* #FFFFFF text on accent fills (7.1:1) */
+
+  /* Scrollbar */
+  --c-thumb:       190 203 216; /* #BECBD8 */
+  --c-thumb-hover: 141 163 181; /* #8DA3B5 */
+
+  --line-alpha:   0.16;
+  --glow-alpha:   0.55;
+  --shadow-alpha: 0.14;
+
+  --theme-color: #F5F7FA;
 }

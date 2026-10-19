@@ -12,6 +12,9 @@
     <meta name="theme-color" content="#0A1114" />
 
     <link rel="stylesheet" href="/brand/tokens.css" />
+    <script>/* Theme before first paint; the full logic is in /brand/theme.js. */
+    (function(){var d=document.documentElement,p='auto',q=/[?&]theme=(light|dark|auto)\b/.exec(location.search);try{p=localStorage.getItem('bonaparks-theme')||p}catch(e){}if(q)p=q[1];if(p!=='light'&&p!=='dark')p='auto';var t=p!=='auto'?p:(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');d.setAttribute('data-theme',t);d.setAttribute('data-theme-pref',p);var m=document.querySelector('meta[name="theme-color"]'),c=getComputedStyle(d).getPropertyValue('--theme-color').trim();if(m&&c)m.setAttribute('content',c)})();</script>
+    <script src="/brand/theme.js" defer></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,7 +30,7 @@
               bone:        'rgb(var(--c-text) / <alpha-value>)',    // primary text
               muted:       'rgb(var(--c-muted) / <alpha-value>)',   // secondary text
               accent:      'rgb(var(--c-accent) / <alpha-value>)',  // buttons, links, focus
-              'on-accent': 'rgb(var(--c-deep) / <alpha-value>)',    // text on accent
+              'on-accent': 'rgb(var(--c-on-accent) / <alpha-value>)', // text on accent fills
             },
             fontFamily: {
               display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Helvetica Neue"', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
@@ -54,18 +57,18 @@
             inset: 0;
             pointer-events: none;
             z-index: 0;
-            background-image: radial-gradient(circle at 50% 0%, rgb(var(--c-glow) / 0.16), transparent 55%);
+            background-image: radial-gradient(circle at 50% 0%, rgb(var(--c-glow) / var(--glow-alpha)), transparent 55%);
         }
 
         /* Apple-style headings: system font (SF Pro on Apple devices), semibold, tight tracking */
         .font-display { font-weight: 600; letter-spacing: -0.022em; }
 
-        ::selection { background: rgb(var(--c-accent)); color: rgb(var(--c-deep)); }
+        ::selection { background: rgb(var(--c-accent)); color: rgb(var(--c-on-accent)); }
 
         ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: rgb(var(--c-bg)); }
-        ::-webkit-scrollbar-thumb { background: rgb(var(--c-navy)); border-radius: 99px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-glow)); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--c-thumb)); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-thumb-hover)); }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(14px); }
