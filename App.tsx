@@ -237,7 +237,7 @@ const App: React.FC = () => {
                   <button
                     onClick={() => setLang(code)}
                     lang={code}
-                    className={`transition-colors ${lang === code ? 'text-gold' : 'text-muted hover:text-bone'}`}
+                    className={`rounded px-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-ink ${lang === code ? 'text-accent' : 'text-muted hover:text-bone'}`}
                     aria-pressed={lang === code}
                   >
                     {code.toUpperCase()}

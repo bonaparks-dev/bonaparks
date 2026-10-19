@@ -26,5 +26,7 @@ a:hover { color:var(--bone); }
 code { font-size:14px; color:var(--bone); }
 footer { border-top:1px solid var(--line); padding-top:20px; padding-bottom:32px; color:var(--muted); font-size:13px; max-width:none; text-align:center; }
 .lang { color:var(--line); font-size:12px; margin-left:18px; white-space:nowrap; }
-.lang a { margin-left:0; }
+.lang a { margin-left:0; color:var(--muted); }
+.lang a:hover { color:var(--bone); }
+.lang a[aria-current] { color:var(--accent); }
 @media (max-width: 520px) { h1 { font-size:34px; } nav a { margin-left:12px; letter-spacing:.1em; } .lang { margin-left:12px; } .lang a { margin-left:0; } }
