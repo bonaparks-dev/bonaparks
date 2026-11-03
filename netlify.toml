@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+# Rendu réaliste des scans de l'app iOS (rendu-scan + rendu-scan-background).
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Static pages of the Bonaparks iOS app (public/), served before the SPA fallback.
 # App Store Connect links to these URLs: keep them stable.
 [[redirects]]

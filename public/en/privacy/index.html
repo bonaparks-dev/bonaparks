@@ -29,15 +29,15 @@
 <main>
   <p class="eyebrow">Bonaparks app for iPhone and iPad</p>
   <h1>Privacy policy</h1>
-  <p class="meta">Publisher: Bonaparks · Contact: <a href="mailto:bonaparks@icloud.com">bonaparks@icloud.com</a> · Last updated: 09/10/2026</p>
+  <p class="meta">Publisher: Bonaparks · Contact: <a href="mailto:bonaparks@icloud.com">bonaparks@icloud.com</a> · Last updated: 03/11/2026</p>
 
   <div class="summary">
-    <p><strong>In short: Bonaparks collects no data.</strong></p>
+    <p><strong>In short: Bonaparks collects no data, unless you ask for a realistic render of a plan.</strong></p>
     <ul>
-      <li>No account, no sign-up, no Bonaparks server.</li>
+      <li>No account, no sign-up. The Bonaparks server is only used for the optional realistic render (section 6).</li>
       <li>No analytics, no advertising, no tracking across apps or websites.</li>
-      <li>No third-party SDK or service built into the app.</li>
-      <li>Your plans, your household, your cameras and your settings stay on your device.</li>
+      <li>No third-party SDK built into the app. Only the realistic render uses a third-party service (OpenAI), at your request.</li>
+      <li>Your household, your cameras and your settings stay on your device. So do your plans, except the model picture sent for a realistic render.</li>
     </ul>
   </div>
 
@@ -69,16 +69,19 @@
   <h2>5. Sharing at your initiative</h2>
   <p>You can export the 3D model of a scan (USDZ file) with the iOS share button. The file is then sent to the app or person you choose; Bonaparks does not receive a copy. The app can also open the Home app, the App Store or iOS Settings.</p>
 
-  <h2>6. Deletion</h2>
+  <h2>6. Realistic render of a plan (optional)</h2>
+  <p>After a scan, the app draws a 3D model of the floor on the device (walls, openings and furniture volumes, no photos). If you tap “Create the realistic render” and accept, the app sends the Bonaparks server (hosted by Netlify) the picture of this model, the number of furniture items per type and the number of rooms. The server passes them to OpenAI, which creates the realistic picture; it is sent back to the app and saved on your device.</p>
+  <p>No name, address, photo, account or device identifier is sent. To prevent abuse, the server counts renders per day using a non-reversible fingerprint of the IP address. The model picture is deleted from the server as soon as the render is done, and the realistic picture as soon as the app has saved it. OpenAI does not use them to train its models and may keep them for up to 30 days for abuse monitoring before deleting them. Nothing is sent without your consent.</p>
+  <h2>7. Deletion</h2>
   <p>Removing a camera in the app also deletes its password from the keychain. Removing a member or deleting the app erases the corresponding data from the device. Depending on the iOS version, keychain items may remain after the app is deleted: to erase them, remove your cameras in the app before deleting it.</p>
 
-  <h2>7. Children</h2>
-  <p>The app collects no data, including about children. The first name of a child added to the household stays on the device.</p>
+  <h2>8. Children</h2>
+  <p>The app collects no data about children. The first name of a child added to the household stays on the device.</p>
 
-  <h2>8. Your rights</h2>
-  <p>Since Bonaparks holds no data about you through the app, there is nothing for us to access, correct or erase: you keep full control of the data on your device. For any question about data protection (GDPR), write to <a href="mailto:bonaparks@icloud.com">bonaparks@icloud.com</a>. You can also contact the data protection authority of your country (in France, the CNIL; in Italy, the Garante per la protezione dei dati personali).</p>
+  <h2>9. Your rights</h2>
+  <p>Since Bonaparks keeps no data about you through the app (render pictures are deleted as soon as the app receives them), there is nothing for us to access, correct or erase: you keep full control of the data on your device. For any question about data protection (GDPR), write to <a href="mailto:bonaparks@icloud.com">bonaparks@icloud.com</a>. You can also contact the data protection authority of your country (in France, the CNIL; in Italy, the Garante per la protezione dei dati personali).</p>
 
-  <h2>9. Changes</h2>
+  <h2>10. Changes</h2>
   <p>If a future version of the app adds an online service or any data collection, this page will be updated before its release and the date above will be changed.</p>
 </main>
 <footer>© 2026 Bonaparks · <a href="/en/support">Support</a> · <a href="mailto:bonaparks@icloud.com">bonaparks@icloud.com</a><br /><div data-theme-switch></div></footer>
