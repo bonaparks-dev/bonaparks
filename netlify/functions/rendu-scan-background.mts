@@ -4,7 +4,7 @@ import { internalKey, isId, prompt, store, type Job } from "../lib/rendu.mts";
 
 async function edit(image: ArrayBuffer, text: string, withFidelity: boolean): Promise<Response> {
   const form = new FormData();
-  form.append("model", process.env.OPENAI_IMAGE_MODEL || "gpt-image-1");
+  form.append("model", process.env.OPENAI_IMAGE_MODEL || "gpt-image-2");
   form.append("image", new Blob([image], { type: "image/jpeg" }), "maquette.jpg");
   form.append("prompt", text);
   form.append("size", "1024x1536");
