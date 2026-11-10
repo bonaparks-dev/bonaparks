@@ -7,7 +7,7 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Static pages of the Bonaparks iOS app (public/), served before the SPA fallback.
+# Static pages of the Bonaparks iOS app (public/).
 # App Store Connect links to these URLs: keep them stable.
 [[redirects]]
   from = "/confidentialite"
@@ -29,7 +29,17 @@
   to = "/en/support/index.html"
   status = 200
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# This is a static multi-page site. Missing scripts must return 404, not HTML.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/supranu/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

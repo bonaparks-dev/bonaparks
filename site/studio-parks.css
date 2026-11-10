@@ -1,0 +1,66 @@
+/* Parks 3D — midnight blue surfaces and luminous blue controls. */
+:root{--bg:#0c0d10;--sidebar:#101318;--panel:#171b22;--line:#30353f;--muted:#9ca2ad;--text:#eceef1;--accent:#5c92ff;--ink:#fff}
+body{background:radial-gradient(100% 700px at 52% -180px,#3867c438,transparent 75%),var(--bg);background-attachment:fixed}
+.connected-home,.connected-home .inspector{overflow-anchor:none}
+.sidebar{background:linear-gradient(175deg,#141820ee,#101318 52%)}
+.brand-symbol{background:linear-gradient(135deg,#5c92ff,#5b7ec4);color:white;border:1px solid #9abcff77;box-shadow:0 0 30px #5c92ff25;border-radius:11px;padding:7px;letter-spacing:0;font-size:15px}
+.brand-symbol svg{width:24px;height:24px}.brand{letter-spacing:-.7px}.brand small{letter-spacing:2.2px}.brand b{color:#b6ceff}
+.nav-item.active{background:linear-gradient(100deg,#5c92ff3b,#5c92ff0c);color:#d8e5ff;border:1px solid #6c9cfb4d}.nav-item.active:before{display:none}
+.button.primary{background:linear-gradient(115deg,#5c92ff,#5b8bea);color:white;border-color:#7da8ff;box-shadow:0 4px 18px #5c92ff20}.button.primary:hover{background:#77a4ff}
+.status-dot,.home-live-dot{background:#9abcff;box-shadow:0 0 10px #5c92ff55}
+.home-bar{background:linear-gradient(110deg,#1c2435,#161a22 75%);border-color:#333d52;box-shadow:0 4px 30px #0002}
+.home-summary{border-color:#ffffff0b}.home-summary strong{color:#ebf1fc}.home-scene{background:#222936;border-color:#363e4f;color:#cdd6e9}.home-scene svg{color:#a3c2ff}
+.home-scene:hover,.home-scene.selected{background:linear-gradient(115deg,#5487ed,#527acb)!important;border-color:#89b0ff;color:#fff}
+.home-view-options button[aria-pressed=true]{background:#5c92ff30;color:#c9dbff;border-color:#729cef}
+.workspace,.inspector{background:#15181e;border-color:#313948;box-shadow:0 12px 32px #0003}
+.canvas-toolbar,.home-spacebar{background:#181c25;border-color:#2c3340}.floor-tabs button[aria-pressed=true]{background:#5486e9;color:#fff;box-shadow:0 3px 18px #5c92ff40}
+.home-space-chips button[aria-pressed=true]{background:#2b3d62!important;border-color:#759eef;color:#eaf1ff}.home-space-chips button:hover{background:#252f44!important}
+.viewport[data-mode=render],.viewport[data-mode=render].home-night{background:radial-gradient(ellipse at 50% 45%,#202839,#101621 75%)}
+.canvas-label{padding:7px 10px;background:#151a25d9;border:1px solid #606b8244;border-radius:6px;backdrop-filter:blur(8px);font-size:9px;letter-spacing:.7px}
+#house-stage #house-render{filter:brightness(.78) saturate(.8)}#house-stage.is-night #house-render{filter:brightness(.3) saturate(.65) contrast(1.08)}
+.home-light-marker,.home-tv-marker{position:absolute;pointer-events:auto;transform:translate(-50%,-50%) scale(calc(1 / var(--camera-zoom,1)));border:1px solid #a0afce85;background:#212631e8;color:#b7bfce;border-radius:50%;width:27px;height:27px;padding:6px;display:grid;place-items:center;box-shadow:0 3px 12px #0005;transition:background .25s,box-shadow .25s,color .25s;z-index:2}
+.home-light-markers{position:absolute;inset:0;pointer-events:none}.home-light-markers[hidden]{display:none}.home-light-marker svg,.home-tv-marker svg{width:15px;height:15px}
+.home-light-marker.on{background:#ffdf8a;color:#5b3507;border-color:#fff2bc;box-shadow:0 0 0 4px #ffcf5424,0 0 24px #ffd45a8c}
+.home-light-marker:hover{background:#353f54!important;z-index:6}.home-light-marker.on:hover{background:#ffeeb4!important}.home-light-marker.selected{outline:2px solid #fff;outline-offset:3px}
+.home-light-marker span{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;color:#e9eef7;background:#161d2aef;padding:6px 9px;border:1px solid #62718f;border-radius:5px;opacity:0;pointer-events:none}
+.home-light-marker:hover span,.home-light-marker:focus-visible span{opacity:1}.home-tv-marker{width:25px;height:25px;border-radius:6px;color:#c0d5ff}.home-tv-marker.on{color:#d7e4ff;background:#273b63;border-color:#8bb2ff}
+.home-tv-screen{transition:opacity .4s;filter:drop-shadow(0 0 4px #99bbff)}.selected-room-ring{pointer-events:none}
+.home-panel-head{background:linear-gradient(120deg,#1d2432,#171b23);border-bottom:1px solid #303a4d}.home-panel-tabs{padding-top:10px}.home-panel-tabs button[aria-pressed=true]{color:#dde8ff;background:#34518b}
+.home-filter button{padding:7px 11px;font-size:10px}.home-filter button[aria-pressed=true]{background:#5c92ff30;border-color:#7aa3f4;color:#cedeff}
+.home-connection{background:#5c92ff14;color:#b1c1e0;border-color:#506080}.home-control-name strong{font-size:12px}.home-control-name small{font-size:10px}
+.home-switch{width:38px;height:23px;padding:3px;background:#353c4b;border-color:#565e6f}.home-switch span{width:15px;height:15px;background:#adb4c2}.home-switch[aria-checked=true]{background:#5c92ff;border-color:#87afff;box-shadow:0 0 13px #5c92ff30}.home-switch[aria-checked=true] span{background:#fff;transform:translateX(15px)}
+.home-lighting{margin-top:18px}.lighting-heading{display:flex;gap:10px;align-items:center;margin-bottom:15px}.lighting-heading>i{color:#ffe09b;background:#ffc94b14;border:1px solid #e3b76040;width:37px;height:37px;border-radius:12px}.lighting-heading h3{font-size:16px;font-weight:650;margin-bottom:5px}.lighting-heading span{font-size:10px;color:#a8b2c6}
+.lighting-bulk{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px}.lighting-bulk button{display:flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;padding:10px 5px;font-size:10px;background:#222a3b;border:1px solid #506080;color:#e4edff}.lighting-bulk button:first-child{background:linear-gradient(110deg,#517fdb,#5273b4);border-color:#81a1e1}.lighting-bulk svg{width:13px;height:13px}
+.home-light-row{border:1px solid #333b4c;border-radius:10px;padding:0 10px;margin-bottom:7px;background:#1b212c;min-height:58px}.home-light-row>button:first-child{font-size:11px;padding:10px 0}.home-light-row>button:first-child span{flex:1}.home-light-row>button:first-child small{font-size:9px;color:#a6afc1}.home-light-row.on{background:linear-gradient(105deg,#33405a,#202a3d);border-color:#607296}.home-light-row i{flex:none;background:#2b3445;color:#a9b4c9;width:32px;height:32px}.home-light-row i.lit{color:#ffe29b;background:#85602d7a;box-shadow:0 0 16px #ffc86522}.home-light-row.on small{color:#ffdfa0}
+.home-range input{accent-color:#8bb0fa;height:6px}.home-range{color:#abb5c9}.home-range output{color:#e3ecff}.home-play,.spatial-launch{background:#5c92ff;color:#fff}.home-play:hover,.spatial-launch:hover{background:#74a2ff!important}
+.home-tv-card{border:1px solid #394356;background:linear-gradient(135deg,#1c2433,#191e27);border-radius:14px;padding:14px;margin-top:20px}.home-tv-card.on{border-color:#6783bc;box-shadow:0 0 24px #5c92ff10}.home-tv-heading{display:flex;gap:9px;align-items:center}.home-tv-heading>i{color:#a4bff4;width:29px}.home-tv-heading>div{flex:1}.home-tv-heading strong{font-size:12px;display:block}.home-tv-heading small{display:block;color:#a3afc6;font-size:9px;margin-top:4px}.tv-power{width:34px;height:34px;border:1px solid #505f7e;border-radius:50%;display:grid;place-items:center;color:#a8b4cd;padding:8px}.tv-power svg{width:16px;height:16px}.tv-power[aria-pressed=true]{background:#5c92ff;color:white;border-color:#99bbff;box-shadow:0 0 15px #5c92ff50}
+.tv-preview{aspect-ratio:2.25;border:1px solid #373f4f;border-radius:9px;margin:15px 0;background:radial-gradient(ellipse at center,#202838,#0e1118);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transition:background .4s}.tv-preview>span{font-size:8px;letter-spacing:1.5px;color:#a1afca}.tv-preview>strong{font-size:16px;font-weight:550}.tv-preview>small{font-size:8px;color:#a8b3c9}.tv-preview.on{background:radial-gradient(ellipse at 20% 10%,#5d78ad80,transparent),linear-gradient(130deg,#364970,#293753);border-color:#6e84b1}.tv-preview.on>span{color:#d4e2ff}
+.tv-remote[inert]{opacity:.45}.tv-source{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px;color:#b8c1d3}.tv-source select{background:#181f2d;border:1px solid #4b5873;color:#e6eeff;border-radius:7px;padding:8px 10px;font-size:10px;min-width:135px}.tv-channel{display:grid;grid-template-columns:35px 1fr 35px;align-items:center;gap:10px;margin-top:17px}.tv-channel>button,.tv-volume-buttons>button{border:1px solid #4c5a77;border-radius:8px;height:34px;color:#d6e0f5;background:#273042;font-size:18px}.tv-channel label{text-align:center;font-size:7px;letter-spacing:1.6px;color:#9daac4}.tv-channel input{display:block;width:100%;border:0;background:none;text-align:center;font-size:24px;color:#e5eeff;padding:5px;appearance:textfield;-moz-appearance:textfield}.tv-channel input::-webkit-inner-spin-button{appearance:none}.tv-volume-buttons{display:grid;grid-template-columns:35px 1fr 35px;gap:8px;margin-top:13px}.tv-volume-buttons>button:nth-child(2){display:flex;align-items:center;justify-content:center;gap:7px;font-size:10px}.tv-volume-buttons>button svg{width:14px;height:14px}.tv-volume-buttons [aria-pressed=true]{background:#46536c;border-color:#8fa4ce}.tv-note{font-size:8px;color:#8d98af;line-height:1.7;margin-top:13px}
+.home-humidity-card{background:linear-gradient(120deg,#253149,#1d2536);border-color:#50638a}.home-humidity-card strong{color:#b2ccff}.home-humidity-card>div>span,.home-humidity-card p,.home-humidity-card em{color:#b2bed6}
+.home-simulation-note{background:#12161e;color:#919cb1;border-color:#30394b}.home-space-title h2{color:#d6e4ff}.home-space-title>span{color:#a4b3d2}.home-back,.home-link{color:#a4bff5}.home-gate-card{background:linear-gradient(120deg,#202734,#191e29);border-color:#414d64}
+.home-space-chips{scrollbar-color:#556380 transparent}.connected-home .inspector{scrollbar-color:#52658b transparent}.home-view-options{border-color:#36435c}
+.spatial-timeline{background:linear-gradient(110deg,#20293a,#171d28);border-color:#414d64}.spatial-transport>button:first-child{background:#5c92ff;color:#fff;border-color:#8ab1ff}.spatial-transport select{background:#1f2736;border-color:#49597a;color:#d5dff2}.spatial-track input{accent-color:#95b6f8}
+.spatial-scenarios [aria-pressed=true],.spatial-source-tabs [aria-pressed=true]{background:#324a79;border-color:#7491ca;color:#e3ecff}.spatial-alert:not(.has-alert){background:#1d2330;border-color:#414c61}.spatial-alert.acknowledged{background:#232c3f;border-color:#687a9e}.spatial-preferences button[aria-checked=true] i{background:#4866a2;color:#fff}
+.zoom-controls{background:#1a202ce6;border-color:#505c75}.zoom-controls button:disabled{opacity:.2}.home-focus .home-summary strong:before{content:'PARKS 3D';font-size:10px;font-weight:750;letter-spacing:1px;color:#bad1ff;margin-right:16px}
+@media(min-width:1181px){.connected-home .editor-layout{grid-template-columns:minmax(0,1fr) 330px}}
+@media(max-width:730px){.home-view-options{background:#19202d;box-shadow:-8px 0 12px #19202d}.connected-home .inspector{background:#151b26;border-color:#52668e}.home-light-marker{width:24px;height:24px;padding:5px}.home-light-marker svg{width:13px;height:13px}.home-focus .home-summary strong:before{font-size:8px;margin-right:7px}.canvas-label{font-size:8px;max-width:calc(100% - 35px)}.home-tv-card{padding:14px}.lighting-bulk button{min-height:39px}}
+@media(prefers-reduced-motion:reduce){.home-tv-screen,.home-light-marker{transition:none}}
+
+/* Shared palette with the public Parks 3D welcome page. */
+:root{--bg:#080c17;--sidebar:#0d1320;--panel:#131b2a;--line:#2a354b;--muted:#9baac2;--text:#edf2fc;--accent:#5289ff;--ink:#fff}
+body{background:radial-gradient(ellipse 90% 650px at 75% -150px,#244c8540,transparent 75%),#080c17}
+.sidebar{background:linear-gradient(170deg,#121c30,#0c1220 65%)}
+.brand-symbol,.button.primary{background:linear-gradient(125deg,#4789f7,#3459cd)}
+.home-bar{background:linear-gradient(115deg,#1c2b45,#131b2b);border-color:#38496a}
+.workspace,.inspector{background:#111827;border-color:#2d3951}
+.canvas-toolbar,.home-spacebar{background:#151d2d;border-color:#2a354b}
+.viewport[data-mode=render],.viewport[data-mode=render].home-night{background:radial-gradient(ellipse at 50% 45%,#182747,#0a1120 80%)}
+.home-panel-head{background:linear-gradient(120deg,#1d2a42,#141c2c);border-color:#33425e}
+.home-light-row.on{background:linear-gradient(105deg,#ffce7820,#1c2535);border-color:#c5a06b70}
+.home-light-row.on small{color:#f8d99e}
+.home-lighting .lighting-bulk button:first-child,.home-scene.selected,.home-scene:hover{background:linear-gradient(115deg,#3e76dc,#3655b8)!important;border-color:#7f9fe1}
+.home-switch[aria-checked=true],.tv-power[aria-pressed=true]{background:#447de3;border-color:#7ca9f5}
+.home-panel-tabs button[aria-pressed=true]{background:#294a7b;color:#e7f1ff}
+.connected-home .viewport{touch-action:pan-y}.connected-home .recenter-view{display:none}
+.recenter-view{display:grid;place-items:center;width:34px;height:34px;padding:8px;border:1px solid #4c638b;border-radius:9px;background:#162339dd;pointer-events:auto}.recenter-view svg{width:17px;height:17px}
+@media(max-width:730px){.connected-home .inspector{background:#111a2c;border-color:#526d9d}.home-view-options{background:#192640;box-shadow:-8px 0 12px #192640}}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080c17">
+<title>Parks 3D Studio · Votre maison prend forme</title>
+<link rel="stylesheet" href="studio.css?v=4"><link rel="stylesheet" href="studio-home.css?v=4"><link rel="stylesheet" href="studio-spatial.css?v=3"><link rel="stylesheet" href="studio-parks.css?v=2"><link rel="stylesheet" href="studio-comfort.css?v=1"><link rel="stylesheet" href="studio-dashboard.css?v=1"><script type="module" src="studio.mjs?v=7"></script>
+</head>
+<body>
+<div class="studio-shell">
+ <aside class="sidebar">
+  <a class="brand" href="index.html" aria-label="Parks 3D, retour à l’accueil"><span class="brand-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10"/></svg></span><span>Parks <b>3D</b><small>HOME STUDIO</small></span></a>
+  <div class="workspace-label">ESPACE PERSONNEL</div>
+  <nav aria-label="Navigation principale">
+   <button class="nav-item active" data-action="home" aria-label="Ma maison"><i data-icon="house"></i><span>Ma maison</span></button>
+   <button class="nav-item" data-home-nav aria-label="Automatisations"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 3 4 14h7l-1 7 10-12h-8Z"/></svg></i><span>Automatisations</span></button>
+   <button class="nav-item" data-spatial-nav="family" aria-label="Famille et avatars"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="3"/><path d="M3 21v-4a6 6 0 0 1 12 0v4M16 4a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5v3"/></svg></i><span>Famille</span></button>
+   <button class="nav-item" data-spatial-nav="security" aria-label="Sécurité et relecture 3D"><i data-icon="shield"></i><span>Sécurité</span></button>
+   <button class="nav-item" data-action="projects" aria-label="Mes projets"><i data-icon="layers"></i><span>Mes projets</span><span id="project-count" class="count">1</span></button>
+   <button class="nav-item" data-action="library" aria-label="Bibliothèque"><i data-icon="grid"></i><span>Bibliothèque</span></button>
+  </nav>
+  <div class="sidebar-line"></div>
+  <div class="workspace-label project-label">MES ESPACES <button class="mini-button" data-action="new" aria-label="Créer un projet">+</button></div>
+  <div id="project-list"></div>
+  <div class="sidebar-bottom"><div class="local-card"><span class="status-dot"></span><strong>Votre espace, chez vous.</strong><p>Vos projets sont enregistrés dans ce navigateur.</p></div><button class="nav-item" data-action="help"><i data-icon="help"></i><span>Guide de l’atelier</span></button><a class="nav-item old-app" href="aide.html"><i data-icon="arrow"></i><span>Aide & contact</span></a><div class="profile"><span class="avatar">P</span><div><strong>Espace Parks 3D</strong><small>Version navigateur</small></div><span class="beta">BÊTA</span></div></div>
+ </aside>
+ <main class="main">
+  <header class="topbar"><div class="breadcrumbs">Mon espace <span>/</span> <strong>Home Studio</strong></div><div class="top-actions"><span id="save-state" role="status"><span class="status-dot"></span>Enregistré localement</span><button class="button subtle" data-action="import"><i data-icon="upload"></i>Importer un plan</button><button class="button primary" data-action="new"><i data-icon="plus"></i>Créer un projet</button></div></header>
+  <div class="page-heading"><div><div class="eyebrow">PARKS 3D</div><div class="title-line"><h1 id="project-title">Su Pranu</h1><span id="project-tag" class="tag">MA MAISON</span></div><p id="project-description">Votre maison, sous tous les angles.</p></div><div class="heading-actions"><button class="button subtle" data-action="export"><i data-icon="download"></i>Exporter</button><button class="icon-button" data-action="help" aria-label="Ouvrir le guide"><i data-icon="help"></i></button></div></div>
+  <section id="home-bar" class="home-bar" aria-label="Scènes et ambiance" hidden></section>
+  <div class="editor-layout">
+   <section class="workspace" aria-label="Atelier de conception">
+    <div class="canvas-toolbar"><div id="floor-tabs" class="floor-tabs" role="group" aria-label="Étages"></div><div id="view-tabs" class="segmented" role="group" aria-label="Mode d’affichage"></div></div>
+    <div class="viewport" id="viewport" tabindex="0" aria-label="Espace du plan. Utiliser les outils de dessin ou sélectionner une pièce.">
+     <div class="canvas-label"><span class="status-dot"></span><span id="canvas-caption">VUE D’ENSEMBLE</span></div>
+     <div id="toolbox" class="toolbox" role="toolbar" aria-label="Outils du plan"></div>
+     <div id="render-view" class="render-view"><div id="house-stage"><img id="house-render" alt="Vue d’ensemble du rez-de-chaussée de Su Pranu" draggable="false"><div id="home-layer"></div></div></div>
+     <svg id="plan-canvas" xmlns="http://www.w3.org/2000/svg" aria-label="Plan modifiable en mètres" hidden></svg>
+     <div id="three-view" hidden></div>
+     <div id="empty-state" class="empty-state" hidden><span class="empty-icon"><i data-icon="room"></i></span><h2>Tout commence par une pièce.</h2><p>Tracez un rectangle, puis ajustez ses dimensions.<br>Votre maison prend forme en 2D et en 3D.</p><button class="button primary" data-action="draw">Dessiner ma première pièce <i data-icon="arrow"></i></button></div>
+     <div class="north" aria-label="Repère visuel"><span>N</span><svg viewBox="0 0 20 26"><path d="M10 2 16 22 10 18 4 22Z" fill="none" stroke="currentColor"/></svg></div>
+     <div class="viewport-bottom"><span id="canvas-hint">La maison et ses extérieurs, en un regard.</span><button class="recenter-view" data-action="fit" aria-label="Recentrer la vue"><i data-icon="fit"></i></button></div>
+    </div>
+    <footer class="canvas-footer"><span><i data-icon="shield"></i><span id="footer-note">Rendu architectural · Su Pranu</span></span><div><button id="undo" data-action="undo" aria-label="Annuler la modification" disabled><i data-icon="undo"></i></button><button id="redo" data-action="redo" aria-label="Rétablir la modification" disabled><i data-icon="redo"></i></button><span id="scale-note">PARKS 3D STUDIO</span></div></footer>
+   </section>
+   <aside class="inspector" id="inspector" aria-label="Propriétés du projet"></aside>
+  </div>
+  <div class="bottom-note"><span>IMAGINEZ. DESSINEZ. HABITEZ.</span><span>Un espace pensé autour de vous.</span></div>
+ </main>
+</div>
+<dialog id="modal" aria-labelledby="modal-title"><div class="modal-heading"><div><div class="eyebrow">PARKS 3D STUDIO</div><h2 id="modal-title"></h2></div><button class="icon-button" data-action="close" aria-label="Fermer la fenêtre">×</button></div><div id="modal-body"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="file-input" accept=".json,.png,.jpg,.jpeg,.webp" hidden>
+</body></html>

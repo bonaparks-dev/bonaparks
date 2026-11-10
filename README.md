@@ -1,20 +1,21 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Parks 3D
 
-# Run and deploy your AI Studio app
+Browser studio and landing page at https://bonaparks.com.
 
-This contains everything you need to run your app locally.
+## Development
 
-View your app in AI Studio: https://ai.studio/apps/drive/1uO4y8ESC09ZUBwRm_zquEAOw0Sd0vR5e
+Requires Node.js 22 or later. No frontend API keys are needed.
 
-## Run Locally
+- `npm run build`: creates `dist/` from `site/` and preserved mobile-app pages in `public/`; checks static references.
+- `npm run preview`: serves the production build at http://127.0.0.1:8775.
+- `npm test`: verifies plan geometry, device state, shutters and security replay.
 
-**Prerequisites:**  Node.js
+The Su Pranu architecture uses the approved render assets without geometry changes. Device controls and security scenarios are local demonstrations; no real devices or cameras are connected.
 
+## Hosting
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Netlify project `bonaparks1` deploys branch `main`. Keep the existing iOS support/privacy routes and `netlify/functions` intact. Credentials stay in Netlify environment variables; the static frontend does not receive them. The previous site is recoverable from commit `0555ed7b4e43feddb717f16358c9bbf341ed4c2c` or the previous Netlify production deployment.
+
+## Legal follow-up
+
+The web demo is free, with no checkout or subscription. Its CGU, privacy, contact and commercial-status pages are published with the existing Bonaparks support email. Complete the legal publisher identity (legal name, professional address, country, registration/VAT) when provided by the owner. Sales terms for a paid offer must be defined before adding sales.
