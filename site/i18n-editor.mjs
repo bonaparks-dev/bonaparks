@@ -1,4 +1,6 @@
 export const editorRows=[
+['Créer mon projet','Create my project','Crea il mio progetto','Crear mi proyecto','Mein Projekt erstellen','创建我的项目','Создать мой проект'],
+['Étages','Floors','Piani','Plantas','Etagen','楼层','Этажи'],
 ['Chêne naturel','Natural oak','Rovere naturale','Roble natural','Natureiche','天然橡木','Натуральный дуб'],
 ['Pierre claire','Light stone','Pietra chiara','Piedra clara','Heller Stein','浅色石材','Светлый камень'],
 ['Sauge','Sage','Salvia','Salvia','Salbei','鼠尾草色','Шалфей'],
