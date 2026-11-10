@@ -18,11 +18,11 @@ export const cameras=[
  {id:'pool',name:'Piscine',zone:'pool',point:[796,870],target:[676,746],crop:[68,84]}
 ];
 export const scenarios={
- intrusion:{name:'Intrusion par le côté',duration:40,actor:'Personne non identifiée',kind:'adult',color:'#ee827b',camera:'side',
-  track:[[0,950,530],[6,890,552],[12,812,550],[18,742,540],[25,653,540],[32,604,598],[40,645,704]],
+ intrusion:{name:'Intrusion par le côté',duration:60,actor:'Personne non identifiée',kind:'adult',color:'#ee827b',camera:'side',
+  track:[[0,950,530],[6,890,552],[12,812,550],[18,786,570],[25,760,588],[32,739,623],[42,737,683],[52,770,696],[60,770,696]],
   events:[{id:'entry',time:6,title:'Franchissement latéral',detail:'Une personne entre par le côté de la propriété. Le portail reste fermé.',camera:'side',zone:'garden',level:'warning'},
-   {id:'intrusion',time:18,title:'Présence non identifiée',detail:'La caméra du jardin reprend la trajectoire vers la maison.',camera:'garden',zone:'garden',level:'alert'},
-   {id:'pool-side',time:32,title:'Déplacement vers la piscine',detail:'La trajectoire atteint les abords du bassin.',camera:'pool',zone:'pool',level:'alert'}]},
+   {id:'intrusion',time:12,title:'Présence non identifiée',detail:'Individu non identifié dans le jardin à droite.',camera:'garden',zone:'garden',level:'alert'},
+   {id:'pool-side',time:42,title:'Suivi dans le jardin',detail:'Les caméras suivent l’individu dans le jardin. Le portail reste fermé.',camera:'pool',zone:'pool',level:'alert'}]},
  pool:{name:'Enfant près de la piscine',duration:36,actor:'Enfant · scénario',kind:'child',color:'#f4bd6d',camera:'garden',
   track:[[0,540,635],[6,581,681],[12,615,714],[18,627,747],[23,633,756],[30,613,700],[36,580,657]],
   events:[{id:'approach',time:8,title:'Approche de la piscine',detail:'Un enfant de démonstration s’approche du bassin.',camera:'garden',zone:'garden',level:'warning'},

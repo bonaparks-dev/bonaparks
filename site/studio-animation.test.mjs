@@ -86,7 +86,7 @@ test('arrival rooms stay dark until occupants enter; departure shuts down AC bef
  const leaving=journeyFrame('departure',41);assert.equal(leaving.climate.rdc,false);assert.equal(leaving.climate.etage,false);assert.equal(leaving.lit.length,0);
 });
 test('incident replay advances at one second per second, including pool vigilance',()=>{
- for(const [id,start] of [['family',24],['security',14]])for(let t=start;t<59;t++)assert.equal(tourFrame(id,t+1).incidentTime-tourFrame(id,t).incidentTime,1);
+ for(const [id,start] of [['family',24],['security',0]])for(let t=start;t<59;t++)assert.equal(tourFrame(id,t+1).incidentTime-tourFrame(id,t).incidentTime,1);
 });
 
 test('family remains visible in free exploration and freezes when a tour is paused',()=>{

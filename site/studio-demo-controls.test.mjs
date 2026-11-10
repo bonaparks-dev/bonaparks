@@ -6,7 +6,7 @@ import {equipmentSummary,fansMarkup} from './studio-equipment.mjs';
 
 test('three modes apply coherent states, including all floors and animated shutter targets',()=>{
  let s=initialHome();s.fans.patio.on=s.fans.living.on=s.sockets.kitchen.on=true;
- const morning=demoCommand(s,'etage','mode','morning');assert.equal(morning.mode,'morning');assert.ok(Object.values(morning.state.lights).every(v=>v.on&&v.brightness===100));assert.ok(Object.values(morning.state.shutters).every(v=>v.target===100));
+ const morning=demoCommand(s,'etage','mode','morning');assert.equal(morning.mode,'morning');assert.ok(Object.values(morning.state.lights).every(v=>!v.on));assert.ok(Object.values(morning.state.shutters).every(v=>v.target===100));
  const evening=demoCommand(morning.state,'overview','mode','evening').state;assert.equal(evening.lights.living.brightness,45);assert.equal(evening.music.playing,true);assert.equal(evening.lights.children.on,false);
  const night=demoCommand(evening,'rdc','mode','night').state;assert.equal(night.lights.children.on,false);assert.ok(Object.values(night.fans).every(v=>!v.on));assert.ok(Object.values(night.sockets).every(v=>!v.on));assert.ok(Object.values(night.shutters).every(v=>v.target===0));assert.equal(night.music.playing,false);
 });

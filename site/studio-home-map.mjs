@@ -28,7 +28,7 @@ export function mapMarkup(s,floor,definitions,selected){
  }
  html+=doorsMarkup(s.doors,floor)+fansMarkup(s,floor);
  const ac=floor==='etage'?'etage':'rdc',air=points['ac-'+ac];if(air)html+=breezeMarkup(s,ac,air);
- for(const [i,[x,y]] of speakers[floor].entries()){const on=s.music.playing&&s.music.speakers[i]&&s.music.volume>0;html+=`<g data-key="speaker-${i}" class="map-speaker ${on?'is-playing':''}" transform="translate(${x} ${y})"><rect x="-5" y="-10" width="10" height="20" rx="3" fill="#303e44" stroke="#b2c5c8" stroke-width="1"/><circle cy="3" r="3" fill="#718894"/><ellipse rx="17" ry="10" class="sound-ring"/><ellipse rx="29" ry="18" class="sound-ring second"/></g>`;}
+ for(const [i,[x,y]] of speakers[floor].entries()){const on=s.alertResponse?.speaking||s.music.playing&&s.music.speakers[i]&&s.music.volume>0;html+=`<g data-key="speaker-${i}" class="map-speaker ${on?'is-playing':''} ${s.alertResponse?.speaking?'is-announcing':''}" transform="translate(${x} ${y})"><rect x="-5" y="-10" width="10" height="20" rx="3" fill="#303e44" stroke="#b2c5c8" stroke-width="1"/><circle cy="3" r="3" fill="#718894"/><ellipse rx="17" ry="10" class="sound-ring"/><ellipse rx="29" ry="18" class="sound-ring second"/></g>`;}
  const tvScreens={rdc:{living:'660,241 709,265 709,286 660,263'},etage:{children:'232,429 278,448 278,460 232,442'}};
  for(const [id,shape] of Object.entries(tvScreens[floor]||{})){const tv=s.tv[id];html+=`<defs><linearGradient id="screen-${id}" x2="1" y2="1"><stop stop-color="#5ec8f0"/><stop offset=".5" stop-color="#7164e8"/><stop offset="1" stop-color="#ed8bca"/></linearGradient></defs><polygon class="home-tv-screen" data-tv-screen="${id}" points="${shape}" fill="url(#screen-${id})" opacity="${tv.on?.9:0}"/>`;}
  if(floor==='etage')html+='<g class="home-shutter-surfaces">'+shuttersMarkup(s.shutters)+'</g>';
@@ -40,7 +40,7 @@ export function mapMarkup(s,floor,definitions,selected){
  }
  for(const t of televisions.filter(t=>tvScreens[floor]?.[t.id])){const pos=floor==='rdc'?[686,264]:[254,449];html+='<button class="home-tv-hit" data-home-select="tv:'+t.id+'" style="left:'+(pos[0]-28)/10+'%;top:'+(pos[1]-16)/10+'%;width:5.6%;height:3.2%" aria-label="Télécommande · '+t.name+'" title="Télécommande · '+t.name+'"></button>';}
  html+=lampButtons(s,floor,definitions);if(floor==='overview'&&s.presence!=='away')html+='<button class="home-item-hit car-hit" data-home-direct="car" style="left:18%;top:37%;width:8%;height:12%" aria-label="Voiture · contact et phares" aria-pressed="'+s.car.on+'"></button>';
- for(const [id,[x,y]] of Object.entries(fanPositions[floor]||{}))html+=`<button class="home-fan-hit" data-device="fan" data-id="${id}" aria-label="${fans.find(f=>f.id===id).name}" aria-pressed="${s.fans?.[id]?.on===true}" style="left:${(x-30)/10}%;top:${(y-24)/10}%;width:6%;height:4.8%"></button>`;
+ for(const [id,[x,y]] of Object.entries(fanPositions[floor]||{}))html+=`<button class="home-fan-hit" data-device="fan" data-id="${id}" aria-label="${fans.find(f=>f.id===id).name}" aria-pressed="${s.fans?.[id]?.on===true}" style="left:${(x+22)/10}%;top:${(y+10)/10}%"><span>${homeIcon('power')}</span></button>`;
  return html+'</div>'+sensorsMarkup(s,floor,points);
 
 }

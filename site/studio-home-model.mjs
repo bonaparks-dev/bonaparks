@@ -26,8 +26,8 @@ export const lights=[
  ['garage','Garage','outside'],['pool','Piscine','outside'],['spa','Jacuzzi','outside']
 ].map(([id,name,zone])=>({id,name,zone}));
 export const scenes=[
- {id:'morning',name:'Bonjour',icon:'sun',description:'Toutes les lumières à 100 %, volets de l’étage ouverts et ambiance jour.'},
- {id:'evening',name:'Soirée',icon:'moon',description:'Lumières douces dans la maison, terrasse et musique.'},
+ {id:'morning',name:'Bonjour',icon:'sun',description:'Volets ouverts, lumières éteintes : place à la lumière du jour.'},
+ {id:'evening',name:'Soirée',icon:'moon',description:'Lumières douces, jardin, piscine et terrasse.'},
  {id:'welcome',name:'Retour maison',icon:'home',description:'Le portail s’ouvre, la voiture se gare et la famille rentre. La maison s’allume.'},
  {id:'departure',name:'Départ',icon:'gate',description:'La famille rejoint la voiture. Lumières et clim éteintes, volets et portail fermés, protection activée.'},
  {id:'terrace',name:'Soirée terrasse',icon:'music',description:'Terrasse à 75 %, jardin à 35 %, piscine éclairée, animation musique sur les quatre enceintes.'},
@@ -70,7 +70,7 @@ export function applyScene(state,id){
  if(id==='night')s.shutters=commandShutters(s.shutters,'all','close');
  if(id==='off')s.shutters=commandShutters(s.shutters,'all','stop');
  if(id==='departure'){s.shutters=commandShutters(s.shutters,'all','close');s.presence='away';s.security='armed';}
- if(id==='morning'){s.night=false;s.shutters=commandShutters(s.shutters,'all','open');allLights(s,true,100);}
+ if(id==='morning'){s.night=false;s.shutters=commandShutters(s.shutters,'all','open');allLights(s,false);s.music.playing=false;}
  if(id==='evening'){s.night=true;allLights(s,false);for(const k of ['living','kitchen','patio','garden','pool','entry'])Object.assign(s.lights[k],{on:true,brightness:k==='garden'?25:45});s.music.playing=true;}
  if(id==='welcome'){for(const k of ['entry','stairs','living','kitchen'])s.lights[k].on=true;s.gate.target=1;}
  if(id==='terrace'){s.night=true;for(const [k,b] of Object.entries({patio:75,garden:35,gazebo:50,pool:85,entry:30}))s.lights[k]={...s.lights[k],on:true,brightness:b};s.music.playing=true;s.music.speakers=[true,true,true,true];}

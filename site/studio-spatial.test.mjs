@@ -29,7 +29,7 @@ test('family movement is subdued in the full view while the security replay rema
  assert.ok(Math.abs(sampleTrack(scenarios.intrusion.track,25).x-sampleTrack(scenarios.intrusion.track,0).x)>100);
 });
 test('alerts follow timeline thresholds and rewind removes future events',()=>{
- assert.equal(eventsAt('intrusion',5.9).length,0);assert.equal(eventsAt('intrusion',6).length,1);assert.equal(eventsAt('intrusion',40).length,3);assert.equal(eventsAt('intrusion',0).length,0);
+ assert.equal(eventsAt('intrusion',5.9).length,0);assert.equal(eventsAt('intrusion',6).length,1);assert.equal(eventsAt('intrusion',60).length,3);assert.equal(eventsAt('intrusion',0).length,0);
  assert.equal(eventsAt('pool',18).at(-1).id,'pool-zone');assert.equal(eventsAt('pool',17.9).at(-1).id,'approach');
 });
 test('video and spatial timelines stay proportional for clips of different lengths',()=>{

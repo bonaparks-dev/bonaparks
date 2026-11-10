@@ -29,7 +29,7 @@ test('night and morning scenes coordinate shutters with lights',()=>{
 });
 test('security hands off between five cameras and clears pool danger on rewind and safe return',()=>{
  assert.equal(cameras.length,5);assert.equal(new Set(cameras.map(c=>c.id)).size,5);
- assert.ok(scenarios.intrusion.track[0][1]>900);assert.equal(cameraAt('intrusion',0),'side');assert.equal(cameraAt('intrusion',18),'garden');assert.equal(cameraAt('intrusion',32),'pool');
+ assert.ok(scenarios.intrusion.track[0][1]>900);assert.equal(cameraAt('intrusion',0),'side');assert.equal(cameraAt('intrusion',18),'garden');assert.equal(cameraAt('intrusion',42),'pool');
  assert.equal(cameraAt('pool',8),'garden');assert.equal(cameraAt('pool',18),'pool');
  assert.equal(safetyState('pool',18),'alert');assert.equal(safetyState('pool',30),'info');assert.equal(safetyState('pool',0),'idle');
  for(const s of Object.values(scenarios))for(const e of s.events)assert.ok(cameras.some(c=>c.id===e.camera));
