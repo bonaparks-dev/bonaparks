@@ -4,7 +4,11 @@ Le site reste déployé sur le projet Netlify `bonaparks1` par la branche `main`
 
 ## Parcours
 
-L’accueil présente quatre scénarios de 54 à 60 secondes. Chaque scénario parcourt les trois rendus approuvés : ensemble, RDC et étage. Après inscription, ils jouent dans un iframe du studio, sans modifier les réglages du studio personnel. Le visiteur peut mettre en pause, rejouer et déplacer le curseur. Les personnages et les événements sont des simulations, sans analyse vidéo ni connexion à un équipement.
+L’accueil présente quatre scénarios de 54 à 60 secondes. Chaque scénario parcourt les trois rendus approuvés : ensemble, RDC et étage. Ils jouent sans inscription dans un iframe public `/demo.html`, distinct des routes protégées du studio, sans modifier les réglages du studio personnel. Le visiteur peut mettre en pause, rejouer et déplacer le curseur. Les personnages et les événements sont des simulations, sans analyse vidéo ni connexion à un équipement.
+
+## Langues
+
+Le sélecteur de l’en-tête propose français, anglais, italien, espagnol, allemand, chinois simplifié et russe. La préférence `parks.language` reste dans le navigateur ; `?lang=fr|en|it|es|de|zh|ru` permet de partager une version. La navigation, les formulaires, les légendes des scénarios, les commandes, l’éditeur et les pages d’information utilisent des catalogues locaux `site/i18n-*.mjs`, sans service de traduction distant. Les noms saisis et les projets enregistrés ne sont pas réécrits. Ajouter toute nouvelle copie aux sept colonnes du catalogue ; les tests vérifient les pages publiques et chaque chapitre des scénarios.
 
 ## Accès par nom et e-mail
 

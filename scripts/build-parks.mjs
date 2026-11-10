@@ -8,6 +8,9 @@ await rm(destination,{recursive:true,force:true});await mkdir(destination,{recur
 // Keep the app's existing privacy/support URLs and server functions separate.
 await cp(path.join(root,'public'),destination,{recursive:true});
 await cp(path.join(root,'site'),destination,{recursive:true,filter:s=>!s.endsWith('.test.mjs')});
+// A dedicated public, read-only scene; /studio continues to require a session.
+const demo=(await readFile(path.join(root,'site/studio.html'),'utf8')).replace('<body>','<body class="demo-embed" data-public-demo><svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs><filter id="scene-alpha" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncA type="linear" slope="1.25" intercept="-0.25"/></feComponentTransfer></filter></defs></svg>').replace('<title>Parks 3D Studio · Votre maison prend forme</title>','<meta name="robots" content="noindex"><title>Parks 3D · Scénarios publics</title>');
+await writeFile(path.join(destination,'demo.html'),demo);
 const revision=process.env.COMMIT_REF||'local';
 await writeFile(path.join(destination,'release.json'),JSON.stringify({application:'Parks 3D',revision,builtAt:new Date().toISOString()},null,2));
 let count=0,bytes=0;

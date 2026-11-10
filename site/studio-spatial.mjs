@@ -9,7 +9,7 @@ const shieldIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
 export class SpatialExperience{
  constructor(home){
-  this.home=home;try{this.state=restoreSpatial(JSON.parse(localStorage.getItem(SPATIAL_KEY)));}catch{this.state=initialSpatial();}
+  this.home=home;try{this.state=home.demo?initialSpatial():restoreSpatial(JSON.parse(localStorage.getItem(SPATIAL_KEY)));}catch{this.state=initialSpatial();}
   this.floor='overview';this.active=false;this.securityOpen=false;this.scenario='intrusion';this.time=0;this.playing=false;this.speed=1;this.camera='side';this.followCamera=true;this.selected=null;this.acknowledged=new Set();this.motion=matchMedia('(prefers-reduced-motion:reduce)');this.lastEvent='';this.frameId=0;this.renderer=null;this.rendererError=false;this.source='demo';this.videoURL=null;this.videoName='';
   this.layer=document.createElement('div');this.layer.id='spatial-layer';this.layer.innerHTML='<svg class="spatial-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="camera-field"><stop stop-color="#81adf3" stop-opacity=".16"/><stop offset="1" stop-color="#81adf3" stop-opacity=".015"/></linearGradient></defs><path class="camera-field"/><polygon class="safety-zone" points="566,768 617,718 768,786 795,822 751,908 579,857"/><polyline class="spatial-trail"/><circle class="spatial-origin" r="4"/></svg><div class="avatar-canvas"></div><div class="avatar-labels"></div><div class="spatial-map-cameras"></div>';
   this.cameraMarkers=this.layer.querySelector('.spatial-map-cameras');this.cameraMarkers.innerHTML=cameras.map(c=>`<button data-spatial-camera="${c.id}" class="spatial-map-camera" style="left:${c.point[0]/10}%;top:${c.point[1]/10}%" aria-label="Caméra de démonstration · ${c.name}" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m4 5 13 3-2 8-13-3Zm9 11-1 4h-5M17 9l4 1-1 4-4-1"/></svg><span>${c.name}</span></button>`).join('');
@@ -31,7 +31,7 @@ export class SpatialExperience{
   new ResizeObserver(()=>this.draw()).observe(home.stage);
  }
  get current(){return scenarios[this.scenario];}
- save(){try{localStorage.setItem(SPATIAL_KEY,JSON.stringify(this.state));}catch{this.home.toast('Les profils ne peuvent pas être enregistrés dans ce navigateur.');}}
+ save(){if(this.home.demo)return;try{localStorage.setItem(SPATIAL_KEY,JSON.stringify(this.state));}catch{this.home.toast('Les profils ne peuvent pas être enregistrés dans ce navigateur.');}}
  setView(active,floor){this.active=active;if(floor!==this.floor&&this.securityOpen)this.pause();this.floor=floor;this.layer.hidden=!active;if(!active){this.pause();this.securityOpen=false;document.body.classList.remove('spatial-security');cancelAnimationFrame(this.frameId);this.frameId=0;this.timeline.hidden=true;return;}this.loadRenderer();this.startFrame();this.draw();}
  async loadRenderer(){if(this.loading||this.renderer||this.rendererError)return;this.loading=true;try{const {AvatarRenderer}=await import('./studio-avatars.mjs');this.renderer=new AvatarRenderer(this.canvasHost);this.draw();}catch(error){console.error('Avatars 3D indisponibles',error);this.rendererError=true;this.home.toast('WebGL indisponible : les positions restent affichées, les avatars 3D sont désactivés.');}finally{this.loading=false;}}
  refresh(){if(!this.active)return;this.home.renderPanel();this.draw();}
