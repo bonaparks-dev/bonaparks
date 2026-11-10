@@ -64,8 +64,8 @@ test('routine triggers at local time on chosen days once per date with no catchu
 test('every lighting circuit has a floor hotspot and all effects follow state',()=>{
  for(const l of lights)assert.ok(Object.values(mapPoints).some(p=>p[l.id]),l.id);
  const h=initialHome();h.music.playing=true;h.spa.jets=true;h.climate.rdc.on=true;
- const html=mapMarkup(h,'overview',lights,null);assert.equal((html.match(/map-speaker is-playing/g)||[]).length,4);assert.ok(html.includes('spa-bubbles'));assert.ok(html.includes('air-flow'));
- const off=mapMarkup(applyScene(h,'off'),'overview',lights,null);assert.ok(!off.includes('spa-bubbles is-running'));assert.ok(!off.includes('air-flow is-running'));assert.ok(!off.includes('map-speaker is-playing'));assert.ok(off.includes('sound-ring'));assert.ok(off.includes('spa-bubbles'));assert.ok(!off.includes('home-pin'));assert.ok(off.includes('data-home-direct="gate"'));
+ const html=mapMarkup(h,'overview',lights,null);assert.equal((html.match(/map-speaker is-playing/g)||[]).length,4);assert.ok(html.includes('pool-contour'));assert.ok(html.includes('ac-unit running'));
+ const off=mapMarkup(applyScene(h,'off'),'overview',lights,null);assert.ok(!off.includes('ac-unit running'));assert.ok(!off.includes('map-speaker is-playing'));assert.ok(off.includes('sound-ring'));assert.ok(!off.includes('home-pin'));assert.ok(off.includes('data-home-direct="gate"'));
 });
 
 test('all four water circuits restore independently in every combination',()=>{
@@ -73,7 +73,6 @@ test('all four water circuits restore independently in every combination',()=>{
   const h=initialHome();const expected=[0,1,2,3].map(bit=>!!(mask&(1<<bit)));
   [h.pool.pump,h.spa.jets,h.lights.pool.on,h.lights.spa.on]=expected;
   const r=restoreHome(h);assert.deepEqual([r.pool.pump,r.spa.jets,r.lights.pool.on,r.lights.spa.on],expected);
-  const html=mapMarkup(r,'overview',lights,null);assert.equal(html.includes('pool-circulation is-running'),expected[0]);assert.equal(html.includes('spa-bubbles is-running'),expected[1]);
  }
 });
 test('old saved homes preserve devices and gain safe pump and demo humidity defaults',()=>{

@@ -1,10 +1,11 @@
 import * as T from './vendor/three.module.min.js';
+import {DemoVehicle} from './studio-vehicle.mjs';
 
 // A transparent, orthographic 3D layer. Its pixel origin is shared with the
 // architectural image so camera pan/zoom never drifts away from the floor.
 export class AvatarRenderer{
  constructor(host){
-  this.host=host;this.actors=new Map();this.scene=new T.Scene();
+  this.host=host;this.actors=new Map();this.scene=new T.Scene();this.vehicle=new DemoVehicle(this.scene);this.lastTime=0;
   this.camera=new T.OrthographicCamera(-500,500,500,-500,.1,2000);this.camera.position.z=1000;
   this.renderer=new T.WebGLRenderer({alpha:true,antialias:true});this.renderer.setPixelRatio(Math.min(devicePixelRatio,2));this.renderer.setClearColor(0,0);this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.3;
   this.renderer.domElement.setAttribute('aria-label','Avatars 3D de démonstration');this.renderer.domElement.setAttribute('role','img');host.append(this.renderer.domElement);
@@ -33,23 +34,25 @@ export class AvatarRenderer{
    this.ellipsoid(body,skin,[0,1.71,.184],[.033,.045,.035]);this.ellipsoid(body,'#986854',[0,1.64,.162],[.042,.009,.009]);
    if(child)body.scale.set(.76,.74,.76);
   }
-  root.add(body);this.scene.add(root);return {root,body,ring,shadow,bones,signature:[info.kind,info.color,info.look,info.alert].join('|')};
+  const fadeMaterials=[];body.traverse(o=>{if(o.isMesh){o.material=o.material.clone();fadeMaterials.push(o.material);}});root.add(body);this.scene.add(root);return {root,body,ring,shadow,bones,fadeMaterials,heading:null,signature:[info.kind,info.color,info.look,info.alert].join('|')};
  }
- remove(id){const a=this.actors.get(id);if(!a)return;this.scene.remove(a.root);a.ring.material.dispose();a.shadow.material.dispose();this.actors.delete(id);}
- render(list,time,floor,animate){
+ remove(id){const a=this.actors.get(id);if(!a)return;this.scene.remove(a.root);a.ring.material.dispose();a.shadow.material.dispose();for(const m of a.fadeMaterials)m.dispose();this.actors.delete(id);}
+ render(list,time,floor,animate,vehicle){
   const w=this.host.clientWidth,h=this.host.clientHeight;if(!w||!h)return;const aspect=w/h;
   const zoom=Number(this.host.parentElement.parentElement.style.getPropertyValue('--camera-zoom'))||1,ratio=Math.min(3,Math.ceil(devicePixelRatio*zoom));
   if(ratio!==this.pixelRatio){this.pixelRatio=ratio;this.renderer.setPixelRatio(ratio);}
   if(this.w!==w||this.h!==h){this.w=w;this.h=h;this.renderer.setSize(w,h,false);this.camera.left=-500*aspect;this.camera.right=500*aspect;this.camera.updateProjectionMatrix();}
   const alive=new Set(list.map(n=>n.id));for(const id of this.actors.keys())if(!alive.has(id))this.remove(id);
+  const dt=Math.min(.1,Math.max(0,time-this.lastTime));this.lastTime=time;this.vehicle.update(vehicle,aspect,dt);
   list.forEach((info,index)=>{
    const signature=[info.kind,info.color,info.look,info.alert].join('|');let actor=this.actors.get(info.id);if(actor&&actor.signature!==signature){this.remove(info.id);actor=null;}if(!actor){actor=this.build(info);this.actors.set(info.id,actor);}
    const scale=floor==='overview'?27:38;actor.root.position.set((info.x-500)*aspect,500-info.y,index*3);actor.root.scale.setScalar(scale);
-   actor.body.rotation.y=info.heading||0;const gait=animate&&info.moving?Math.sin(time*2+index)*(info.motion??1):0;
-   actor.body.position.y=animate?Math.sin(time*3+index)*.012:0;
-   actor.bones.forEach((bone,i)=>{if(info.kind==='dog'&&i===4)bone.rotation.z=animate?Math.sin(time*2)*.1:0;else bone.rotation.x=gait*(i%2?1:-1)*(i<2?.31:.25);});
-   actor.ring.material.opacity=info.selected?.98:info.alert?.8:.55;actor.ring.material.color.set(info.alert?'#fb7977':info.selected?'#c7baff':'#9dd8ff');
+   const target=info.heading||0;if(actor.heading===null)actor.heading=target;if(info.moving){const delta=Math.atan2(Math.sin(target-actor.heading),Math.cos(target-actor.heading));actor.heading+=delta*(1-Math.exp(-dt*5));}actor.body.rotation.y=actor.heading;const gait=animate&&info.moving?Math.sin(time*(info.kind==='dog'?9:7)+index)*(info.motion??1):0;
+   actor.body.position.y=animate?Math.abs(gait)*.035+Math.sin(time*2+index)*.008:0;
+   actor.bones.forEach((bone,i)=>{if(info.kind==='dog'&&i===4)bone.rotation.z=animate?Math.sin(time*8)*.42:0;else bone.rotation.x=gait*(i%2?1:-1)*(i<2?.5:.38);});
+   const opacity=info.opacity??1;for(const m of actor.fadeMaterials){m.transparent=opacity<1;m.opacity=opacity;m.depthWrite=opacity>=1;}actor.shadow.material.opacity=.18*opacity;
+   actor.ring.material.opacity=(info.selected?.98:info.alert?.8:.55)*opacity;actor.ring.material.color.set(info.alert?'#fb7977':info.selected?'#c7baff':'#9dd8ff');
   });this.renderer.render(this.scene,this.camera);
  }
- dispose(){for(const id of [...this.actors.keys()])this.remove(id);for(const g of Object.values(this.geometry))g.dispose();for(const m of this.materials.values())m.dispose();this.renderer.dispose();this.renderer.domElement.remove();}
+ dispose(){this.vehicle.dispose();for(const id of [...this.actors.keys()])this.remove(id);for(const g of Object.values(this.geometry))g.dispose();for(const m of this.materials.values())m.dispose();this.renderer.dispose();this.renderer.domElement.remove();}
 }

@@ -7,6 +7,21 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+[functions."parks-studio"]
+  included_files = ["site/studio.html"]
+
+[[redirects]]
+  from = "/studio.html"
+  to = "/.netlify/functions/parks-studio"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/studio"
+  to = "/.netlify/functions/parks-studio"
+  status = 200
+  force = true
+
 # Static pages of the Bonaparks iOS app (public/).
 # App Store Connect links to these URLs: keep them stable.
 [[redirects]]

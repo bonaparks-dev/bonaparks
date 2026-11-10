@@ -7,10 +7,11 @@
     "dev": "node scripts/build-parks.mjs && node scripts/serve.mjs",
     "build": "node scripts/build-parks.mjs",
     "preview": "node scripts/serve.mjs",
-    "test": "node --test site/studio-comfort.test.mjs site/studio-home.test.mjs site/studio-spatial.test.mjs site/studio-model.test.mjs"
+    "test": "node --test site/studio-comfort.test.mjs site/studio-home.test.mjs site/studio-spatial.test.mjs site/studio-model.test.mjs site/studio-animation.test.mjs netlify/lib/access.test.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^11.1.7",
+    "jose": "^6.2.17",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
