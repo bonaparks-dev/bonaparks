@@ -12,3 +12,30 @@ body:has(.live-demo){background:#03060b;color:#d7e2f2}.site-header:has(+main .li
 @media(prefers-reduced-motion:reduce){.fan-switch,.home-fan-hit>span{transition:none}}
 
 .demo-panel-navigation{position:static;background:none;padding-top:0;margin-top:0;box-shadow:none}.demo-view-top .demo-view-actions{flex-wrap:wrap}.action-feedback{background:linear-gradient(125deg,#122136f5,#080f1bfa);border-color:#94bce638}.action-feedback>i{background:#7caee819;color:#a8cfff}.action-feedback>button:focus-visible{outline-color:#9ec7f7}
+
+/* Comfort values belong in the rail. The scene contains only physical effects. */
+.climate-card{display:grid;grid-template-columns:28px minmax(0,1fr) 34px;gap:7px 10px;padding:11px 12px;border-radius:12px}
+.climate-card .climate-symbol{grid-column:1;grid-row:1;width:27px;height:28px;background:none}
+.climate-card .climate-copy{grid-column:2;grid-row:1}
+.climate-card .climate-copy small{margin-top:4px;font-variant-numeric:tabular-nums}
+.climate-card .climate-power{grid-column:3;grid-row:1;width:32px;height:32px;margin:0;border:1px solid #9ebde322}
+.climate-setpoint{grid-column:2 / 4;display:flex;align-items:center;gap:8px;margin-top:2px;padding-top:5px;border-top:1px solid #9ebde313}
+.climate-setpoint>span{font-size:9px;color:#7f91aa;flex:1}.climate-setpoint>output{font-size:12px;min-width:44px;text-align:center}
+.climate-setpoint>button,.climate-setpoint>button:last-child{width:27px;height:26px;margin:0;background:#7ea3cc09;border-radius:6px;color:#a9bdd4}
+.demo-readings{gap:16px;margin-top:11px}.demo-readings>span{font-size:9px;line-height:1.5;grid-template-columns:1fr;gap:4px}.demo-readings small{grid-column:1;font-variant-numeric:tabular-nums;color:#b4c7dc}
+/* On phones the horizontal plot stays above an independently scrollable rail. */
+@media(max-width:767px){
+ .live-demo.wrap{height:calc(100svh - 62px);min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ .demo-view{height:auto;min-height:0;max-height:none}
+ .demo-view-top{padding:12px 14px 8px;min-height:44px;gap:6px}.demo-view-top h1{font-size:16px}
+ .demo-view-top .demo-floors{gap:2px}.demo-view-top .demo-floors button{padding:8px;font-size:9px}
+ .demo-screen{flex:none;height:auto;aspect-ratio:1.65;min-height:0}
+ .demo-caption{min-height:29px;padding:6px 14px 8px;font-size:9px}
+ .demo-controls{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:16px 14px 26px;border-top:1px solid #a5c8ef20;border-radius:18px 18px 0 0;background:linear-gradient(180deg,#0a1524,#040a12)}
+ .demo-control-heading h2{font-size:16px}.demo-controls .quick-modes{margin-top:12px}.demo-scenario{min-height:78px}.demo-transport{padding-block:10px}
+ .climate-card{padding:10px 12px;gap:7px 10px}.climate-copy strong{font-size:11px}.climate-copy small{font-size:9px}
+ .climate-setpoint>button,.climate-setpoint>button:last-child{width:32px;height:32px}
+ .demo-after.wrap{padding:14px}.demo-view-top>div>span{display:none}
+}
+@media(min-width:768px) and (max-width:1100px){.live-demo.wrap{grid-template-columns:minmax(0,1fr) 310px}.demo-controls{padding-inline:16px}.demo-view-top{padding-inline:18px}.demo-view-top h1{font-size:18px}}
+@media(hover:none) and (max-height:500px) and (max-width:950px){.live-demo.wrap{height:auto;grid-template-columns:1fr}.demo-view{height:auto}.demo-screen{height:auto;aspect-ratio:1.65}.demo-controls{max-height:65svh;overflow-y:auto}}

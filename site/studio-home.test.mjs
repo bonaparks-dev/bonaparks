@@ -1,3 +1,4 @@
+import {presentationBounds,presentationMatrix} from './studio-presentation.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {initialHome,restoreHome,applyScene,tickGate,dueRoutines,validRoutine,lights,changeTV,lightingForFloor,setFloorLights} from './studio-home-model.mjs';
@@ -86,7 +87,8 @@ test('space cameras center each selected room on desktop and mobile',()=>{
   assert.ok(spacesForFloor(floor).length>0);
   for(const size of [[800,600,900,600],[300,280,360,400]])for(const room of spacesForFloor(floor)){
    const [w,h,hw,hh]=size,c=spaceCamera(floor,room.id,w,h,hw,hh),p=mapPoints[floor][room.id];
-   assert.ok(c.zoom>=1&&c.zoom<=3.4);assert.ok(Math.abs(c.x+(p[0]/1000-.5)*w*c.zoom)<.00001);assert.ok(Math.abs(c.y+(p[1]/1000-.5)*h*c.zoom)<.00001);
+   const [a,b,cc,d]=presentationMatrix(floor),bounds=presentationBounds(floor,w,h),x=(p[0]/1000-.5)*w,y=(p[1]/1000-.5)*h;
+   assert.ok(c.zoom>=1&&c.zoom<=3.4);assert.ok(Math.abs(c.x+(a*x+cc*y-(bounds.left+bounds.right)/2)*c.zoom)<.00001);assert.ok(Math.abs(c.y+(b*x+d*y-(bounds.top+bounds.bottom)/2)*c.zoom)<.00001);
   }
  }
  assert.deepEqual(spaceCamera('overview','all',800,600,900,600),{x:0,y:0,zoom:1});

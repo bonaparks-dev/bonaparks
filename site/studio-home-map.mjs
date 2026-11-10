@@ -1,6 +1,6 @@
 import {lightingMarkup} from './studio-lighting.mjs';
 import {fansMarkup,fanPositions,fans} from './studio-equipment.mjs';
-import {lampButtons,breezeMarkup,sensorsMarkup} from './studio-fixtures.mjs';
+import {lampButtons,breezeMarkup} from './studio-fixtures.mjs';
 import {poolPath as waterPath,spaPath} from './studio-water.mjs';
 import {roomSurfaces,polygonPoints,surfaceBox} from './studio-home-surfaces.mjs';
 import {shuttersMarkup} from './studio-shutters.mjs';
@@ -10,8 +10,8 @@ import {gateMarkup} from './studio-gate.mjs';
 // Hotspots are presentation coordinates over the accepted Su Pranu renders.
 // They do not change the scanned architecture or claim measured device positions.
 export const mapPoints={
- overview:{kitchen:[463,295],living:[503,399],'bath-down':[398,350],patio:[410,505],stairs:[522,526],garden:[755,543],gazebo:[499,729],entry:[274,242],garage:[181,283],pool:[672,821],spa:[687,746],gate:[272,123],'ac-rdc':[558,337],music:[388,548]},
- rdc:{kitchen:[511,249],living:[600,421],'bath-down':[360,330],patio:[410,570],stairs:[615,679],'ac-rdc':[717,324],music:[328,674]},
+ overview:{kitchen:[463,295],living:[503,399],'bath-down':[398,350],patio:[410,505],stairs:[522,526],garden:[755,543],gazebo:[499,729],entry:[274,242],garage:[181,283],pool:[672,821],spa:[687,746],gate:[272,123],'ac-rdc':[560,292],music:[388,548]},
+ rdc:{kitchen:[511,249],living:[600,421],'bath-down':[360,330],patio:[410,570],stairs:[615,679],'ac-rdc':[686,224],music:[328,674]},
  etage:{master:[475,212],guest:[723,331],children:[330,395],blue:[578,548],'bath-up':[440,472],hall:[580,405],stairs:[684,666],'ac-etage':[691,443]}
 };
 const speakers={overview:[[348,470],[460,521],[334,531],[458,586]],rdc:[[229,469],[549,626],[142,660],[422,796]],etage:[]};
@@ -41,7 +41,7 @@ export function mapMarkup(s,floor,definitions,selected){
  for(const t of televisions.filter(t=>tvScreens[floor]?.[t.id])){const pos=floor==='rdc'?[686,264]:[254,449];html+='<button class="home-tv-hit" data-home-select="tv:'+t.id+'" style="left:'+(pos[0]-28)/10+'%;top:'+(pos[1]-16)/10+'%;width:5.6%;height:3.2%" aria-label="Télécommande · '+t.name+'" title="Télécommande · '+t.name+'"></button>';}
  html+=lampButtons(s,floor,definitions);if(floor==='overview'&&s.presence!=='away')html+='<button class="home-item-hit car-hit" data-home-direct="car" style="left:18%;top:37%;width:8%;height:12%" aria-label="Voiture · contact et phares" aria-pressed="'+s.car.on+'"></button>';
  for(const [id,[x,y]] of Object.entries(fanPositions[floor]||{}))html+=`<button class="home-fan-hit" data-device="fan" data-id="${id}" aria-label="${fans.find(f=>f.id===id).name}" aria-pressed="${s.fans?.[id]?.on===true}" style="left:${(x+22)/10}%;top:${(y+10)/10}%"><span>${homeIcon('power')}</span></button>`;
- return html+'</div>'+sensorsMarkup(s,floor,points);
+ return html+'</div>';
 
 }
 export function updateGateElement(svg,position){if(svg){svg.setAttribute('opacity',position>0?'1':'0');svg.innerHTML=gateMarkup(position);}}

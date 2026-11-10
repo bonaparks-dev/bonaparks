@@ -1,5 +1,6 @@
 import {lights} from './studio-home-model.mjs';
 import {mapPoints} from './studio-home-map.mjs';
+import {presentationMatrix,presentationBounds} from './studio-presentation.mjs';
 
 export function spacesForFloor(floor){return lights.filter(l=>mapPoints[floor]?.[l.id]);}
 export function clampHouseZoom(value){return Number.isFinite(value)?Math.max(1,Math.min(3.4,value)):1;}
@@ -11,7 +12,9 @@ export function spaceCamera(floor,id,width,height,hostWidth,hostHeight){
  const broad=['garden','patio','living'].includes(id);
  const fraction=id==='garden'?.56:floor==='overview'?(broad?.29:.23):(broad?.48:.36);
  const zoom=Math.max(1.35,Math.min(1.85,hostWidth*.78/(width*fraction),hostHeight*.72/(height*fraction)));
- return {x:(.5-point[0]/1000)*width*zoom,y:(.5-point[1]/1000)*height*zoom,zoom};
+ const [a,b,c,d]=presentationMatrix(floor),bounds=presentationBounds(floor,width,height);
+ const px=(point[0]/1000-.5)*width,py=(point[1]/1000-.5)*height;
+ return {x:((bounds.left+bounds.right)/2-a*px-c*py)*zoom,y:((bounds.top+bounds.bottom)/2-b*px-d*py)*zoom,zoom};
 }
 
 // Update existing nodes so running SVG/CSS animations retain their phase.

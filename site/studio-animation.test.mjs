@@ -1,3 +1,6 @@
+import {controlsMarkup} from './landing-controls.mjs';
+import {fixtures} from './studio-fixtures.mjs';
+import {outdoorLightSurfaces} from './studio-lighting.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {initialHome,restoreHome,lights} from './studio-home-model.mjs';
@@ -6,7 +9,7 @@ import {smoothTrack,ambientMotion} from './studio-motion.mjs';
 import {journeyFrame,journeys,journeyActors,climateStep} from './studio-life-model.mjs';
 import {FrameLoop} from './studio-frame-loop.mjs';
 import {SpatialExperience} from './studio-spatial.mjs';
-import {waterLevels} from './studio-water.mjs';
+import {waterLevels,poolCurrentFrame} from './studio-water.mjs';
 import {mapMarkup} from './studio-home-map.mjs';
 import {tours,tourFrame} from './studio-tour-model.mjs';
 import {lightFields,lightingMarkup} from './studio-lighting.mjs';
@@ -45,8 +48,29 @@ test('temperature cools gradually without overshooting and legacy homes gain amb
  c.rdc.mode='heat';c.rdc.temperature=28;assert.ok(climateStep(c,.1).rdc.ambient>23);
  const old=initialHome();delete old.climate.rdc.ambient;old.security='arming';const r=restoreHome(old);assert.equal(r.climate.rdc.ambient,26);assert.equal(r.security,'disarmed');
 });
-test('both bathrooms expose humidity and AC values use explicit degrees Celsius',()=>{
- const s=initialHome();for(const [floor,value] of [['rdc','58 %'],['etage','64 %']]){const html=mapMarkup(s,floor,lights,null);assert.ok(html.includes(value));assert.ok(html.includes('26,0 °C'));assert.ok(html.includes('map-lamp'));assert.ok(!html.includes('home-pin'));}
+test('comfort values remain in the control rail and never obscure any of the three plans',()=>{
+ const s=initialHome();for(const floor of ['overview','rdc','etage']){
+  const map=mapMarkup(s,floor,lights,null),panel=controlsMarkup(floor);
+  assert.ok(!map.includes('map-reading'));assert.ok(!map.includes(' °C'));assert.ok(!map.includes('58 %'));assert.ok(!map.includes('64 %'));
+  assert.ok(panel.includes('26,0 °C'));assert.ok(panel.includes('58 %'));assert.ok(panel.includes('64 %'));assert.ok(panel.includes('data-setpoint'));
+ }
+});
+test('garden lighting covers both lawns and entry spots illuminate planting',()=>{
+ const inside=([x,y],poly)=>{let hit=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [xi,yi]=poly[i],[xj,yj]=poly[j];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))hit=!hit;}return hit;};
+ const lawns=outdoorLightSurfaces.garden;
+ assert.equal(fixtures.overview.garden.length,6);
+ for(const p of fixtures.overview.garden)assert.ok(lawns.some(poly=>inside(p,poly)),'every source falls on a lawn');
+ for(const poly of lawns)assert.ok(fixtures.overview.garden.filter(p=>inside(p,poly)).length>=2,'both lawns are lit');
+ assert.equal(lightFields(initialHome(),'overview').filter(f=>f.uplight).length,2);
+});
+test('pool circulation has traveling, dissipating wave fronts only while its pump runs',()=>{
+ assert.deepEqual(poolCurrentFrame(10,0),[]);
+ const a=poolCurrentFrame(0,1),b=poolCurrentFrame(.1,1);assert.equal(a.length,18);
+ assert.ok(a.every(p=>p.opacity>=0&&p.opacity<=.48));
+ assert.ok(b.every((p,i)=>p.x<a[i].x&&p.y>a[i].y));
+ assert.ok(a.every((p,i)=>Math.hypot(p.x-b[i].x,p.y-b[i].y)<1.2));
+ assert.ok(poolCurrentFrame(0,.5).every((p,i)=>Math.abs(p.opacity-a[i].opacity*.5)<1e-12));
+ assert.deepEqual(poolCurrentFrame(10,1),poolCurrentFrame(10,1));
 });
 
 test('diffuse lighting is independent, dimmable and bounded by its room on every floor',()=>{
