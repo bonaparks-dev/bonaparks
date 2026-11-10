@@ -1,0 +1,20 @@
+{
+  "reference": "Asno demo inspected in the user's Opera window",
+  "scope": "Public homepage and connected-home studio presentation; existing architectural renders and geometry retained",
+  "changes": [
+    "Continuous near-black scene background, no nested preview cards",
+    "Opaque blue image background clipped out in the full studio as well as the public preview",
+    "Viewport-height scene and independently scrolling right control rail",
+    "Persistent floor navigation on desktop; stacked controls on mobile",
+    "Public room lighting, climate setpoints, TV power/channels/volume, terrace music, four water circuits, gate, car and individual shutters"
+  ],
+  "verification": {
+    "node_tests": "68 passed",
+    "build": "95 files; all static references resolved",
+    "visual_viewports": ["1280x720 desktop", "390x844 mobile", "1000x550 compact window"],
+    "mobile_overflow": "document width 375 px within a 390 px viewport",
+    "manual_controls": ["Lights on and off", "Three floor selectors", "Children TV power and channel 1 to 2", "All upstairs shutters opening to 100%"],
+    "studio": "Native view inspected after removing the blue raster background",
+    "geometry": "No new raster rotation, affine distortion, architectural regeneration or changes to the calibrated overlays"
+  }
+}

@@ -1,6 +1,7 @@
+import {demoCommand} from './studio-demo-controls.mjs';
 import {tours,tourFrame} from './studio-tour-model.mjs';
 import {journeyActors} from './studio-life-model.mjs';
-import {initialHome,setFloorLights} from './studio-home-model.mjs';
+import {initialHome} from './studio-home-model.mjs';
 import {initialSpatial,cameraAt,safetyState} from './studio-spatial-model.mjs';
 export class ShowcaseTour{
  constructor(home){this.home=home;this.id=null;this.lastId='arrival';this.time=0;this.playing=false;this.mode=null;this.floor=null;this.lastPaint=0;this.lastPost=0;this.frame=null;
@@ -10,7 +11,7 @@ export class ShowcaseTour{
    if(d.action==='play'){if(!this.id)this.start(this.lastId);if(this.frame?.done)this.seek(0);this.playing=true;}
    if(d.action==='seek')this.seek(d.time);
    if(d.action==='interactive')this.manual();
-   if(d.action==='device')this.command(d.device,d.id);
+   if(d.action==='device')this.command(d.device,d.id,d.value);
    if(d.action==='floor'&&['overview','rdc','etage'].includes(d.floor)){this.manual();this.home.onFloor?.(d.floor);}
    this.publish();
   });
@@ -18,17 +19,8 @@ export class ShowcaseTour{
  }
  start(id){if(!tours[id])return;const h=this.home;h.life.stop();h.spatial.pause();cancelAnimationFrame(h.gateFrame);cancelAnimationFrame(h.shutterFrame);h.gateFrame=h.shutterFrame=0;this.id=this.lastId=id;this.time=0;this.mode=null;this.floor=null;this.playing=!h.spatial.motion.matches;h.state=initialHome();h.state.night=true;h.spatial.state={...initialSpatial(),members:[...initialSpatial().members,{id:'child-2',name:'Enfant · télé',kind:'child',color:'#b6a6e5',look:1,zone:'children'},{id:'child-3',name:'Enfant · jeux',kind:'child',color:'#e1af83',look:0,zone:'blue'}]};this.apply();this.publish();}
  manual(){if(!this.id)return;this.lastId=this.id;this.id=null;this.frame=null;this.playing=false;this.home.life.stop();this.home.spatial.pause();this.home.spatial.securityOpen=false;this.home.state.presence='home';this.home.state.security='disarmed';this.home.state.doors={patio:0,upstairs:0};this.home.renderMap();this.home.spatial.draw();this.publish();}
- command(device,id){const allowed=['light','pool-pump','spa-pump','ac','car','gate','lights','tv'];if(!allowed.includes(device))return;const h=this.home;if(device==='light'&&!Object.hasOwn(h.state.lights,id))return;if(device==='ac'&&!['rdc','etage'].includes(id))return;if(device==='tv'&&!['living','children'].includes(id))return;this.manual();const s=h.state;if(['pool-pump','spa-pump','car','gate'].includes(device)||device==='light'&&['pool','spa'].includes(id))h.onFloor?.('overview');if(device==='ac'&&(id==='etage'||h.floor==='etage'))h.onFloor?.(id);
-  if(device==='light')s.lights[id].on=!s.lights[id].on;
-  if(device==='pool-pump')s.pool.pump=!s.pool.pump;
-  if(device==='spa-pump')s.spa.jets=!s.spa.jets;
-  if(device==='ac')s.climate[id].on=!s.climate[id].on;
-  if(device==='car'){s.car.on=!s.car.on;h.onFloor?.('overview');}
-  if(device==='gate'){s.gate.target=s.gate.target===1?0:1;h.startGate();}
-  if(device==='lights')h.state=setFloorLights(s,h.floor,id==='on');
-  if(device==='tv')s.tv[id].on=!s.tv[id].on;
-  h.renderMap();h.spatial.draw();this.publish();
- }
+ command(device,id,value){const h=this.home;if(!demoCommand(h.state,h.floor,device,id,value))return;this.manual();const result=demoCommand(h.state,h.floor,device,id,value);h.state=result.state;if(result.gate)h.startGate();if(result.shutters)h.startShutters();h.renderMap();h.spatial.draw();this.publish();}
+
  seek(t){if(!this.id)this.start(this.lastId);this.time=Math.max(0,Math.min(60,Number(t)||0));this.mode=null;this.apply();this.publish();}
  tick(dt,now){if(this.id){this.home.spatial.playing=this.playing&&!!this.frame?.incident;if(this.playing){this.time=Math.min(60,this.time+dt);this.apply();if(this.frame.done){this.playing=false;if(this.id==='arrival'){this.manual();this.home.onFloor?.('overview');}}}}if(now-this.lastPost>.25){this.lastPost=now;this.publish();}}
  apply(){const f=this.frame=tourFrame(this.id,this.time),h=this.home,s=h.state;
@@ -43,5 +35,5 @@ export class ShowcaseTour{
   if(f.floor==='etage')return list.map(a=>a.id==='child-2'?{...a,x:315,y:477,moving:false,heading:-1.5}:a);
   return list;
  }
- publish(){const f=this.frame,s=this.home.state;parent.postMessage({type:'parks-tour-state',id:this.id||this.lastId,interactive:!this.id,time:this.time,duration:60,floor:this.home.floor,caption:f?.caption||'À vous de jouer. Touchez un équipement ou utilisez les commandes.',playing:this.playing,done:f?.done||false,severity:f?.incident?safetyState(f.incident,f.incidentTime):'idle',devices:{pool:s.lights.pool.on,spa:s.lights.spa.on,'pool-pump':s.pool.pump,'spa-pump':s.spa.jets,'ac-rdc':s.climate.rdc.on,'ac-etage':s.climate.etage.on,car:this.home.life.vehicle()?.lights===true,gate:s.gate.target>.5},readings:{rdc:s.climate.rdc.ambient,etage:s.climate.etage.ambient,'bath-down':s.humidity['bath-down'],'bath-up':s.humidity['bath-up']}},location.origin);}
+ publish(){const f=this.frame,s=this.home.state;parent.postMessage({type:'parks-tour-state',id:this.id||this.lastId,interactive:!this.id,time:this.time,duration:60,floor:this.home.floor,caption:f?.caption||'À vous de jouer. Touchez un équipement ou utilisez les commandes.',playing:this.playing,done:f?.done||false,severity:f?.incident?safetyState(f.incident,f.incidentTime):'idle',controls:{lights:s.lights,climate:s.climate,tv:s.tv,music:s.music,humidity:s.humidity,shutters:s.shutters,pool:s.pool,spa:s.spa,gate:s.gate,car:{on:this.home.life.vehicle()?.lights===true}},devices:{pool:s.lights.pool.on,spa:s.lights.spa.on,'pool-pump':s.pool.pump,'spa-pump':s.spa.jets,'ac-rdc':s.climate.rdc.on,'ac-etage':s.climate.etage.on,car:this.home.life.vehicle()?.lights===true,gate:s.gate.target>.5},readings:{rdc:s.climate.rdc.ambient,etage:s.climate.etage.ambient,'bath-down':s.humidity['bath-down'],'bath-up':s.humidity['bath-up']}},location.origin);}
 }

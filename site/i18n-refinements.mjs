@@ -189,4 +189,8 @@ export const refinementRows=[
   "空调关闭",
   "КОНДИЦИОНЕР ВЫКЛ."
  ]
+,
+["DIVERTISSEMENT","ENTERTAINMENT","INTRATTENIMENTO","ENTRETENIMIENTO","UNTERHALTUNG","娱乐","РАЗВЛЕЧЕНИЯ"],
+["Tous les volets","All shutters","Tutte le tapparelle","Todas las persianas","Alle Rollläden","所有卷帘","Все рольставни"],
+["Baisser la température","Lower temperature","Abbassare la temperatura","Bajar la temperatura","Temperatur senken","降低温度","Понизить температуру"]
 ];

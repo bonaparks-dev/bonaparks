@@ -7,10 +7,15 @@ html:has(body.demo-embed){background:transparent}
 .demo-embed .spatial-actor-label>span{transform:var(--scene-inverse) translate(-50%,-3px);transform-origin:0 100%}
 .demo-embed .spatial-map-camera{transform:var(--scene-inverse) translate(-50%,-50%);transform-origin:0 0}
 body[data-public-demo] #house-stage #house-render{filter:url(#scene-alpha) brightness(.88) saturate(.86)}
-body[data-public-demo] #house-stage.is-night #house-render{filter:url(#scene-alpha) brightness(.34) saturate(.72)}
+body[data-public-demo] #house-stage.is-night #house-render{filter:url(#scene-alpha) brightness(.45) saturate(.78)}
 body[data-public-demo] .home-effects>image{filter:url(#scene-alpha) saturate(.86) brightness(.98)}
 .demo-embed .home-hit-areas{display:block!important;pointer-events:none}
 .demo-embed #render-view{pointer-events:auto}
 .demo-embed .map-lamp-button,.demo-embed .home-item-hit,.demo-embed .home-room-hit{pointer-events:auto}
 .demo-embed .home-tv-hit{display:none}
+/* The parent page supplies one continuous background. Keep every canvas layer transparent. */
+.demo-embed #viewport,.demo-embed #render-view,.demo-embed .workspace,.demo-embed .main{background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important}
+.demo-embed #render-view{inset:0!important}
+.demo-embed #house-stage{filter:drop-shadow(0 24px 28px #0006)}
+.demo-embed .home-room-hit:hover,.demo-embed .home-room-hit:focus-visible,.demo-embed .home-item-hit:hover,.demo-embed .home-item-hit:focus-visible{border-color:transparent;box-shadow:none;outline:1px solid #c0b0ee55}
 @media(max-width:650px){.demo-embed .map-lamp-button>span{width:11px;height:11px}.demo-embed .map-lamp-button>span>svg{width:7px;height:7px}.demo-embed .map-readings{display:none}}
