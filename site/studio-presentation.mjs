@@ -1,5 +1,5 @@
 // Presentation only: approved images and animation coordinates stay intact.
-// Align both ground-plane axes and fit the scene instead of its diagonal image box.
+// A rigid rotation aligns the facade without shearing furniture or architecture.
 export const presentations={
  overview:{across:[1115,411],down:[-299,667],outline:[[.211,.004],[.982,.382],[.767,1],[.006,.618]],clip:'polygon(21.1% 0.4%,98.2% 38.2%,76.7% 100%,0.6% 61.8%)'},
  rdc:{across:[540,245],down:[-490,800],outline:[[.41,.04],[.85,.25],[1,.36],[1,.45],[.60,1],[.02,.77],[0,.62]]},
@@ -7,8 +7,8 @@ export const presentations={
 };
 export function presentationMatrix(floor){
  const v=presentations[floor]||presentations.overview;
- const ul=Math.hypot(...v.across),vl=Math.hypot(...v.down),ux=v.across[0]/ul,uy=v.across[1]/ul,vx=v.down[0]/vl,vy=v.down[1]/vl,det=ux*vy-uy*vx;
- return [vy/det,-uy/det,-vx/det,ux/det];
+ const length=Math.hypot(...v.across),c=v.across[0]/length,s=v.across[1]/length;
+ return [c,-s,s,c];
 }
 export function fitPresentation(floor,width,height,viewportWidth,viewportHeight){
  const v=presentations[floor]||presentations.overview,[a,b,c,d]=presentationMatrix(floor);

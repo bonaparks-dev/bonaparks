@@ -26,7 +26,7 @@ export class AvatarRenderer{
    const tail=this.ellipsoid(body,'#a1845d',[0,.5,-.48],[.055,.22,.065]);tail.rotation.x=-.8;bones.push(tail);
   }else{
    const child=info.kind==='child';this.ellipsoid(body,info.color,[0,1.13,0],[.25,.35,.15]);this.ellipsoid(body,'#354657',[0,.82,0],[.23,.13,.14]);
-   for(const x of [-.12,.12]){const leg=this.limb(body,'#405165',x,.84,.65,.085);bones.push(leg);this.ellipsoid(leg,'#e8e7dc',[0,-.65,.055],[.10,.075,.16]);}
+   for(const x of [-.12,.12]){const leg=this.limb(body,'#405165',x,.84,.32,.085);const knee=this.limb(leg,'#405165',0,-.32,.33,.078);leg.userData.knee=knee;bones.push(leg);this.ellipsoid(knee,'#e8e7dc',[0,-.33,.055],[.10,.075,.16]);}
    for(const x of [-.28,.28]){const arm=this.limb(body,info.color,x,1.36,.42,.075);bones.push(arm);this.ellipsoid(arm,skin,[0,-.45,0],[.072,.105,.07]);}
    this.ellipsoid(body,skin,[0,1.5,0],[.08,.10,.085]);this.ellipsoid(body,skin,[0,1.74,0],[.19,.23,.18]);this.ellipsoid(body,hair,[0,1.87,-.015],[.20,.13,.18]);
    if(info.look){this.ellipsoid(body,hair,[0,1.68,-.14],[.19,.23,.085]);this.ellipsoid(body,hair,[.13,1.79,-.13],[.095,.12,.08]);}
@@ -34,7 +34,7 @@ export class AvatarRenderer{
    this.ellipsoid(body,skin,[0,1.71,.184],[.033,.045,.035]);this.ellipsoid(body,'#986854',[0,1.64,.162],[.042,.009,.009]);
    if(child)body.scale.set(.76,.74,.76);
   }
-  const fadeMaterials=[];body.traverse(o=>{if(o.isMesh){o.material=o.material.clone();fadeMaterials.push(o.material);}});root.add(body);this.scene.add(root);return {root,body,ring,shadow,bones,fadeMaterials,heading:null,signature:[info.kind,info.color,info.look,info.alert].join('|')};
+  const fadeMaterials=[];body.traverse(o=>{if(o.isMesh){o.material=o.material.clone();fadeMaterials.push(o.material);}});root.add(body);this.scene.add(root);return {root,body,ring,shadow,bones,fadeMaterials,phase:0,heading:null,signature:[info.kind,info.color,info.look,info.alert].join('|')};
  }
  remove(id){const a=this.actors.get(id);if(!a)return;this.scene.remove(a.root);a.ring.material.dispose();a.shadow.material.dispose();for(const m of a.fadeMaterials)m.dispose();this.actors.delete(id);}
  render(list,time,floor,animate,vehicle){
@@ -47,9 +47,9 @@ export class AvatarRenderer{
   list.forEach((info,index)=>{
    const signature=[info.kind,info.color,info.look,info.alert].join('|');let actor=this.actors.get(info.id);if(actor&&actor.signature!==signature){this.remove(info.id);actor=null;}if(!actor){actor=this.build(info);this.actors.set(info.id,actor);}
    const scale=floor==='overview'?27:38;actor.root.position.set((info.x-500)*aspect,500-info.y,index*3);actor.root.scale.setScalar(scale);
-   const target=info.heading||0;if(actor.heading===null)actor.heading=target;if(info.moving){const delta=Math.atan2(Math.sin(target-actor.heading),Math.cos(target-actor.heading));actor.heading+=delta*(1-Math.exp(-dt*5));}actor.body.rotation.y=actor.heading;const gait=animate&&info.moving?Math.sin(time*(info.kind==='dog'?9:7)+index)*(info.motion??1):0;
-   actor.body.position.y=animate?Math.abs(gait)*.035+Math.sin(time*2+index)*.008:0;
-   actor.bones.forEach((bone,i)=>{if(info.kind==='dog'&&i===4)bone.rotation.z=animate?Math.sin(time*8)*.42:0;else bone.rotation.x=gait*(i%2?1:-1)*(i<2?.5:.38);});
+   const target=info.heading||0;if(actor.heading===null)actor.heading=target;if(info.moving){const delta=Math.atan2(Math.sin(target-actor.heading),Math.cos(target-actor.heading));actor.heading+=delta*(1-Math.exp(-dt*5));}actor.body.rotation.y=actor.heading;const speed=Math.max(0,info.speed??5);if(animate&&info.moving)actor.phase+=dt*Math.min(7,Math.max(2.5,speed*.3));const gait=animate&&info.moving?Math.sin(actor.phase+index)*(info.motion??1):0;
+   actor.body.position.y=animate?Math.abs(gait)*.018+Math.sin(time*2+index)*.008:0;
+   actor.bones.forEach((bone,i)=>{if(info.kind==='dog'&&i===4)bone.rotation.z=animate?Math.sin(time*5)*.3:0;else{const stride=gait*(i%2?1:-1);bone.rotation.x=stride*(i<2?.36:.22);if(bone.userData.knee)bone.userData.knee.rotation.x=Math.max(0,-stride)*.55;}});
    const opacity=info.opacity??1;for(const m of actor.fadeMaterials){m.transparent=opacity<1;m.opacity=opacity;m.depthWrite=opacity>=1;}actor.shadow.material.opacity=.18*opacity;
    actor.ring.material.opacity=(info.selected?.98:info.alert?.8:.55)*opacity;actor.ring.material.color.set(info.alert?'#fb7977':info.selected?'#c7baff':'#9dd8ff');
   });this.renderer.render(this.scene,this.camera);

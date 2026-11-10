@@ -6,8 +6,9 @@ import {rows} from './i18n-catalog.mjs';
 import {extraRows} from './i18n-extra.mjs';
 import {legalRows} from './i18n-legal.mjs';
 import {editorRows} from './i18n-editor.mjs';
+import {refinementRows} from './i18n-refinements.mjs';
 import {tours} from './studio-tour-model.mjs';
-const all=[...rows,...extraRows,...legalRows,...editorRows];
+const all=[...rows,...extraRows,...legalRows,...editorRows,...refinementRows];
 const normalize=s=>s.replace(/\s+/g,' ').trim();
 test('all seven languages have a complete, non-empty catalog',()=>{
  assert.deepEqual(languages.map(l=>l[0]),['fr','en','it','es','de','zh','ru']);

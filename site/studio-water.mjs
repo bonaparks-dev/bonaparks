@@ -5,7 +5,7 @@ export const waterLevels=s=>[s.lights.pool.on?s.lights.pool.brightness/100:0,s.l
 export class WaterRenderer{
  constructor(stage){this.canvas=document.createElement('canvas');this.canvas.className='home-water-canvas';this.canvas.setAttribute('aria-hidden','true');stage.insertBefore(this.canvas,stage.querySelector('#home-layer'));this.ctx=this.canvas.getContext('2d');this.paths=[new Path2D(poolPath),new Path2D(spaPath)];this.level=[0,0,0,0];this.clock=0;this.previous=0;}
  draw(now,state,floor,animate){this.canvas.hidden=floor!=='overview';if(floor!=='overview'||!this.ctx)return;const dt=Math.min(.1,Math.max(0,now-this.previous));this.previous=now;if(animate)this.clock+=dt;const w=Math.round(this.canvas.clientWidth*Math.min(devicePixelRatio,2)),h=Math.round(this.canvas.clientHeight*Math.min(devicePixelRatio,2));if(!w||!h)return;if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}const c=this.ctx;c.setTransform(w/1000,0,0,h/1000,0,0);c.clearRect(0,0,1000,1000);
-  waterLevels(state).forEach((v,i)=>this.level[i]+=(v-this.level[i])*(1-Math.exp(-dt*4)));
+  const settle=Math.max(1/60,dt);waterLevels(state).forEach((v,i)=>this.level[i]+=(v-this.level[i])*(1-Math.exp(-settle*4)));
   for(let basin=0;basin<2;basin++){const small=basin===1,light=this.level[basin],flow=this.level[basin+2],path=this.paths[basin],t=this.clock,x=small?665:577,y=small?726:746,width=small?42:185,height=small?40:145;c.save();c.clip(path);
    const depth=c.createLinearGradient(x,y,x+width*.55,y+height);depth.addColorStop(0,`rgba(10,72,105,${state.night?.78:.35})`);depth.addColorStop(.5,`rgba(15,139,177,${.12+light*.2})`);depth.addColorStop(1,`rgba(6,53,89,${state.night?.7:.3})`);c.fillStyle=depth;c.fillRect(x,y,width,height);
    const color=state.lights[small?'spa':'pool'].color,rgb=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16)).join(',');const glow=c.createRadialGradient(x+width*.65,y+height*.25,0,x+width*.5,y+height*.5,width*.8);glow.addColorStop(0,`rgba(${rgb},${light*.65})`);glow.addColorStop(.5,`rgba(${rgb},${light*.3})`);glow.addColorStop(1,`rgba(${rgb},0)`);c.fillStyle=glow;c.fillRect(x,y,width,height);
@@ -14,7 +14,7 @@ export class WaterRenderer{
    if(flow>.01){for(let i=0;i<(small?45:23);i++){const p=(t*(small?.22:.09)+i*.173)%1,px=x+width*(.12+((i*37)%79)/100)+Math.sin(p*6+i)*1.4,py=y+height*(1-p),radius=small?.4+Math.sin(p*Math.PI)*1.0:.4;c.beginPath();c.ellipse(px,py,radius,radius*.7,0,0,Math.PI*2);c.strokeStyle=`rgba(225,255,255,${Math.sin(p*Math.PI)*flow*(small?.8:.42)})`;c.lineWidth=.6;c.stroke();}}
    // Low underwater luminaires, following each pool's inside wall.
    if(light>.01){for(const [lx,ly] of small?[[676,735],[697,750]]:[[633,760],[683,781],[733,802]]){const g=c.createRadialGradient(lx,ly,0,lx,ly,small?8:22);g.addColorStop(0,`rgba(211,255,255,${light*.8})`);g.addColorStop(1,'rgba(50,206,247,0)');c.fillStyle=g;c.fillRect(lx-23,ly-23,46,46);c.fillStyle=`rgba(235,255,255,${light})`;c.fillRect(lx-1.8,ly-.6,3.6,1.2);}}
-   c.restore();c.strokeStyle=`rgba(175,226,237,${.28+light*.32})`;c.lineWidth=.8;c.stroke(path);
+   c.restore();
   }
  }
 }

@@ -9,3 +9,7 @@ html:has(body.demo-embed){background:transparent}
 body[data-public-demo] #house-stage #house-render{filter:url(#scene-alpha) brightness(.88) saturate(.86)}
 body[data-public-demo] #house-stage.is-night #house-render{filter:url(#scene-alpha) brightness(.46) saturate(.8)}
 body[data-public-demo] .home-effects>image{filter:url(#scene-alpha)}
+.demo-embed .home-hit-areas{display:block!important;pointer-events:none}
+.demo-embed #render-view{pointer-events:auto}
+.demo-embed .map-lamp-button,.demo-embed .home-item-hit,.demo-embed .home-room-hit{pointer-events:auto}
+.demo-embed .home-tv-hit{display:none}

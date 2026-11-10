@@ -64,7 +64,7 @@ test('routine triggers at local time on chosen days once per date with no catchu
 test('every lighting circuit has a floor hotspot and all effects follow state',()=>{
  for(const l of lights)assert.ok(Object.values(mapPoints).some(p=>p[l.id]),l.id);
  const h=initialHome();h.music.playing=true;h.spa.jets=true;h.climate.rdc.on=true;
- const html=mapMarkup(h,'overview',lights,null);assert.equal((html.match(/map-speaker is-playing/g)||[]).length,4);assert.ok(html.includes('pool-contour'));assert.ok(html.includes('ac-unit running'));
+ const html=mapMarkup(h,'overview',lights,null);assert.equal((html.match(/map-speaker is-playing/g)||[]).length,4);assert.ok(!html.includes('pool-contour'));assert.ok(!html.includes('spa-contour'));assert.ok(html.includes('ac-unit running'));
  const off=mapMarkup(applyScene(h,'off'),'overview',lights,null);assert.ok(!off.includes('ac-unit running'));assert.ok(!off.includes('map-speaker is-playing'));assert.ok(off.includes('sound-ring'));assert.ok(!off.includes('home-pin'));assert.ok(off.includes('data-home-direct="gate"'));
 });
 

@@ -1,8 +1,9 @@
-import {lampsMarkup,breezeMarkup,sensorsMarkup} from './studio-fixtures.mjs';
+import {lampsMarkup,lampButtons,breezeMarkup,sensorsMarkup} from './studio-fixtures.mjs';
 import {poolPath as waterPath,spaPath} from './studio-water.mjs';
 import {roomSurfaces,polygonPoints,surfaceBox} from './studio-home-surfaces.mjs';
 import {shuttersMarkup} from './studio-shutters.mjs';
 import {televisions} from './studio-home-model.mjs';
+import {doorsMarkup} from './studio-doors.mjs';
 // Hotspots are presentation coordinates over the accepted Su Pranu renders.
 // They do not change the scanned architecture or claim measured device positions.
 export const mapPoints={
@@ -30,10 +31,9 @@ export function mapMarkup(s,floor,definitions,selected){
  html+='</mask></defs><image href="supranu/'+files[floor]+'" width="1000" height="1000" preserveAspectRatio="none" mask="url(#lit-rooms)"/>';
  for(const l of lit)html+='<polygon data-key="light-surface-'+l.id+'" class="room-illumination" points="'+polygonPoints(surfaces[l.id])+'" fill="#ffe0a4" filter="url(#surface-feather)" opacity="'+(s.lights[l.id].on?s.lights[l.id].brightness/100*(s.night?.12:.035):0)+'"/>';
  if(floor==='overview'){
-  html+=`<path class="basin-contour" data-key="pool-contour" d="${waterPath}"/><path class="basin-contour" data-key="spa-contour" d="${spaPath}"/>`;
   html+=`<g id="animated-gate" opacity="${s.gate.position>0?1:0}" style="filter:brightness(${s.night&&!s.lights.entry.on?.43:1})">${gateShape(s.gate.position)}</g>`;
  }
- html+=lampsMarkup(s,floor);
+ html+=doorsMarkup(s.doors,floor)+lampsMarkup(s,floor);
  const ac=floor==='etage'?'etage':'rdc',air=points['ac-'+ac];if(air)html+=breezeMarkup(s,ac,air);
  for(const [i,[x,y]] of speakers[floor].entries()){const on=s.music.playing&&s.music.speakers[i]&&s.music.volume>0;html+=`<g data-key="speaker-${i}" class="map-speaker ${on?'is-playing':''}" transform="translate(${x} ${y})"><rect x="-5" y="-10" width="10" height="20" rx="3" fill="#303e44" stroke="#b2c5c8" stroke-width="1"/><circle cy="3" r="3" fill="#718894"/><ellipse rx="17" ry="10" class="sound-ring"/><ellipse rx="29" ry="18" class="sound-ring second"/></g>`;}
  const tvScreens={rdc:{living:'660,241 709,265 709,286 660,263'},etage:{children:'232,429 278,448 278,460 232,442'}};
@@ -46,6 +46,7 @@ export function mapMarkup(s,floor,definitions,selected){
   for(const [id,x,y,w,h,label]of [['pool',580,752,178,132,'Lumière de la piscine'],['spa',664,724,44,42,'Lumière du jacuzzi'],['gate',234,96,78,70,'Portail d’entrée']])html+=`<button data-key="item-${id}" class="home-item-hit" data-home-direct="${id}" style="left:${x/10}%;top:${y/10}%;width:${w/10}%;height:${h/10}%;${id==='pool'?'clip-path:polygon(26% 0,100% 35%,87% 100%,10% 66%,0 30%);':id==='spa'?'clip-path:ellipse(46% 47%);':''}" aria-label="${label} · action directe" title="${id==='gate'?'Ouvrir / arrêter / fermer le portail':'Allumer / éteindre la '+(id==='pool'?'piscine':'lumière du jacuzzi')}" ${id!=='gate'?`aria-pressed="${s.lights[id].on}"`:''}></button>`;
  }
  for(const t of televisions.filter(t=>tvScreens[floor]?.[t.id])){const pos=floor==='rdc'?[686,264]:[254,449];html+='<button class="home-tv-hit" data-home-select="tv:'+t.id+'" style="left:'+(pos[0]-28)/10+'%;top:'+(pos[1]-16)/10+'%;width:5.6%;height:3.2%" aria-label="Télécommande · '+t.name+'" title="Télécommande · '+t.name+'"></button>';}
+ html+=lampButtons(s,floor,definitions);if(floor==='overview'&&s.presence!=='away')html+='<button class="home-item-hit car-hit" data-home-direct="car" style="left:18%;top:37%;width:8%;height:12%" aria-label="Voiture · contact et phares" aria-pressed="'+s.car.on+'"></button>';
  return html+'</div>'+sensorsMarkup(s,floor,points);
 
 }

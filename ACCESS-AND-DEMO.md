@@ -4,7 +4,7 @@ Le site reste déployé sur le projet Netlify `bonaparks1` par la branche `main`
 
 ## Parcours
 
-L’accueil présente quatre scénarios de 54 à 60 secondes. Chaque scénario parcourt les trois rendus approuvés : ensemble, RDC et étage. Ils jouent sans inscription dans un iframe public `/demo.html`, distinct des routes protégées du studio, sans modifier les réglages du studio personnel. Le visiteur peut mettre en pause, rejouer et déplacer le curseur. Les personnages et les événements sont des simulations, sans analyse vidéo ni connexion à un équipement.
+L’accueil présente quatre scénarios de 60 secondes réelles. Chaque scénario parcourt les trois rendus approuvés : ensemble, RDC et étage. Ils jouent sans inscription dans un iframe public `/demo.html`, distinct des routes protégées du studio, sans modifier les réglages du studio personnel. L’arrivée démarre à l’ouverture, puis revient à l’ensemble en exploration libre. Le visiteur peut mettre en pause, rejouer, déplacer le curseur ou utiliser les petites commandes latérales (éclairage, quatre circuits d’eau, climatisation ON/OFF, portail, contact et phares). Une seule boucle RAF pilote les changements de niveau sans accélérer la chronologie. L’arrivée éclaire chaque pièce après l’entrée des occupants ; le départ éteint la climatisation et les lumières avant la sortie de la voiture. Les personnages et les événements sont des simulations, sans analyse vidéo ni connexion à un équipement.
 
 ## Langues
 

@@ -1,4 +1,12 @@
 /* Surfaces remain readable; controls live beside the architecture. */
+.map-lamp-button{position:absolute;z-index:4;width:28px;height:28px;display:grid;place-items:center;padding:0;border:0;background:transparent!important;pointer-events:auto;transform:var(--scene-inverse) translate(-50%,-50%);transform-origin:0 0;cursor:pointer;box-shadow:none!important}
+.map-lamp-button>span{width:12px;height:12px;border:1px solid #d9e4ff91;border-radius:50%;background:#29374bd9;box-shadow:0 2px 5px #0006;transition:background .6s,box-shadow .6s,border-color .6s}
+.map-lamp-button[aria-pressed=true]>span{background:#ffe3a4;border-color:#fff3d7;box-shadow:0 0 0 3px #ffdb7e20,0 0 14px #ffd57980}
+.map-lamp-button:focus-visible{outline:1px solid #b8d2ff;border-radius:50%;outline-offset:2px}
+.map-lamp-button:hover>span{border-color:#fff;box-shadow:0 0 0 3px #d7e3ff20}
+.map-reading{transform:var(--scene-inverse) translate(-50%,-100%)!important;transform-origin:0 0}
+.spatial-actor-label>span{transform:var(--scene-inverse) translate(-50%,-3px)!important;transform-origin:0 100%}
+.car-hit{z-index:3}
 #house-stage #house-render{filter:brightness(.88) saturate(.86)}
 #house-stage.is-night #house-render{filter:brightness(.46) saturate(.8)}
 .room-reveal,.room-illumination{transition:opacity .65s ease}
@@ -32,3 +40,5 @@
 .safety-zone{stroke:#90baf6;fill:#70a8ee;fill-opacity:.035;stroke-opacity:.5}.safety-zone.danger{stroke:#f19387;fill:#e96357;fill-opacity:.15}
 @media(max-width:730px){.home-controls-open .home-controls-toggle{background:#3765a9;color:white}.shutter-actions button,.shutters-bulk button{min-height:42px}.shutter-card{padding:16px 13px}}
 @media(prefers-reduced-motion:reduce){.room-reveal,.room-illumination,.shutter-preview i{transition:none}}
+.safety-zone,.safety-zone.danger{stroke:none}
+@media(prefers-reduced-motion:reduce){.map-lamp-button>span{transition:none}}
