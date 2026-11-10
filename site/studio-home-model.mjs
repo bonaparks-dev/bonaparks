@@ -53,7 +53,7 @@ export function restoreHome(raw){
  s.log=Array.isArray(raw.log)?raw.log.slice(0,30).filter(l=>typeof l.text==='string'&&l.text.length<200&&typeof l.at==='string').map(l=>({text:l.text,at:l.at})):[];return s;
 }
 export function validRoutine(r){return r&&typeof r.id==='string'&&/^[a-z0-9-]{1,80}$/i.test(r.id)&&typeof r.name==='string'&&r.name.trim().length>0&&/^([01]\d|2[0-3]):[0-5]\d$/.test(r.time)&&Array.isArray(r.days)&&r.days.length>0&&r.days.every(d=>Number.isInteger(d)&&d>=0&&d<=6)&&scenes.some(s=>s.id===r.scene);}
-export function lightingForFloor(floor){return lights.filter(l=>floor==='overview'||l.zone===floor||(floor==='rdc'&&['patio','stairs'].includes(l.id)));}
+export function lightingForFloor(floor){return lights.filter(l=>floor==='overview'||l.zone===floor||(floor==='rdc'&&['patio','stairs'].includes(l.id))||(floor==='etage'&&l.id==='stairs'));}
 export function setFloorLights(state,floor,on){const s=structuredClone(state);for(const l of lightingForFloor(floor))s.lights[l.id].on=on;return s;}
 function allLights(s,on,brightness){for(const l of Object.values(s.lights)){l.on=on;if(brightness)l.brightness=brightness;}}
 export function applyScene(state,id){

@@ -9,6 +9,7 @@ import {SpatialExperience} from './studio-spatial.mjs';
 import {waterLevels} from './studio-water.mjs';
 import {mapMarkup} from './studio-home-map.mjs';
 import {tours,tourFrame} from './studio-tour-model.mjs';
+import {lightFields,lightingMarkup} from './studio-lighting.mjs';
 
 test('all four entry scenarios visit the three house plans and finish deterministically',()=>{assert.equal(Object.keys(tours).length,4);for(const [id,t]of Object.entries(tours)){assert.equal(t.duration,60);const floors=new Set();for(let n=0;n<=t.duration;n++)floors.add(tourFrame(id,n).floor);assert.deepEqual([...floors].sort(),['etage','overview','rdc']);assert.equal(tourFrame(id,t.duration+100).done,true);}assert.equal(tourFrame('family',52).incident,'pool');assert.equal(tourFrame('security',36).incident,'intrusion');assert.equal(tourFrame('departure',60).journey.security,'armed');});
 
@@ -46,6 +47,19 @@ test('temperature cools gradually without overshooting and legacy homes gain amb
 });
 test('both bathrooms expose humidity and AC values use explicit degrees Celsius',()=>{
  const s=initialHome();for(const [floor,value] of [['rdc','58 %'],['etage','64 %']]){const html=mapMarkup(s,floor,lights,null);assert.ok(html.includes(value));assert.ok(html.includes('26,0 °C'));assert.ok(html.includes('map-lamp'));assert.ok(!html.includes('home-pin'));}
+});
+
+test('diffuse lighting is independent, dimmable and bounded by its room on every floor',()=>{
+ for(const floor of ['overview','rdc','etage']){
+  const state=initialHome();for(const light of Object.values(state.lights))light.on=false;
+  const dark=lightFields(state,floor);assert.ok(dark.length>0);assert.ok(dark.every(f=>f.level===0));
+  const id=dark[0].id;state.lights[id].on=true;state.lights[id].brightness=35;
+  const lit=lightFields(state,floor);
+  assert.ok(lit.filter(f=>f.id===id).every(f=>f.level===.35));assert.ok(lit.filter(f=>f.id!==id).every(f=>f.level===0));
+  const markup=lightingMarkup(state,floor);
+  for(const field of lit){assert.ok(field.radius>=48&&field.radius<=195);assert.ok(field.polygon.length>=4);assert.ok(markup.includes('mask="url(#light-room-'+field.id+')"'));assert.ok(markup.includes('data-key="reveal-'+field.key+'"'));}
+  assert.ok(!markup.includes('stroke='));
+ }
 });
 
 test('reentrant floor changes keep exactly one animation clock at 30, 60 and 144 fps',()=>{

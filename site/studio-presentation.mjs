@@ -1,5 +1,6 @@
 // Presentation only: approved images and animation coordinates stay intact.
-// A rigid rotation aligns the facade without shearing furniture or architecture.
+// Rectify BOTH floor-plane axes. Rotation alone left the side walls leaning.
+// Normalize the determinant so the correction preserves area and stays modest.
 export const presentations={
  overview:{across:[1115,411],down:[-299,667],outline:[[.211,.004],[.982,.382],[.767,1],[.006,.618]],clip:'polygon(21.1% 0.4%,98.2% 38.2%,76.7% 100%,0.6% 61.8%)'},
  rdc:{across:[540,245],down:[-490,800],outline:[[.41,.04],[.85,.25],[1,.36],[1,.45],[.60,1],[.02,.77],[0,.62]]},
@@ -7,8 +8,10 @@ export const presentations={
 };
 export function presentationMatrix(floor){
  const v=presentations[floor]||presentations.overview;
- const length=Math.hypot(...v.across),c=v.across[0]/length,s=v.across[1]/length;
- return [c,-s,s,c];
+ const uLength=Math.hypot(...v.across),vLength=Math.hypot(...v.down);
+ const [ux,uy]=v.across.map(n=>n/uLength),[vx,vy]=v.down.map(n=>n/vLength);
+ const area=ux*vy-uy*vx,k=1/Math.sqrt(area);
+ return [vy*k,-uy*k,-vx*k,ux*k];
 }
 export function fitPresentation(floor,width,height,viewportWidth,viewportHeight){
  const v=presentations[floor]||presentations.overview,[a,b,c,d]=presentationMatrix(floor);

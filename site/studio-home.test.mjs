@@ -6,8 +6,9 @@ import {spacesForFloor,spaceCamera,clampHouseZoom} from './studio-home-spaces.mj
 
 test('floor lighting commands only affect the displayed level',()=>{
  const h=applyScene(initialHome(),'off'),up=setFloorLights(h,'etage',true);
- assert.equal(lightingForFloor('etage').length,6);
- assert.ok(lights.every(l=>up.lights[l.id].on===(l.zone==='etage')));
+ assert.equal(lightingForFloor('etage').length,7);
+ assert.ok(lights.every(l=>up.lights[l.id].on===(l.zone==='etage'||l.id==='stairs')));
+ assert.equal(setFloorLights(up,'etage',false).lights.stairs.on,false);
  assert.ok(Object.values(h.lights).every(l=>!l.on));
  const outside=setFloorLights(up,'outside',true),down=setFloorLights(outside,'rdc',false);
  assert.equal(down.lights.master.on,true);assert.equal(down.lights.pool.on,true);assert.equal(down.lights.patio.on,false);
