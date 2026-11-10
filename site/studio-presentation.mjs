@@ -1,17 +1,13 @@
-// Shared presentation basis for the render, water, fixtures and hit targets.
-// The overview uses the plot's two boundary directions as horizontal/vertical
-// axes. Interior views keep their native camera and architectural coordinates.
+import {overlayStyles} from './studio-overview-projection.mjs';
+// Every architectural image keeps its native camera and undistorted proportions.
+// The landscape camera itself aligns the rectangle with the screen axes.
 export const presentations={
- overview:{across:[1115,411],down:[-299,667],outline:[[.211,.004],[.982,.382],[.767,1],[.006,.618]],clip:'polygon(21.1% 0.4%,98.2% 38.2%,76.7% 100%,0.6% 61.8%)'},
+ overview:{across:[1,0],down:[0,1],outline:[[.0098,.048],[.9902,.048],[.9902,.963],[.0098,.963]]},
  rdc:{across:[540,245],down:[-490,800],outline:[[.41,.04],[.85,.25],[1,.36],[1,.45],[.60,1],[.02,.77],[0,.62]]},
  etage:{across:[683,302],down:[-351,576],outline:[[.425,.04],[.865,.235],[.865,.416],[.975,.46],[.635,1],[.05,.77],[.195,.40]],clip:'polygon(42.3% 4%,86.5% 23.5%,86.5% 41.6%,97.5% 46%,63.5% 100%,5% 77%,19.5% 40%)'}
 };
 export function presentationMatrix(floor){
- if(floor!=='overview')return [1,0,0,1];
- const [x,y]=presentations.overview.across,[vx,vy]=presentations.overview.down,length=Math.hypot(x,y);
- const a=x/length,b=-y/length,c=y/length,d=x/length;
- const lean=(a*vx+c*vy)/(b*vx+d*vy);
- return [a-lean*b,b,c-lean*d,d];
+ return [1,0,0,1];
 }
 export function presentationBounds(floor,width,height){
  const v=presentations[floor]||presentations.overview,[a,b,c,d]=presentationMatrix(floor);
@@ -32,5 +28,6 @@ export function fitPresentation(floor,width,height,viewportWidth,viewportHeight)
 }
 export function applyPresentation(stage,floor,width,height,viewportWidth,viewportHeight){
  const view=fitPresentation(floor,width,height,viewportWidth,viewportHeight);
- stage.style.width=view.width+'px';stage.style.height=view.height+'px';stage.style.setProperty('--scene-inverse',view.inverse);stage.style.setProperty('--scene-clip',view.clip);stage.dataset.presentation=floor;return view.transform;
+ const overlay=floor==='overview'?overlayStyles(view.width,view.height):{transform:'none',inverse:view.inverse};
+ stage.style.width=view.width+'px';stage.style.height=view.height+'px';stage.style.setProperty('--overlay-transform',overlay.transform);stage.style.setProperty('--scene-inverse',overlay.inverse);stage.style.setProperty('--scene-clip',view.clip);stage.dataset.presentation=floor;return view.transform;
 }

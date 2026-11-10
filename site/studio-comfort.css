@@ -52,3 +52,10 @@
 .safety-zone,.safety-zone.danger{stroke:none}
 @media(prefers-reduced-motion:reduce){.map-lamp-button>span{transition:none}}
 @media(prefers-reduced-motion:reduce){.light-diffusion,.lamp-emitter{transition:none;transform:scale(1)}#house-stage{transition:none}}
+
+/* Native geometry is never sheared. Only legacy interaction coordinates are projected. */
+#house-stage[data-presentation="overview"] #home-layer,#house-stage[data-presentation="overview"] .home-water-canvas,#house-stage[data-presentation="overview"] .spatial-overlay,#house-stage[data-presentation="overview"] .spatial-map-cameras{transform:var(--overlay-transform);transform-origin:0 0}
+#house-stage[data-presentation="overview"] .avatar-labels{--scene-inverse:matrix(1,0,0,1,0,0)}
+.spatial-map-cameras{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#house-stage[data-presentation="overview"] #house-render{image-rendering:auto;filter:brightness(.98) saturate(.95)}
+#house-stage[data-presentation="overview"].is-night #house-render{filter:brightness(.46) saturate(.84)}

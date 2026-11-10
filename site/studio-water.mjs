@@ -1,6 +1,5 @@
-// Canvas water stays clipped to the approved pool silhouettes.
-export const poolPath='M614 763 Q616 746 630 751 L749 799 Q762 804 757 819 L737 876 Q734 888 720 882 L605 841 Q589 836 596 819 Q576 807 584 789 Q594 774 614 779Z';
-export const spaPath='M674 728 687 726 699 732 704 742 699 754 687 763 672 759 667 748Z';
+import {poolPath,spaPath} from './studio-water-surfaces.mjs';
+export {poolPath,spaPath};
 export const waterLevels=s=>[s.lights.pool.on?s.lights.pool.brightness/100:0,s.lights.spa.on?s.lights.spa.brightness/100:0,s.pool.pump?1:0,s.spa.jets?s.spa.intensity/100:0];
 
 // Return jets push water across the short axis; packets broaden and dissipate
@@ -30,7 +29,7 @@ function drawPoolCurrent(c,time,level){
 }
 export class WaterRenderer{
  constructor(stage){this.canvas=document.createElement('canvas');this.canvas.className='home-water-canvas';this.canvas.setAttribute('aria-hidden','true');stage.insertBefore(this.canvas,stage.querySelector('#home-layer'));this.ctx=this.canvas.getContext('2d');this.paths=[new Path2D(poolPath),new Path2D(spaPath)];this.level=[0,0,0,0];this.clock=0;this.previous=0;}
- draw(now,state,floor,animate){this.canvas.hidden=floor!=='overview';if(floor!=='overview'||!this.ctx)return;const dt=Math.min(.1,Math.max(0,now-this.previous));this.previous=now;if(animate)this.clock+=dt;const w=Math.round(this.canvas.clientWidth*Math.min(devicePixelRatio,2)),h=Math.round(this.canvas.clientHeight*Math.min(devicePixelRatio,2));if(!w||!h)return;if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}const c=this.ctx;c.setTransform(w/1000,0,0,h/1000,0,0);c.clearRect(0,0,1000,1000);
+ draw(now,state,floor,animate){this.canvas.hidden=floor!=='overview';if(floor!=='overview'||!this.ctx)return;const dt=Math.min(.1,Math.max(0,now-this.previous));this.previous=now;if(animate)this.clock+=dt;const zoom=Number(this.canvas.parentElement.style.getPropertyValue('--camera-zoom'))||1,ratio=Math.min(3,Math.ceil(devicePixelRatio*zoom)),w=Math.round(this.canvas.clientWidth*ratio),h=Math.round(this.canvas.clientHeight*ratio);if(!w||!h)return;if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}const c=this.ctx;c.setTransform(w/1000,0,0,h/1000,0,0);c.clearRect(0,0,1000,1000);
   const settle=Math.max(1/60,dt);waterLevels(state).forEach((v,i)=>this.level[i]+=(v-this.level[i])*(1-Math.exp(-settle*4)));
   for(let basin=0;basin<2;basin++){const small=basin===1,light=this.level[basin],flow=this.level[basin+2],path=this.paths[basin],t=this.clock,x=small?665:577,y=small?726:746,width=small?42:185,height=small?40:145;c.save();c.clip(path);
    const depth=c.createLinearGradient(x,y,x+width*.55,y+height);depth.addColorStop(0,`rgba(10,72,105,${state.night?.78:.35})`);depth.addColorStop(.5,`rgba(15,139,177,${.12+light*.2})`);depth.addColorStop(1,`rgba(6,53,89,${state.night?.7:.3})`);c.fillStyle=depth;c.fillRect(x,y,width,height);

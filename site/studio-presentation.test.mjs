@@ -14,7 +14,7 @@ test('overview plot boundaries align with screen axes; interior cameras stay nat
 });
 test('overview fills desktop and phone landscape frames; narrow frames retain the whole plot',()=>{
  for(const [w,h]of [[890,528],[390,390/1.65],[1190,720]]){
-  const v=fitPresentation('overview',1448,1086,w,h);assert.equal(v.fill,true);
+  const v=fitPresentation('overview',4096,2560,w,h);assert.equal(v.fill,true);
   assert.ok(v.bounds.width>=w-.01&&v.bounds.height>=h-.01);
   assert.ok(v.bounds.width<w*1.1&&v.bounds.height<h*1.1);
  }

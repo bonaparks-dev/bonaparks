@@ -19,3 +19,6 @@ body[data-public-demo] .home-effects>image{filter:url(#scene-alpha) saturate(.86
 .demo-embed #house-stage{filter:drop-shadow(0 24px 28px #0006)}
 .demo-embed .home-room-hit:hover,.demo-embed .home-room-hit:focus-visible,.demo-embed .home-item-hit:hover,.demo-embed .home-item-hit:focus-visible{border-color:transparent;box-shadow:none;outline:1px solid #c0b0ee55}
 @media(max-width:650px){.demo-embed .map-lamp-button>span{width:11px;height:11px}.demo-embed .map-lamp-button>span>svg{width:7px;height:7px}.demo-embed .map-readings{display:none}}
+
+body[data-public-demo] #house-stage[data-presentation="overview"] #house-render{filter:none}
+body[data-public-demo] #house-stage[data-presentation="overview"].is-night #house-render{filter:brightness(.45) saturate(.9)}

@@ -1,14 +1,16 @@
 import {lights} from './studio-home-model.mjs';
 import {mapPoints} from './studio-home-map.mjs';
 import {presentationMatrix,presentationBounds} from './studio-presentation.mjs';
+import {overviewPoint} from './studio-overview-projection.mjs';
 
 export function spacesForFloor(floor){return lights.filter(l=>mapPoints[floor]?.[l.id]);}
 export function clampHouseZoom(value){return Number.isFinite(value)?Math.max(1,Math.min(3.4,value)):1;}
 
 // Camera target in the render's coordinate system, independent of screen size.
 export function spaceCamera(floor,id,width,height,hostWidth,hostHeight){
- const point=mapPoints[floor]?.[id];
- if(!point||id==='all')return {x:0,y:0,zoom:1};
+ const source=mapPoints[floor]?.[id];
+ if(!source||id==='all')return {x:0,y:0,zoom:1};
+ const point=floor==='overview'?overviewPoint(...source):source;
  const broad=['garden','patio','living'].includes(id);
  const fraction=id==='garden'?.56:floor==='overview'?(broad?.29:.23):(broad?.48:.36);
  const zoom=Math.max(1.35,Math.min(1.85,hostWidth*.78/(width*fraction),hostHeight*.72/(height*fraction)));

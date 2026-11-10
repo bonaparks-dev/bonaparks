@@ -33,7 +33,8 @@ test('animated entrance uses the rendered threshold instead of floating above th
 });
 
 test('gate leaves stay anchored and keep their physical length throughout the swing',()=>{
- const [a,b]=gateHinges,u=[(b[0]-a[0])/2,(b[1]-a[1])/2],v=[-18.5,43],det=u[0]*v[1]-u[1]*v[0];
+ const [a,b]=gateHinges,u=[(b[0]-a[0])/2,0],v=[0,u[0]*1.6*.84],det=u[0]*v[1]-u[1]*v[0];
+ assert.equal(a[1],b[1],'gate threshold must be horizontal in the native camera');
  for(let t=0;t<=1.001;t+=.02)for(const [i,[hinge,end]]of gateLeaves(t).entries()){
   assert.deepEqual(hinge,gateHinges[i]);const x=end[0]-hinge[0],y=end[1]-hinge[1],along=(x*v[1]-y*v[0])/det,depth=(u[0]*y-u[1]*x)/det;
   assert.ok(Math.abs(along*along+depth*depth-1)<1e-10);

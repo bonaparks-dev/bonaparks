@@ -1,3 +1,4 @@
+import {inverseOverview} from './studio-overview-projection.mjs';
 import {fixtures} from './studio-fixtures.mjs';
 import {roomSurfaces,polygonPoints,surfaceBox} from './studio-home-surfaces.mjs';
 
@@ -37,8 +38,8 @@ export function lightingMarkup(state,floor){
  }
  html+='<mask id="lit-rooms" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">';
  for(const id of rooms)html+=`<g data-key="reveal-room-${id}" mask="url(#light-room-${id})">${fields.filter(f=>f.id===id).map(f=>spread(f,'reveal')).join('')}</g>`;
- const files={overview:'overview_rdc_v23.png',rdc:'rdc_pro.png',etage:'etage_natif_v24.png'};
- html+=`</mask></defs><image data-key="illuminated-materials" class="illuminated-materials" href="supranu/${files[floor]}" width="1000" height="1000" preserveAspectRatio="none" mask="url(#lit-rooms)"/>`;
+ const files={overview:'property_native_v25.webp',rdc:'rdc_pro.png',etage:'etage_quality_v25.webp'};
+ html+=`</mask></defs><g mask="url(#lit-rooms)"><image data-key="illuminated-materials" class="illuminated-materials" href="supranu/${files[floor]}" width="1000" height="1000" preserveAspectRatio="none" transform="${floor==='overview'?'matrix('+inverseOverview().join(' ')+')':''}"/></g>`;
  for(const id of rooms)html+=`<g data-key="warm-room-${id}" mask="url(#light-room-${id})">${fields.filter(f=>f.id===id).map(f=>spread(f,'warm')).join('')}</g>`;
  // A small luminous source and soft bloom, like a real spot. Its footprint
  // brightens the materials below; the interaction target stays transparent.
