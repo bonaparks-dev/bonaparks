@@ -1,17 +1,20 @@
 /* Surfaces remain readable; controls live beside the architecture. */
 .map-lamp-button{position:absolute;z-index:4;width:28px;height:28px;display:grid;place-items:center;padding:0;border:0;background:transparent!important;pointer-events:auto;transform:var(--scene-inverse) translate(-50%,-50%);transform-origin:0 0;cursor:pointer;box-shadow:none!important}
-.map-lamp-button>span{width:16px;height:16px;display:grid;place-items:center;border:1px solid #aabbd570;border-radius:50%;color:#d3e0f4;background:radial-gradient(circle at 40% 30%,#53647f,#26364e);box-shadow:0 2px 5px #0004;transition:background .6s,box-shadow .6s,border-color .6s,color .6s}
+.map-lamp-button>span{width:13px;height:13px;display:grid;place-items:center;border:1px solid #c4ced280;border-radius:50%;color:#e3e6eb;background:#253141b3;box-shadow:0 1px 4px #0003;transition:opacity .45s,background .6s,box-shadow .6s,border-color .6s,color .6s}
 .map-lamp-button>span>svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
-.map-lamp-button[aria-pressed=true]>span{background:radial-gradient(circle at 35% 25%,#fff5ce,#ffce79 65%,#e3a24d);border-color:#ffe9b8;color:#765020;box-shadow:0 0 0 2px #ffdb7e12,0 0 11px #ffd57965,0 2px 5px #0003}
+.map-lamp-button[aria-pressed=true]>span{opacity:0}
+.map-lamp-button[aria-pressed=true]:is(:hover,:focus-visible)>span{opacity:.85;background:#fff1d2;color:#6c512b;border-color:#fff0c9}
 .map-lamp-button:focus-visible{outline:1px solid #b8d2ff;border-radius:50%;outline-offset:2px}
 .map-lamp-button:hover>span{border-color:#fff;box-shadow:0 0 0 3px #d7e3ff20}
 .map-reading{transform:var(--scene-inverse) translate(-50%,-100%)!important;transform-origin:0 0}
 .spatial-actor-label>span{transform:var(--scene-inverse) translate(-50%,-3px)!important;transform-origin:0 100%}
 .car-hit{z-index:3}
 #house-stage #house-render{filter:brightness(.88) saturate(.86)}
+#house-stage{transition:opacity .25s ease}#house-stage.floor-loading{opacity:0!important;pointer-events:none}
 #house-stage.is-night #house-render{filter:brightness(.34) saturate(.72)}
-.light-diffusion{opacity:0;transform:scale(.24);transition:opacity 700ms ease-out,transform 1050ms cubic-bezier(.16,.7,.2,1);will-change:opacity,transform}
+.light-diffusion{opacity:0;transform:scale(.12);transition:opacity 950ms ease-out,transform 1350ms cubic-bezier(.16,.7,.2,1)}
 .light-diffusion.is-lit{opacity:var(--light-level);transform:scale(1)}
+.lamp-emitter{opacity:0;transition:opacity .55s ease-out;pointer-events:none}.lamp-emitter.is-lit{opacity:var(--light-level)}
 .illuminated-materials{filter:saturate(.86) brightness(.98)}
 .room-reveal,.room-illumination{transition:opacity .65s ease}
 .selected-room-outline{pointer-events:none}
@@ -19,6 +22,8 @@
 .home-room-hit:hover,.home-room-hit:focus-visible{background:#9bc4ff0d!important;box-shadow:none!important}
 .home-tv-hit{position:absolute;pointer-events:auto;border:0;background:transparent!important;padding:0}
 .home-tv-hit:focus-visible{outline:2px solid #8db8ff}
+.is-night .home-shutter-surfaces{filter:brightness(.65) saturate(.75)}
+.is-night .entry-door{filter:brightness(.65)}
 .shutters-panel{margin-top:23px;padding-top:18px;border-top:1px solid #33435d}
 .shutters-heading>span{font-size:8px;letter-spacing:1.3px;color:#8da9cf}
 .shutters-heading h3{font-size:17px;margin:9px 0 6px;font-weight:600}
@@ -46,4 +51,4 @@
 @media(prefers-reduced-motion:reduce){.room-reveal,.room-illumination,.shutter-preview i{transition:none}}
 .safety-zone,.safety-zone.danger{stroke:none}
 @media(prefers-reduced-motion:reduce){.map-lamp-button>span{transition:none}}
-@media(prefers-reduced-motion:reduce){.light-diffusion{transition:none;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.light-diffusion,.lamp-emitter{transition:none;transform:scale(1)}#house-stage{transition:none}}

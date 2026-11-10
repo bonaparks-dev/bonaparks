@@ -7,7 +7,10 @@ const paths={house:'m3 10 9-7 9 7M5 9v11h14V9M9 20v-7h6v7',layers:'m3 7 9-4 9 4-
 const icon=(name)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]||paths.room}"/></svg>`;
 const hydrate=()=>document.querySelectorAll('[data-icon]').forEach(n=>{n.innerHTML=icon(n.dataset.icon);n.removeAttribute('data-icon');});
 const fmt=n=>n.toLocaleString('fr-FR',{maximumFractionDigits:1});
-const renders={overview:{file:'overview_rdc_v23.png',label:'Vue d’ensemble'},rdc:{file:'rdc_pro.png',label:'Rez-de-chaussée'},etage:{file:'etage_natif_v22.png',label:'Premier étage'}};
+const renders={overview:{file:'overview_rdc_v23.png',label:'Vue d’ensemble'},rdc:{file:'rdc_pro.png',label:'Rez-de-chaussée'},etage:{file:'etage_natif_v24.png',label:'Premier étage'}};
+// Decode the three views in advance. Never display a new floor's controls and
+// shutters over the previous floor's image while the next PNG is loading.
+const renderPreloads=Object.values(renders).map(r=>{const image=new Image();image.src='supranu/'+r.file;image.decode().catch(()=>{});return image;});
 let state={version:1,activeId:'supranu',projects:[]},loadError=false;
 try{const saved=isShowcase?null:JSON.parse(localStorage.getItem(KEY));if(saved?.version===1&&Array.isArray(saved.projects)&&saved.projects.length<=30){state={version:1,activeId:typeof saved.activeId==='string'?saved.activeId:'supranu',projects:saved.projects.map(validateProject)};}}catch{loadError=true;}
 if(state.activeId!=='supranu'&&!state.projects.some(p=>p.id===state.activeId))state.activeId='supranu';
@@ -39,7 +42,7 @@ function render(){
  $('#scale-note').textContent=isReference?'PARKS 3D STUDIO':'GRILLE 10 CM · MÈTRES';
  $('#undo').disabled=!p||!history().past.length;$('#redo').disabled=!p||!history().future.length;
  $('#toolbox').innerHTML=mode==='plan'?[['select','cursor','Sélectionner (V)'],['room','room','Dessiner une pièce (R)'],['door','door','Ajouter une porte (D)'],['window','window','Ajouter une fenêtre (F)'],['furniture','sofa','Ajouter du mobilier'],['pan','move','Déplacer le plan']].map(([id,ic,label])=>`<button data-tool="${id}" aria-label="${label}" title="${label}" aria-pressed="${tool===id}">${icon(ic)}</button>`).join(''):'';
- if(isReference){const r=renders[renderFloor];$('#house-render').src=`supranu/${r.file}`;$('#house-render').alt=`${r.label} de Su Pranu${renderFloor==='overview'?', avec le rez-de-chaussée et le jardin':''}`;$('#render-view').classList.toggle('overview',renderFloor==='overview');}
+ if(isReference){const r=renders[renderFloor],src=`supranu/${r.file}`;if($('#house-render').getAttribute('src')!==src){$('#house-stage').classList.add('floor-loading');$('#house-render').src=src;}$('#house-render').alt=`${r.label} de Su Pranu${renderFloor==='overview'?', avec le rez-de-chaussée et le jardin':''}`;$('#render-view').classList.toggle('overview',renderFloor==='overview');}
  renderInspector();home.setView(isReference,renderFloor);updateHint();updateView();hydrate();
 }
 function updateHint(){const hints={select:'Sélectionnez une pièce ou un meuble. Glissez pour déplacer.',room:'Glissez pour tracer une pièce. Les bords s’alignent sur 10 cm.',door:'Cliquez sur un mur pour y placer une porte.',window:'Cliquez sur un mur pour y placer une fenêtre.',furniture:'Choisissez un meuble dans la bibliothèque à droite.',pan:'Glissez pour déplacer le plan.'};$('#canvas-hint').textContent=mode==='render'?'Sélectionnez une pièce · Retrouvez ses commandes sur le côté.':mode==='3d'?'Glissez pour tourner autour de votre plan':hints[tool];}

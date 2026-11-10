@@ -1,9 +1,10 @@
+import {upperWindows} from './studio-upper-map.mjs';
 export const shutters=[
- {id:'master',name:'Chambre du fond · gauche',window:[[496,93],[569,125],[569,164],[496,133]]},
- {id:'guest',name:'Chambre du fond · droite',window:[[749,207],[817,238],[817,276],[749,246]]},
- {id:'children',name:'Chambre des enfants',window:null},
- {id:'blue',name:'Chambre au lit bleu',window:[[470,564],[562,601],[562,630],[470,594]]}
-];
+ {id:'master',name:'Chambre du fond · gauche'},
+ {id:'guest',name:'Chambre du fond · droite'},
+ {id:'children',name:'Chambre des enfants'},
+ {id:'blue',name:'Chambre au lit bleu'}
+].map(s=>({...s,window:upperWindows[s.id]}));
 // position is the opening percentage; reload never resumes a motor.
 export function initialShutters(){return Object.fromEntries(shutters.map(s=>[s.id,{position:100,target:100}]));}
 export function restoreShutters(raw){const next=initialShutters();for(const s of shutters){const v=raw?.[s.id]?.position;if(Number.isFinite(v)){const position=Math.max(0,Math.min(100,v));next[s.id]={position,target:position};}}return next;}

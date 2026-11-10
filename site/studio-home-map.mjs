@@ -5,6 +5,7 @@ import {roomSurfaces,polygonPoints,surfaceBox} from './studio-home-surfaces.mjs'
 import {shuttersMarkup} from './studio-shutters.mjs';
 import {televisions} from './studio-home-model.mjs';
 import {doorsMarkup} from './studio-doors.mjs';
+import {gateMarkup} from './studio-gate.mjs';
 // Hotspots are presentation coordinates over the accepted Su Pranu renders.
 // They do not change the scanned architecture or claim measured device positions.
 export const mapPoints={
@@ -16,18 +17,13 @@ const speakers={overview:[[348,470],[460,521],[334,531],[458,586]],rdc:[[229,469
 const iconPaths={tv:'M3 4h18v13H3ZM8 21h8M12 17v4',muted:'M4 9h4l5-5v16l-5-5H4ZM17 9l5 6m0-6-5 6',light:'M9 18h6m-5 3h4M8 14a6 6 0 1 1 8 0l-1 2H9Z',music:'M9 18V5l11-2v13M9 7l11-2M9 18c0 3-6 3-6 0s6-3 6 0m11-2c0 3-6 3-6 0s6-3 6 0',air:'M3 7h12c5 0 5-5 1-5M3 12h15c5 0 5 6 1 6M3 17h7c4 0 4 5 0 5',water:'M2 9q3-4 6 0t6 0 6 0M2 15q3-4 6 0t6 0 6 0',gate:'M3 21V3h18v18M6 7v10m4-10v10m4-10v10m4-10v10',power:'M12 2v10M6 5a9 9 0 1 0 12 0',home:'m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8',moon:'M19 15A9 9 0 0 1 9 3a9 9 0 1 0 10 12',sun:'M12 3v2m0 14v2M3 12h2m14 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',play:'m8 4 12 8-12 8Z',pause:'M8 4v16M16 4v16',clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M12 7v5l4 2',plus:'M12 4v16M4 12h16',check:'m5 12 4 4L20 5',close:'m6 6 12 12M6 18 18 6',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0',expand:'M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5',speaker:'M4 9h4l5-5v16l-5-5H4ZM16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14',settings:'M4 7h16M4 17h16M8 4v6M16 14v6'};
 export const homeIcon=(id)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[id]||iconPaths.light}"/></svg>`;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function gateShape(t){
- const a=[236.9,128.9],b=[309.4,159.3],left=[273.5-55*t,144+32*t],right=[273.5+16*t,144+62*t];
- const leaf=(p,q)=>`<path d="M${p} L${q} l0 -28 L${p[0]} ${p[1]-28}Z" fill="url(#gate-wood)" stroke="#c59051" stroke-width="1.3"/><path d="M${p[0]} ${p[1]-8}L${q[0]} ${q[1]-8}M${p[0]} ${p[1]-15}L${q[0]} ${q[1]-15}M${p[0]} ${p[1]-22}L${q[0]} ${q[1]-22}" stroke="#b87e3f" stroke-width=".7"/>`;
- return `<path d="M235 97 311 128 311 162 235 131Z" fill="#ddbc9a"/><path d="m237 126 72 31" stroke="#f1d4b3" stroke-width="4"/>${leaf(a,left)}${leaf(b,right)}`;
-}
 export function mapMarkup(s,floor,definitions,selected){
  const points=mapPoints[floor],lights=definitions.filter(l=>points[l.id]);
  let html=`<svg class="home-effects" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><defs><radialGradient id="warm-halo"><stop stop-color="#ffe5ad" stop-opacity=".78"/><stop offset=".4" stop-color="#ffc66c" stop-opacity=".34"/><stop offset="1" stop-color="#ffa636" stop-opacity="0"/></radialGradient><radialGradient id="pool-halo"><stop stop-color="${s.lights.pool.color}" stop-opacity=".9"/><stop offset="1" stop-color="${s.lights.pool.color}" stop-opacity=".1"/></radialGradient><linearGradient id="gate-wood"><stop stop-color="#f1c17e"/><stop offset="1" stop-color="#ce9653"/></linearGradient><filter id="soft-glow"><feGaussianBlur stdDeviation="7"/></filter><clipPath id="pool-clip"><path d="${waterPath}"/></clipPath><clipPath id="spa-clip"><path d="${spaPath}"/></clipPath></defs>`;
  const surfaces=roomSurfaces[floor]||{};
  html+=lightingMarkup(s,floor);
  if(floor==='overview'){
-  html+=`<g id="animated-gate" opacity="${s.gate.position>0?1:0}" style="filter:brightness(${s.night&&!s.lights.entry.on?.43:1})">${gateShape(s.gate.position)}</g>`;
+  html+=`<g id="animated-gate" opacity="${s.gate.position>0?1:0}" style="filter:brightness(${s.night&&!s.lights.entry.on?.43:1})">${gateMarkup(s.gate.position)}</g>`;
  }
  html+=doorsMarkup(s.doors,floor);
  const ac=floor==='etage'?'etage':'rdc',air=points['ac-'+ac];if(air)html+=breezeMarkup(s,ac,air);
@@ -46,4 +42,4 @@ export function mapMarkup(s,floor,definitions,selected){
  return html+'</div>'+sensorsMarkup(s,floor,points);
 
 }
-export function updateGateElement(svg,position){if(svg){svg.setAttribute('opacity',position>0?'1':'0');svg.innerHTML=gateShape(position);}}
+export function updateGateElement(svg,position){if(svg){svg.setAttribute('opacity',position>0?'1':'0');svg.innerHTML=gateMarkup(position);}}

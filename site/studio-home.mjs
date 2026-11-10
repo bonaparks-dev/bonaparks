@@ -33,7 +33,7 @@ export class ConnectedHome{
   this.audio.addEventListener('error',()=>{if(this.audioURL){this.state.music.playing=false;this.toast('Ce fichier audio ne peut pas être lu. Choisissez un MP3, WAV ou OGG.');this.update();}});
   this.audio.addEventListener('timeupdate',()=>{const p=this.panel.querySelector('#music-progress');if(p){p.value=Number.isFinite(this.audio.duration)?this.audio.currentTime/this.audio.duration*100:0;p.setAttribute('aria-label','Progression du morceau');}});
   this.dialog.addEventListener('submit',e=>this.saveRoutine(e));
-  this.img.addEventListener('load',()=>this.fit());window.addEventListener('pagehide',()=>this.save());new ResizeObserver(()=>this.fit()).observe(document.querySelector('#render-view'));
+  this.img.addEventListener('load',()=>{this.fit();this.stage.classList.remove('floor-loading');});window.addEventListener('pagehide',()=>this.save());new ResizeObserver(()=>this.fit()).observe(document.querySelector('#render-view'));
   setInterval(()=>this.runDue(),10000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)this.runDue();});
  }
  save(){if(this.demo)return;try{localStorage.setItem(HOME_KEY,JSON.stringify(this.state));}catch{this.toast('Les réglages domotiques ne peuvent pas être enregistrés dans ce navigateur.');}}

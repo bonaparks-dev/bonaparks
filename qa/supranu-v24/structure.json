@@ -1,0 +1,83 @@
+{
+  "method": "Raycasts against evaluated Blender meshes plus manifold-edge checks. These test continuity, not survey accuracy.",
+  "checks": {
+    "hall_north": {
+      "pass": true,
+      "detail": {
+        "rays": 150,
+        "misses": 0
+      }
+    },
+    "hall_south": {
+      "pass": true,
+      "detail": {
+        "rays": 150,
+        "misses": 0
+      }
+    },
+    "children_east_wall_closed": {
+      "pass": true,
+      "detail": {
+        "rays": 108,
+        "misses": 0
+      }
+    },
+    "landing_slab_continuous": {
+      "pass": true,
+      "detail": {
+        "rays": 360,
+        "misses": 0
+      }
+    },
+    "all_16_steps_present": {
+      "pass": true,
+      "detail": {
+        "steps": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "top_step_z": 0,
+        "landing_top_z": 0.015
+      }
+    },
+    "six_doors": {
+      "pass": true,
+      "detail": {
+        "count": 6
+      }
+    },
+    "entry_centered": {
+      "pass": true,
+      "detail": {
+        "center": [
+          4.400000095367432,
+          0.375,
+          0.824999988079071
+        ],
+        "corridor_center_y": 0.375
+      }
+    },
+    "closed_structural_components": {
+      "pass": true,
+      "detail": {
+        "open_meshes": []
+      }
+    }
+  },
+  "passed": true,
+  "failures": []
+}

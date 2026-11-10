@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-10",
+  "reference": "Asno Casa Modelo demo, inspected in the user's open Opera tab",
+  "source": "SuPranu_Etage_Natif_v22.blend and original Matterpak front-facade scan",
+  "render": "SuPranu_Etage_Natif_v24.blend / etage_natif_v24.png",
+  "render_sha256": "5c874b090ecde02666d67b8ee703669ce9f52be2da875e72dfd256b30e5c158f",
+  "render_scope": "Two missing facade windows restored. Existing 545 objects, room dimensions, bathroom fixtures, stairs and camera unchanged.",
+  "geometry_limit": "Approximate reconstruction traced from Matterpak; not surveyed CAD. Existing overview and RDC presentation renders were not remodeled.",
+  "presentation": "Removed the affine floor-plane squaring which distorted upright walls and posts. Preserve native 3D camera perspective and uniform scaling.",
+  "calibration": "Window shutters, stair entrance animation and upstairs walking paths share the Blender camera projection. Gate leaves rotate around fixed image-calibrated hinges.",
+  "lighting": "Small white emitters, warm bloom, surface illumination with 1.35 s diffusion, room masks and reduced-motion support; demo effects, not physical lighting simulation.",
+  "automation": "Four shutters close between 3 and 8 seconds while the upstairs view remains active until 9 seconds; arrival opens them at 48–55 seconds in the upstairs chapter.",
+  "validation": {
+    "node_tests_passed": 63,
+    "blender_checks_passed": 8,
+    "structural_rays_without_misses": 768,
+    "solid_stair_steps": 16,
+    "browser_clock_sample": "25.31 wall seconds / 25.5 seconds on the displayed timeline (0.25 s UI refresh interval)",
+    "visual_checks": ["Opera Asno light on/off", "overview diffusion and independent controls", "nursery and bathroom windows", "four closed shutters at 8 s before floor switch", "native-perspective desktop layout", "complete departure playback reaches protection at 60 s", "390 px mobile controls remain reachable without horizontal overflow"]
+  }
+}

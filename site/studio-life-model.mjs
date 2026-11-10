@@ -1,4 +1,5 @@
 import {ease,smoothTrack} from './studio-motion.mjs';
+import {upperPoint} from './studio-upper-map.mjs';
 const between=(t,a,b)=>ease((t-a)/(b-a));
 export const journeys={
  arrival:{name:'Tout le monde rentre',duration:60,steps:[[0,'Ouverture du portail'],[5,'La voiture entre'],[17,'Stationnement'],[20,'Sortie de la voiture'],[38,'Bienvenue à la maison'],[50,'Portail refermé']]},
@@ -19,7 +20,9 @@ export function journeyFrame(id,time){
  return {id,time:t,duration:s.duration,done:t===s.duration,phase:s.steps.filter(x=>x[0]<=t).at(-1)[1],phaseIndex:s.steps.filter(x=>x[0]<=t).length-1,gate,car,walker,lit,
   floor:arrival?(t<38?'overview':t<48?'rdc':'etage'):(t<9?'etage':t<18?'rdc':'overview'),
   doors:{active:true,patio:arrival?between(t,28,30)*(1-between(t,41,44)):between(t,12,14)*(1-between(t,24,27)),upstairs:arrival?between(t,47,49)*(1-between(t,55,58)):between(t,0,2)*(1-between(t,9,12))},
-  shutterOpening:arrival?between(t,45,52)*100:(1-between(t,9,18))*100,
+  // Close while the upstairs camera is still visible (0–9 s), after the
+  // children leave their rooms. Never hide the entire closure in another view.
+  shutterOpening:arrival?between(t,48,55)*100:(1-between(t,3,8))*100,
   lightsOn:lit.length>0,climateOn:arrival?t>=42:t<18,climate:{rdc:arrival?t>=42:t<16,etage:arrival?t>=50:t<8},
   security:arrival?'disarmed':t>=60?'armed':t>=24?'arming':'disarmed',presence:arrival?'home':'away'};
 }
@@ -31,7 +34,7 @@ export function journeyActors(id,time,floor,members){
  return group.map((m,i)=>{
   let track;
   if(floor==='rdc')track=arrival?[[38,575,590],[40,589,532],[43,515,438],[46,506+i*18,333],[60,506+i*18,333]]:[[9,506+i*18,333],[12,515,438],[15,589,532],[18,575,590]];
-  else {const room=i%2?[676,545]:[380,405],join=i%2?[688,459]:[465,390];track=arrival?[[48,754,510],[50,736,450],[53,...join],[57,...room],[60,...room]]:[[0,...room],[4,...join],[6,736,450],[9,754,510]];}
+  else {const room=i%2?upperPoint(3.5,-1):upperPoint(-1.5,-.5),hall=i%2?upperPoint(3.62,.375):upperPoint(-.55,.375),door=i%2?upperPoint(3.62,-.25):hall,landing=upperPoint(4.95,.35),entry=upperPoint(4.35,.375);track=arrival?[[48,...landing],[50,...entry],[53,...hall],[54,...door],[57,...room],[60,...room]]:[[0,...room],[3,...door],[4,...hall],[7,...entry],[9,...landing]];}
   const p=smoothTrack(track,time);return {...m,...p,x:p.x+i*3,y:p.y+i*3,opacity:1};
  });
 }

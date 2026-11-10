@@ -1,17 +1,13 @@
-// Presentation only: approved images and animation coordinates stay intact.
-// Rectify BOTH floor-plane axes. Rotation alone left the side walls leaning.
-// Normalize the determinant so the correction preserves area and stays modest.
+// Fit the native camera render without distorting its geometry. A 2D affine
+// "rectification" squares the ground plane but bends every upright wall, stair
+// and gate post. Keep one undistorted coordinate space for image and effects.
 export const presentations={
  overview:{across:[1115,411],down:[-299,667],outline:[[.211,.004],[.982,.382],[.767,1],[.006,.618]],clip:'polygon(21.1% 0.4%,98.2% 38.2%,76.7% 100%,0.6% 61.8%)'},
  rdc:{across:[540,245],down:[-490,800],outline:[[.41,.04],[.85,.25],[1,.36],[1,.45],[.60,1],[.02,.77],[0,.62]]},
  etage:{across:[683,302],down:[-351,576],outline:[[.425,.04],[.865,.235],[.865,.416],[.975,.46],[.635,1],[.05,.77],[.195,.40]],clip:'polygon(42.3% 4%,86.5% 23.5%,86.5% 41.6%,97.5% 46%,63.5% 100%,5% 77%,19.5% 40%)'}
 };
 export function presentationMatrix(floor){
- const v=presentations[floor]||presentations.overview;
- const uLength=Math.hypot(...v.across),vLength=Math.hypot(...v.down);
- const [ux,uy]=v.across.map(n=>n/uLength),[vx,vy]=v.down.map(n=>n/vLength);
- const area=ux*vy-uy*vx,k=1/Math.sqrt(area);
- return [vy*k,-uy*k,-vx*k,ux*k];
+ return [1,0,0,1];
 }
 export function fitPresentation(floor,width,height,viewportWidth,viewportHeight){
  const v=presentations[floor]||presentations.overview,[a,b,c,d]=presentationMatrix(floor);
