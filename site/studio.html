@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080c17">
 <title>Parks 3D Studio · Votre maison prend forme</title>
-<link rel="stylesheet" href="studio.css?v=4"><link rel="stylesheet" href="studio-home.css?v=4"><link rel="stylesheet" href="studio-spatial.css?v=3"><link rel="stylesheet" href="studio-parks.css?v=2"><link rel="stylesheet" href="studio-comfort.css?v=1"><link rel="stylesheet" href="studio-dashboard.css?v=1"><link rel="stylesheet" href="studio-animation.css?v=1"><link rel="stylesheet" href="studio-embed.css?v=2"><script type="module" src="studio.mjs?v=9"></script>
-<link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=1"></script></head>
+<link rel="stylesheet" href="studio.css?v=4"><link rel="stylesheet" href="studio-home.css?v=4"><link rel="stylesheet" href="studio-spatial.css?v=3"><link rel="stylesheet" href="studio-parks.css?v=2"><link rel="stylesheet" href="studio-comfort.css?v=1"><link rel="stylesheet" href="studio-dashboard.css?v=1"><link rel="stylesheet" href="studio-animation.css?v=1"><link rel="stylesheet" href="studio-embed.css?v=2"><link rel="stylesheet" href="control-equipment.css?v=1"><script type="module" src="studio.mjs?v=11"></script>
+<link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=1"></script><link rel="stylesheet" href="action-feedback.css?v=1"><meta name="robots" content="noindex,follow"></head>
 <body>
 <div class="studio-shell">
  <aside class="sidebar">
@@ -25,7 +25,7 @@
  </aside>
  <main class="main">
   <header class="topbar"><div class="breadcrumbs">Mon espace <span>/</span> <strong>Home Studio</strong></div><div class="top-actions"><span id="save-state" role="status"><span class="status-dot"></span>Enregistré localement</span><button class="button subtle" data-action="import"><i data-icon="upload"></i>Importer un plan</button><button class="button primary" data-action="new"><i data-icon="plus"></i>Créer un projet</button></div></header>
-  <div class="page-heading"><div><div class="eyebrow">PARKS 3D</div><div class="title-line"><h1 id="project-title">Su Pranu</h1><span id="project-tag" class="tag">MA MAISON</span></div><p id="project-description">Votre maison, sous tous les angles.</p></div><div class="heading-actions"><button class="button subtle" data-action="export"><i data-icon="download"></i>Exporter</button><button class="icon-button" data-action="help" aria-label="Ouvrir le guide"><i data-icon="help"></i></button></div></div>
+  <div class="page-heading"><div><div class="eyebrow">PARKS 3D</div><div class="title-line"><h1 id="project-title">Ma maison</h1><span id="project-tag" class="tag">MA MAISON</span></div><p id="project-description">Votre maison, sous tous les angles.</p></div><div class="heading-actions"><button class="button subtle" data-action="export"><i data-icon="download"></i>Exporter</button><button class="icon-button" data-action="help" aria-label="Ouvrir le guide"><i data-icon="help"></i></button></div></div>
   <section id="home-bar" class="home-bar" aria-label="Scènes et ambiance" hidden></section>
   <div class="editor-layout">
    <section class="workspace" aria-label="Atelier de conception">
@@ -33,14 +33,14 @@
     <div class="viewport" id="viewport" tabindex="0" aria-label="Espace du plan. Utiliser les outils de dessin ou sélectionner une pièce.">
      <div class="canvas-label"><span class="status-dot"></span><span id="canvas-caption">VUE D’ENSEMBLE</span></div>
      <div id="toolbox" class="toolbox" role="toolbar" aria-label="Outils du plan"></div>
-     <div id="render-view" class="render-view"><div id="house-stage"><img id="house-render" alt="Vue d’ensemble du rez-de-chaussée de Su Pranu" draggable="false"><div id="home-layer"></div></div></div>
+     <div id="render-view" class="render-view"><div id="house-stage"><img id="house-render" alt="Vue d’ensemble du rez-de-chaussée de Ma maison" draggable="false"><div id="home-layer"></div></div></div>
      <svg id="plan-canvas" xmlns="http://www.w3.org/2000/svg" aria-label="Plan modifiable en mètres" hidden></svg>
      <div id="three-view" hidden></div>
      <div id="empty-state" class="empty-state" hidden><span class="empty-icon"><i data-icon="room"></i></span><h2>Tout commence par une pièce.</h2><p>Tracez un rectangle, puis ajustez ses dimensions.<br>Votre maison prend forme en 2D et en 3D.</p><button class="button primary" data-action="draw">Dessiner ma première pièce <i data-icon="arrow"></i></button></div>
      <div class="north" aria-label="Repère visuel"><span>N</span><svg viewBox="0 0 20 26"><path d="M10 2 16 22 10 18 4 22Z" fill="none" stroke="currentColor"/></svg></div>
      <div class="viewport-bottom"><span id="canvas-hint">La maison et ses extérieurs, en un regard.</span><button class="recenter-view" data-action="fit" aria-label="Recentrer la vue"><i data-icon="fit"></i></button></div>
     </div>
-    <footer class="canvas-footer"><span><i data-icon="shield"></i><span id="footer-note">Rendu architectural · Su Pranu</span></span><div><button id="undo" data-action="undo" aria-label="Annuler la modification" disabled><i data-icon="undo"></i></button><button id="redo" data-action="redo" aria-label="Rétablir la modification" disabled><i data-icon="redo"></i></button><span id="scale-note">PARKS 3D STUDIO</span></div></footer>
+    <footer class="canvas-footer"><span><i data-icon="shield"></i><span id="footer-note">Rendu architectural · Ma maison</span></span><div><button id="undo" data-action="undo" aria-label="Annuler la modification" disabled><i data-icon="undo"></i></button><button id="redo" data-action="redo" aria-label="Rétablir la modification" disabled><i data-icon="redo"></i></button><span id="scale-note">PARKS 3D STUDIO</span></div></footer>
    </section>
    <aside class="inspector" id="inspector" aria-label="Propriétés du projet"></aside>
   </div>

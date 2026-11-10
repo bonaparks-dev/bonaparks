@@ -10,7 +10,7 @@ export function spaceCamera(floor,id,width,height,hostWidth,hostHeight){
  if(!point||id==='all')return {x:0,y:0,zoom:1};
  const broad=['garden','patio','living'].includes(id);
  const fraction=id==='garden'?.56:floor==='overview'?(broad?.29:.23):(broad?.48:.36);
- const zoom=Math.max(1,Math.min(3.4,hostWidth*.78/(width*fraction),hostHeight*.72/(height*fraction)));
+ const zoom=Math.max(1.35,Math.min(1.85,hostWidth*.78/(width*fraction),hostHeight*.72/(height*fraction)));
  return {x:(.5-point[0]/1000)*width*zoom,y:(.5-point[1]/1000)*height*zoom,zoom};
 }
 

@@ -1,1 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://bonaparks.com/</loc></url><url><loc>https://bonaparks.com/studio.html</loc></url><url><loc>https://bonaparks.com/informations.html</loc></url><url><loc>https://bonaparks.com/aide.html</loc></url><url><loc>https://bonaparks.com/confidentialite-web.html</loc></url><url><loc>https://bonaparks.com/conditions.html</loc></url><url><loc>https://bonaparks.com/cgv.html</loc></url><url><loc>https://bonaparks.com/mentions-legales.html</loc></url></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://bonaparks.com/</loc></url>
+  <url><loc>https://bonaparks.com/comment-ca-marche</loc></url>
+  <url><loc>https://bonaparks.com/informations</loc></url>
+  <url><loc>https://bonaparks.com/aide</loc></url>
+  <url><loc>https://bonaparks.com/conditions</loc></url>
+  <url><loc>https://bonaparks.com/cgv</loc></url>
+  <url><loc>https://bonaparks.com/mentions-legales</loc></url>
+  <url><loc>https://bonaparks.com/confidentialite-web</loc></url>
+</urlset>

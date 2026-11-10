@@ -65,8 +65,8 @@ export class SpatialExperience{
   if(d.spatialNav){this.open(d.spatialNav);return;}if(!this.home.active)return;
   if(d.spatialMember){const m=this.state.members.find(m=>m.id===d.spatialMember);if(!m)return;this.selected=m.id;this.home.tab='family';this.navigate(m.zone);this.refresh();return;}
   if(d.spatialEdit){this.editProfile(d.spatialEdit);return;}
-  if(d.spatialScenario){this.startScenario(d.spatialScenario);return;}
-  if(d.spatialCamera){this.followCamera=false;this.camera=d.spatialCamera;this.refresh();return;}
+  if(d.spatialScenario){this.startScenario(d.spatialScenario);this.home.toast({icon:'eye',title:d.spatialScenario==='pool'?'Vigilance piscine':'Intrusion',detail:'SCÉNARIO DE DÉMONSTRATION'});return;}
+  if(d.spatialCamera){this.followCamera=false;this.camera=d.spatialCamera;this.refresh();this.home.toast({icon:'eye',title:cameras.find(c=>c.id===this.camera).name,detail:'Manuel'});return;}
   if(d.spatialEvent){const event=this.current.events.find(n=>n.id===d.spatialEvent);if(event){this.pause();this.camera=event.camera;this.navigate(null,true);this.seek(event.time);this.refresh();this.revealAlert();}return;}
   if(d.spatialSource){this.pause();this.source=d.spatialSource;this.refresh();this.seek(this.time);return;}
   const a=d.spatialAction;if(!a)return;
@@ -74,7 +74,7 @@ export class SpatialExperience{
   if(a==='visibility'||a==='animation'){const key=a==='visibility'?'visible':'animate';this.state[key]=!this.state[key];this.save();this.refresh();}
   if(a==='add')this.editProfile();if(a==='profile-close')this.dialog.close();
   if(a==='remove'){this.state.members=this.state.members.filter(m=>m.id!==this.editing);this.save();this.dialog.close();this.refresh();}
-  if(a==='play'){if(this.playing)this.pause();else this.play();}if(a==='rewind'){this.pause();this.seek(0);}if(a==='restart')this.startScenario(this.scenario);
+  if(a==='play'){if(this.playing)this.pause();else this.play();this.home.toast({icon:this.playing?'play':'pause',title:this.playing?'Lecture':'Pause'});}if(a==='rewind'){this.pause();this.seek(0);}if(a==='restart'){this.startScenario(this.scenario);this.home.toast({icon:'eye',title:this.scenario==='pool'?'Vigilance piscine':'Intrusion',detail:'SCÉNARIO DE DÉMONSTRATION'});}
   if(a==='ack'){const last=eventsAt(this.scenario,this.time).at(-1);if(last)this.acknowledged.add(this.scenario+':'+last.id);this.updatePlaybackUI();}
   if(a==='video'){this.file.value='';this.file.click();}if(a==='video-remove')this.clearVideo();
  }

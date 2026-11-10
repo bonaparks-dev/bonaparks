@@ -30,7 +30,7 @@ test('dynamic labels retain numbers, symbols and visitor names',()=>{
 });
 test('public pages and account have catalog coverage for every text node',()=>{
  const keys=new Set(all.map(r=>normalize(r[0])));const brands=new Set(['Parks','◇ Parks','3D','Su Pranu','2D','PARKS 3D · HOME STUDIO','G','© 2026 Parks 3D','bonaparks@icloud.com','netlify.com/contact','DM Sans','Manrope','404 · PARKS 3D']);
- for(const name of ['index','compte','conditions','cgv','mentions-legales','aide','informations','confidentialite-web','404']){
+ for(const name of ['index','comment-ca-marche','compte','conditions','cgv','mentions-legales','aide','informations','confidentialite-web','404']){
   const html=fs.readFileSync(new URL(`./${name}.html`,import.meta.url),'utf8').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,'');
   for(const [,raw]of html.matchAll(/>([^<>]+)</g)){
    const source=normalize(raw.replaceAll('&amp;','&').replaceAll('&nbsp;',' '));

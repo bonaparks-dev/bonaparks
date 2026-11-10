@@ -1,4 +1,5 @@
 import {initialShutters,restoreShutters,commandShutters} from './studio-shutters.mjs';
+import {initialFans,initialSockets,equipmentSummary} from './studio-equipment.mjs';
 // Local preview only. No network command or physical device is issued here.
 export const HOME_KEY='bonaparks.supranu.home.v1';
 export const televisions=[{id:'living',name:'TV du séjour',zone:'rdc'},{id:'children',name:'TV des enfants',zone:'etage'}];
@@ -25,7 +26,8 @@ export const lights=[
  ['garage','Garage','outside'],['pool','Piscine','outside'],['spa','Jacuzzi','outside']
 ].map(([id,name,zone])=>({id,name,zone}));
 export const scenes=[
- {id:'morning',name:'Bonjour',icon:'sun',description:'Volets de l’étage ouverts, cuisine éclairée et ambiance jour.'},
+ {id:'morning',name:'Bonjour',icon:'sun',description:'Toutes les lumières à 100 %, volets de l’étage ouverts et ambiance jour.'},
+ {id:'evening',name:'Soirée',icon:'moon',description:'Lumières douces dans la maison, terrasse et musique.'},
  {id:'welcome',name:'Retour maison',icon:'home',description:'Le portail s’ouvre, la voiture se gare et la famille rentre. La maison s’allume.'},
  {id:'departure',name:'Départ',icon:'gate',description:'La famille rejoint la voiture. Lumières et clim éteintes, volets et portail fermés, protection activée.'},
  {id:'terrace',name:'Soirée terrasse',icon:'music',description:'Terrasse à 75 %, jardin à 35 %, piscine éclairée, animation musique sur les quatre enceintes.'},
@@ -34,10 +36,12 @@ export const scenes=[
  {id:'night',name:'Bonne nuit',icon:'moon',description:'Intérieurs éteints, balisage extérieur à 20 %, musique et pompes arrêtées, portail fermé et volets de l’étage fermés.'},
  {id:'off',name:'Tout éteindre',icon:'power',description:'Toutes les lumières, clims, musique et pompes arrêtées. Portail fermé.'}
 ];
-export function initialHome(){return {version:1,car:{on:false},doors:{patio:0,upstairs:0},presence:"home",security:"disarmed",night:false,markers:false,shutters:initialShutters(),lights:Object.fromEntries(lights.map(l=>[l.id,{on:['patio','pool','kitchen'].includes(l.id),brightness:75,color:l.id==='pool'?'#55e5ff':l.id==='spa'?'#87e6de':'#ffd28a'}])),tv:Object.fromEntries(televisions.map(t=>[t.id,initialTV()])),music:{playing:false,volume:35,speakers:[true,true,true,true]},climate:{rdc:{on:false,temperature:23,ambient:26,mode:'cool'},etage:{on:false,temperature:23,ambient:26,mode:'cool'}},pool:{pump:false},spa:{jets:false,intensity:60},humidity:{'bath-down':58,'bath-up':64},gate:{position:0,target:0},routines:[],log:[]};}
+export function initialHome(){return {version:1,fans:initialFans(),sockets:initialSockets(),car:{on:false},doors:{patio:0,upstairs:0},presence:"home",security:"disarmed",night:false,markers:false,shutters:initialShutters(),lights:Object.fromEntries(lights.map(l=>[l.id,{on:['patio','pool','kitchen'].includes(l.id),brightness:75,color:l.id==='pool'?'#55e5ff':l.id==='spa'?'#87e6de':'#ffd28a'}])),tv:Object.fromEntries(televisions.map(t=>[t.id,initialTV()])),music:{playing:false,volume:35,speakers:[true,true,true,true]},climate:{rdc:{on:false,temperature:23,ambient:26,mode:'cool'},etage:{on:false,temperature:23,ambient:26,mode:'cool'}},pool:{pump:false},spa:{jets:false,intensity:60},humidity:{'bath-down':58,'bath-up':64},gate:{position:0,target:0},routines:[],log:[]};}
 const clamp=(v,min,max,fallback)=>Number.isFinite(v)?Math.min(max,Math.max(min,v)):fallback;
 export function restoreHome(raw){
  const s=initialHome();if(!raw||raw.version!==1)return s;
+ for(const [id,f] of Object.entries(s.fans)){const v=raw.fans?.[id];if(v){f.on=v.on===true;f.speed=Math.round(clamp(v.speed,1,3,2));}}
+ for(const [id,v] of Object.entries(s.sockets))v.on=raw.sockets?.[id]?.on===true;
  for(const l of lights){const v=raw.lights?.[l.id];if(!v)continue;s.lights[l.id]={on:v.on===true,brightness:clamp(v.brightness,1,100,75),color:/^#[0-9a-f]{6}$/i.test(v.color)?v.color:s.lights[l.id].color};}
  for(const t of televisions){const v=raw.tv?.[t.id];if(v){let c=initialTV();for(const k of ['volume','channel','source'])c=changeTV(c,k,v[k]);c.on=v.on===true;c.muted=v.muted===true;s.tv[t.id]=c;}}
  s.night=raw.night===true;s.markers=false;s.shutters=restoreShutters(raw.shutters);s.presence=raw.presence==='away'?'away':'home';s.security=raw.security==='armed'?'armed':'disarmed';
@@ -59,13 +63,15 @@ function allLights(s,on,brightness){for(const l of Object.values(s.lights)){l.on
 export function applyScene(state,id){
  const s=structuredClone(state);if(!scenes.some(x=>x.id===id))return s;
  if(id==='off'||id==='night'||id==='departure'){
+  for(const v of [...Object.values(s.fans),...Object.values(s.sockets)])v.on=false;
   allLights(s,false);for(const t of Object.values(s.tv))t.on=false;s.music.playing=false;s.spa.jets=false;s.pool.pump=false;for(const c of Object.values(s.climate))c.on=false;s.gate.target=0;
   if(id==='night'){s.night=true;for(const k of ['entry','stairs'])s.lights[k]={...s.lights[k],on:true,brightness:20};}
  }
  if(id==='night')s.shutters=commandShutters(s.shutters,'all','close');
  if(id==='off')s.shutters=commandShutters(s.shutters,'all','stop');
  if(id==='departure'){s.shutters=commandShutters(s.shutters,'all','close');s.presence='away';s.security='armed';}
- if(id==='morning'){s.night=false;s.shutters=commandShutters(s.shutters,'all','open');s.lights.kitchen.on=true;}
+ if(id==='morning'){s.night=false;s.shutters=commandShutters(s.shutters,'all','open');allLights(s,true,100);}
+ if(id==='evening'){s.night=true;allLights(s,false);for(const k of ['living','kitchen','patio','garden','pool','entry'])Object.assign(s.lights[k],{on:true,brightness:k==='garden'?25:45});s.music.playing=true;}
  if(id==='welcome'){for(const k of ['entry','stairs','living','kitchen'])s.lights[k].on=true;s.gate.target=1;}
  if(id==='terrace'){s.night=true;for(const [k,b] of Object.entries({patio:75,garden:35,gazebo:50,pool:85,entry:30}))s.lights[k]={...s.lights[k],on:true,brightness:b};s.music.playing=true;s.music.speakers=[true,true,true,true];}
  if(id==='swim'){s.lights.pool.on=s.lights.spa.on=true;s.spa.jets=true;s.pool.pump=true;s.lights.patio.on=true;}
@@ -73,7 +79,7 @@ export function applyScene(state,id){
  return s;
 }
 export function tickGate(gate,seconds){const step=Math.max(0,Math.min(seconds,1))/4,delta=gate.target-gate.position;return {...gate,position:Math.abs(delta)<=step?gate.target:gate.position+Math.sign(delta)*step};}
-export function activeCount(s){return Object.values(s.lights).filter(l=>l.on).length+Object.values(s.climate).filter(c=>c.on).length+Object.values(s.tv).filter(t=>t.on).length+(s.spa.jets?1:0)+(s.pool.pump?1:0)+(s.music.playing?s.music.speakers.filter(Boolean).length:0);}
+export function activeCount(s){return equipmentSummary(s).devices.on;}
 export function dueRoutines(s,date=new Date()){
  const day=[date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
  const time=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
