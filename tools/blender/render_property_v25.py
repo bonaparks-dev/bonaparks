@@ -10,7 +10,7 @@ from mathutils import Vector
 from bpy_extras.object_utils import world_to_camera_view
 import os
 P=Path(os.environ.get('SUPRANU_SOURCE_DIR', str(Path(__file__).resolve().parents[3]/'SuPranu')))
-ns={'__file__':str(P/'build_realistic.py')}
+ns={'__file__':str(Path(__file__).resolve().parent/'build_realistic.py')}
 exec((Path(__file__).resolve().parent/'build_realistic.py').read_text().split('levels={}')[0],ns)
 S=bpy.context.scene
 mat,box,cyl,ball,basin=[ns[n] for n in ['material','box','cylinder','ball','basin']]
