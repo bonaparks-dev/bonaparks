@@ -2,7 +2,7 @@ import {nativeDetails} from './studio-native-details.mjs';
 import {legacyPoint} from './studio-overview-projection.mjs';
 // Demo fixtures follow native room edges. They are not a device survey.
 export const fixtures={
- overview:{kitchen:[[465,263]],living:[[560,388]],'bath-down':[[393,331]],patio:[[346,439],[490,508]],stairs:[[553,475]],garden:[[649,344],[929,455],[843,640],[748,707],[75,580],[354,723]],gazebo:[[499,726]],entry:[[255,151],[346,178],[198,136]],garage:[[160,256]]},
+ overview:{kitchen:[[465,263]],living:[[560,388]],'bath-down':[[393,331]],patio:[[346,439],[490,508]],stairs:[[553,475]],garden:[[647.5,348.6],[919.8,482.4],[843,640],[748,707],[75,580],[354,723]],gazebo:[[499,726]],entry:[[255,151],[346,178],[198,136]],garage:[[160,256]]},
  rdc:{kitchen:[[472,207],[575,253]],living:[[670,403],[595,502]],'bath-down':[[358,283]],patio:[[261,487],[513,640]],stairs:[[674,543]]},
  etage:{master:[[440,156],[567,213]],guest:[[721,249],[746,346]],children:[[344,305],[273,425]],blue:[[535,466],[625,552]],'bath-up':[[448,415]],hall:[[573,374]],stairs:[[742,557]]}
 };

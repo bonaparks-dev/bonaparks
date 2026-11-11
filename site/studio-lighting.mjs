@@ -5,7 +5,7 @@ import {roomSurfaces,polygonPoints,surfaceBox} from './studio-home-surfaces.mjs'
 // The garden circuit covers two separate lawns. Keep gravel, pool and terrace
 // outside these masks; entrance uplights include the planting beside the gate.
 export const outdoorLightSurfaces={
- garden:[[[637,326],[966,433],[812,754],[623,671],[543,610]],[[76,493],[274,562],[486,643],[407,790],[12,612]]],
+ garden:[[[635.3,331.2],[948.5,485.1],[812,754],[623,671],[543,610]],[[76,493],[274,562],[486,643],[407,790],[12,612]]],
  entry:[[[226,115],[328,170],[278,294],[190,257]],[[304,99],[414,149],[377,250],[294,213]],[[180,78],[235,109],[201,234],[144,209]]]
 };
 
@@ -38,7 +38,7 @@ export function lightingMarkup(state,floor){
  }
  html+='<mask id="lit-rooms" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">';
  for(const id of rooms)html+=`<g data-key="reveal-room-${id}" mask="url(#light-room-${id})">${fields.filter(f=>f.id===id).map(f=>spread(f,'reveal')).join('')}</g>`;
- const files={overview:'property_native_v25.webp',rdc:'rdc_pro.png',etage:'etage_quality_v25.webp'};
+ const files={overview:'property_parks_v26.webp',rdc:'rdc_pro.png',etage:'etage_quality_v25.webp'};
  html+=`</mask></defs><g mask="url(#lit-rooms)"><image data-key="illuminated-materials" class="illuminated-materials" href="supranu/${files[floor]}" width="1000" height="1000" preserveAspectRatio="none" transform="${floor==='overview'?'matrix('+inverseOverview().join(' ')+')':''}"/></g>`;
  for(const id of rooms)html+=`<g data-key="warm-room-${id}" mask="url(#light-room-${id})">${fields.filter(f=>f.id===id).map(f=>spread(f,'warm')).join('')}</g>`;
  // A small luminous source and soft bloom, like a real spot. Its footprint
