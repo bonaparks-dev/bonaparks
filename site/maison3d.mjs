@@ -44,6 +44,14 @@ const glass=mat(0x9fd0ee,{roughness:.1,metalness:.2,transparent:true,opacity:.55
 // Real windows: the wall is open above a sill, with a frame, two panes and a roller shutter outside.
 const SILL=.62,dark=0x2f3742,shutters=[];
 const slats=surface((g,s)=>{g.fillStyle='#e9e7e1';g.fillRect(0,0,s,s);g.fillStyle='#c5c2ba';for(let i=0;i<s;i+=16)g.fillRect(0,i,s,3);},64,[1,3]);
+/** A door in its opening, from the hinge (x0, z0) to the other side (x1, z1), in metres. It opens when someone comes near. */
+const doors=[];
+function door(x0,z0,x1,z1,y=0){const w=Math.hypot(x1-x0,z1-z0),pivot=new T.Group();pivot.position.set(x0,0,z0);pivot.rotation.y=Math.atan2(-(z1-z0),x1-x0);
+ const leaf=new T.Mesh(new T.BoxGeometry(w-.04,WALL-.02,.045),mat(0x8d7a69,{roughness:.6}));leaf.position.set(w/2,(WALL-.02)/2+.01,0);leaf.castShadow=true;
+ const knob=new T.Mesh(new T.SphereGeometry(.035,10,8),mat(0xd8dde4,{metalness:.8,roughness:.25}));knob.position.set(w-.14,.95,.05);const knob2=knob.clone();knob2.position.z=-.05;
+ pivot.add(leaf,knob,knob2);parent.add(pivot);
+ for(const [x,z] of [[x0,z0],[x1,z1]]){const j=new T.Mesh(new T.BoxGeometry(.07,WALL,.13),mat(0x2f3742));j.position.set(x,WALL/2,z);j.rotation.y=pivot.rotation.y;j.castShadow=true;parent.add(j);}
+ doors.push({pivot,base:pivot.rotation.y,x:(x0+x1)/2,z:(z0+z1)/2,y,open:0});}
 /** A window in a wall along x: a, b its two sides and z its line, in metres; out is +1 when outside is towards +z. */
 function windowAt(a,b,z,out,up,cut=WALL){
  const piece=(x0,z0,x1,z1,h,y0,color,o,shadow)=>{const m=new T.Mesh(new T.BoxGeometry(x1-x0,h,z1-z0),typeof color==='number'?mat(color,o):color);m.position.set((x0+x1)/2,y0+h/2,(z0+z1)/2);return put(m,shadow);};
@@ -82,7 +90,7 @@ const rooms={
 };
 for(const [id,r] of Object.entries(rooms)){if(!r.map)continue;const [a,b,c,d]=r.rect;ground(a,b,c,d,.08,r.map,id);}
 box(300,581,570,690,.02,.075,0xffffff,{map:tex.paving},false).userData.room='terrace';
-wallH(325,352,224);wallH(412,482,224);wallH(538,573,224);windowAt(X(352),X(412),Z(224),-1);windowAt(X(482),X(538),Z(224),-1);     // back wall, with its two windows
+wallH(325,352,224);wallH(412,482,224);wallH(538,573,224);windowAt(X(352),X(412),Z(224),-1);windowAt(X(482),X(538),Z(224),-1);door(X(497),Z(466),X(541),Z(466));door(X(385),Z(398),X(385),Z(432));     // back wall, with its two windows
 wallV(327,224,584);wallV(571,224,584);                                         // left, right
 wallH(325,497,466);wallH(541,573,466);                                          // between the living room and the laundry, with its door
 wallV(385,315,398);wallV(385,432,466);wallH(327,385,315);                       // the shower room, with its door
@@ -124,7 +132,7 @@ uroom('master','Chambre du fond · gauche',-3.45,.95,.4,4,tex.wood);uroom('guest
 uroom('children','Chambre des enfants',-3.45,-3.5,-.6,.95,tex.wood);uroom('bathup','Salle de bain',-.6,-3.5,1,0,tex.bath);uroom('blue','Chambre au lit bleu',1,-3.5,4.7,0,tex.wood);uroom('hallup','Couloir du haut',-.6,0,4.7,.95,tex.tile);
 for(const [y,out,wins] of [[4,-1,[[-1.75,-.45],[2.6,3.8]]],[-3.5,1,[[-1.85,-.8],[1.65,3.15]]]]){let x=-3.5;for(const [a,b] of wins){uw(x,y-.05,a,y+.05);windowAt(sx(a),sx(b),sz(y),out,true);x=b;}uw(x,y-.05,4.75,y+.05);}
 uw(-3.5,-3.55,-3.4,4.05);uw(4.65,-3.55,4.75,0);uw(4.65,.8,4.75,4.05);   // outer walls, the door from the landing on the right
-uw(-3.45,.9,-1.5,1);uw(.4,.9,2,1);uw(2.85,.9,4.7,1);                                                // back rooms, with their doors on the hall
+uw(-3.45,.9,-.5,1);uw(.4,.9,2,1);uw(2.85,.9,4.7,1);                                                // back rooms, with their doors on the hall
 uw(-.65,-3.5,-.55,.05);uw(.95,-3.5,1.05,0);uw(-.6,-.05,.05,.05);uw(.8,-.05,3.3,.05);uw(4.05,-.05,4.7,.05);            // front rooms
 ub(.45,1.15,1.85,3.95,1.25,0,0xf4f5f7);ub(1.14,1.14,1.16,3.95,1.2,0,0xcfd4da);                       // wardrobes between the two back rooms
 const bed=(x0,y0,x1,y1,cover,head)=>{ub(x0,y0,x1,y1,.3,0,0xb78752);ub(x0+.05,y0+.05,x1-.05,y1-.05,.16,.3,cover);const h=head==='back';ub(x0,h?y1-.12:y0,x1,h?y1:y0+.12,.75,0,0xb78752);const w=(x1-x0)/2;for(const k of [0,1])ub(x0+.12+k*w,h?y1-.62:y0+.2,x0+w-.12+k*w,h?y1-.2:y0+.62,.1,.46,0xffffff);};
@@ -134,6 +142,9 @@ for(const [x,y,c] of [[-3.1,-1.7,0xf0a070],[-2.0,-2.6,0xf2f2f2]]){ub(x,y,x+.75,y
 ub(-3.35,.1,-2.55,.85,.85,0,0xf4f5f7);ub(-3.38,-3.4,-3.3,-2.6,.5,.5,0x10151d);                       // chest of drawers, a small TV
 ub(-.45,-3.35,.35,-1.6,.55,0,0xffffff,{roughness:.2});ub(-.33,-3.23,.23,-1.72,.05,.5,0xa8c7dc,{roughness:.2},false);ub(.5,-2.75,.92,-2.2,.42,0,0xffffff,{roughness:.2});ub(.35,-.95,.92,-.3,.8,0,0xd9b98f);ub(.4,-.9,.87,-.35,.08,.8,0xffffff,{roughness:.2});
 bed(1.7,-3.25,3.45,-1.2,0x3f8fd6,'front');ub(3.6,-3.3,4.05,-2.85,.5,0,0xc59a66);                     // the blue bed
+// a door in every opening of the upper floor
+door(sx(4.7),sz(.8),sx(4.7),sz(0),2.75);door(sx(-.5),sz(.95),sx(.4),sz(.95),2.75);door(sx(2),sz(.95),sx(2.85),sz(.95),2.75);
+door(sx(-.6),sz(.05),sx(-.6),sz(.9),2.75);door(sx(.05),sz(0),sx(.8),sz(0),2.75);door(sx(3.3),sz(0),sx(4.05),sz(0),2.75);
 // the pergola over the terrace, level with the upper floor
 for(const v of [584,637,690])box(298,v-1.5,572,v+1.5,.12,-.2,0xc9a36b);for(const u of [300,436,570])box(u-1.2,584,u+1.2,690,.1,-.1,0xc9a36b);
 for(const [a,b] of [[303,433],[439,567]])for(const [c,d] of [[588,634],[640,687]])box(a,c,b,d,.03,-.04,0xf1ece2,{roughness:.9});
@@ -337,6 +348,7 @@ function frame(now){
  const poolLevel=lamps.get('pool').level;water.material.emissiveIntensity=.1+.75*poolLevel;spa.material.emissiveIntensity=.12+.7*poolLevel;tex.water.offset.x=now*.00001;tex.water.offset.y=now*.000006;
  tv.material.emissiveIntensity=.9*lamps.get('living').level*night;glass.emissiveIntensity=.15+.5*Math.max(lamps.get('kitchen').level,lamps.get('living').level)*night;
  shutter.open+=(shutter.target-shutter.open)*Math.min(1,dt*(reduce?60:1.6));for(const b of shutters){const closed=Math.max(.03,1-shutter.open);b.mesh.scale.y=closed;b.mesh.position.y=b.top-b.height*closed/2;}
+ for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
  renderer.render(scene,camera);
