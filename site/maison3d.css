@@ -21,6 +21,9 @@ button:focus-visible,.tag.press:focus-visible{outline:2px solid var(--accent);ou
 .mark i{font-style:normal;font-size:11px;font-weight:700;color:#06101a;background:var(--accent);padding:4px 6px;border-radius:7px}
 .status{margin:0;color:var(--soft);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .scene.day .status,.scene.day .hint{color:#22344c}.scene.day .mark{color:#0c1a2b}
+.floors{position:absolute;right:18px;top:max(14px,env(safe-area-inset-top));display:flex;gap:2px;padding:3px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.floors button{border:0;background:transparent;color:var(--soft);font-size:12px;padding:7px 14px;border-radius:99px}
+.floors button[aria-pressed=true]{background:var(--accent);color:#06101a;font-weight:600}
 .back{position:absolute;left:max(18px,env(safe-area-inset-left));top:calc(max(16px,env(safe-area-inset-top)) + 40px);padding:8px 13px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);font-size:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .toast{position:absolute;left:50%;bottom:58px;transform:translate(-50%,10px);margin:0;padding:9px 16px;border-radius:99px;background:rgba(14,19,28,.8);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-weight:500;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translate(-50%,0)}.toast b{color:var(--warm);font-weight:600}
