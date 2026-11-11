@@ -8,31 +8,80 @@
   <meta name="description" content="La maison pilote de Parks 3D en trois dimensions : tournez autour, entrez dans une pièce, allumez une lampe.">
   <title>Parks 3D · La maison en trois dimensions</title>
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="maison3d.css?v=1">
-  <script type="module" src="maison3d.mjs?v=1"></script>
+  <link rel="stylesheet" href="maison3d.css?v=2">
+  <script type="module" src="maison3d.mjs?v=2"></script>
 </head>
 <body>
-<main class="scene" id="scene" aria-label="Maison pilote en trois dimensions">
-  <canvas id="view" aria-hidden="true"></canvas>
-  <div class="labels" id="labels"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 15A9 9 0 0 1 9 3a9 9 0 1 0 10 12"/></symbol>
+  <symbol id="i-sleep" viewBox="0 0 24 24"><path d="M17 15A8 8 0 0 1 9 5a8 8 0 1 0 8 10M15 3h5l-5 6h5"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4M8 14a6 6 0 1 1 8 0l-1 2H9Z"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24"><path d="M3 21V3h18v18M6 7v10m4-10v10m4-10v10m4-10v10"/></symbol>
+  <symbol id="i-temp" viewBox="0 0 24 24"><path d="M10 14V5a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></symbol>
+  <symbol id="i-leave" viewBox="0 0 24 24"><path d="M4 3h16v18H4ZM4 7h16M4 11h16M4 15h16"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/></symbol>
+  <symbol id="i-air" viewBox="0 0 24 24"><path d="M3 7h12c5 0 5-5 1-5M3 12h15c5 0 5 6 1 6M3 17h7c4 0 4 5 0 5"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 2v10M6 5a9 9 0 1 0 12 0"/></symbol>
+</defs></svg>
 
-  <header class="top">
-    <a class="mark" href="recit.html" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
-    <p class="status" id="status" aria-live="polite"></p>
+<div class="app">
+  <main class="scene" id="scene" aria-label="Maison pilote en trois dimensions">
+    <canvas id="view" aria-hidden="true"></canvas>
+    <div class="labels" id="labels"></div>
+    <header class="top">
+      <a class="mark" href="recit.html" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
+      <p class="status" id="status" aria-live="polite"></p>
+    </header>
+    <button class="back" id="back" hidden>← Vue complète</button>
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    <p class="hint" id="hint">Glissez pour tourner · Molette ou deux doigts pour zoomer · Touchez une pièce pour y entrer</p>
+  </main>
+
+  <aside class="panel" aria-label="Tableau de bord de la maison">
+    <div class="panel-head"><h1>Maison connectée</h1><span class="chip">Mode aperçu</span></div>
     <div class="modes" role="group" aria-label="Ambiance">
-      <button data-mode="day" aria-pressed="false">Bonjour</button>
-      <button data-mode="evening" aria-pressed="true">Soirée</button>
-      <button data-mode="night" aria-pressed="false">Bonne nuit</button>
+      <button data-mode="day" aria-pressed="false"><svg><use href="#i-sun"/></svg>Bonjour</button>
+      <button data-mode="evening" aria-pressed="true"><svg><use href="#i-moon"/></svg>Soirée</button>
+      <button data-mode="night" aria-pressed="false"><svg><use href="#i-sleep"/></svg>Bonne nuit</button>
     </div>
-  </header>
 
-  <button class="back" id="back" hidden>← Vue complète</button>
-  <p class="toast" id="toast" role="status" aria-live="polite"></p>
-  <p class="hint" id="hint">Glissez pour tourner · Molette ou deux doigts pour zoomer · Touchez une pièce pour y entrer</p>
-  <p class="fine">Maison pilote · Équipements et mesures simulés.</p>
+    <div class="row-title"><span>Toute la maison</span><small id="active"></small></div>
+    <div class="tiles">
+      <div class="tile"><svg><use href="#i-bulb"/></svg><b id="count">0/13</b><small>Lumières</small></div>
+      <button class="tile" id="gate-tile" aria-pressed="false"><svg><use href="#i-gate"/></svg><b id="gate-state">Fermé</b><small>Portail</small></button>
+      <div class="tile"><svg><use href="#i-temp"/></svg><b>24,5 °C</b><small>Séjour</small></div>
+    </div>
 
-  <ul class="list" id="list" aria-label="Lumières de la maison"></ul>
-</main>
+    <p class="label">Scénarios</p>
+    <div class="scenes" id="scenes">
+      <button data-scene="arrival"><svg><use href="#i-home"/></svg>Tout le monde rentre</button>
+      <button data-scene="departure"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button>
+      <button data-scene="intrusion"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button>
+    </div>
+    <div class="transport" id="transport" hidden>
+      <button id="stop" aria-label="Arrêter le scénario">■</button><span id="caption"></span>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+    <div class="alert" id="alert" hidden>
+      <span>Alerte · démonstration</span><strong>Personne non identifiée dans le jardin, à droite.</strong>
+      <ul><li>Téléphones <b>Notification reçue</b></li><li>Écran central <b>Alerte affichée</b></li><li>Enceintes <b>Annonce en cours</b></li></ul>
+    </div>
+
+    <div class="card clim">
+      <svg><use href="#i-air"/></svg>
+      <div><b>Clim · RDC</b><small id="clim-state">OFF · 26,0 °C</small></div>
+      <button class="round" id="clim-power" aria-pressed="false" aria-label="Climatisation du rez-de-chaussée"><svg><use href="#i-power"/></svg></button>
+      <div class="setpoint"><span>Consigne</span><button id="clim-less" aria-label="Baisser la consigne">−</button><b id="clim-set">23 °C</b><button id="clim-more" aria-label="Monter la consigne">+</button></div>
+    </div>
+
+    <div class="row-title"><span class="label">Éclairage</span><span class="links"><button id="all-on">Tout allumer</button><button id="all-off">Tout éteindre</button></span></div>
+    <ul class="lights" id="list"></ul>
+
+    <p class="fine">Maison pilote · Personnages, équipements et alertes simulés.</p>
+  </aside>
+</div>
 <noscript><p style="padding:24px;color:#fff">La maison en trois dimensions a besoin de JavaScript.</p></noscript>
 </body>
 </html>
