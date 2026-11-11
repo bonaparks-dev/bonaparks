@@ -59,3 +59,12 @@
 .spatial-map-cameras{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 #house-stage[data-presentation="overview"] #house-render{image-rendering:auto;filter:brightness(.98) saturate(.95)}
 #house-stage[data-presentation="overview"].is-night #house-render{filter:brightness(.46) saturate(.84)}
+/* Lamps are balls hanging on a wire: grey when off, glowing when on. The lamp itself is the switch. */
+.map-lamp-button>span{position:relative;width:12px;height:12px;border:0;background:radial-gradient(circle at 35% 30%,#c9d0db,#7d8794 70%);box-shadow:0 1px 3px #0007;transition:background .5s,box-shadow .5s,transform .25s cubic-bezier(.3,1.6,.5,1)}
+.map-lamp-button>span>svg{display:none}
+.map-lamp-button>span::before{content:'';position:absolute;left:50%;bottom:100%;width:1px;height:11px;background:#0b0f15cc}
+.map-lamp-button[aria-pressed=true]>span,.map-lamp-button[aria-pressed=true]:is(:hover,:focus-visible)>span{opacity:1;background:radial-gradient(circle at 40% 35%,#fff,#ffe9b8 55%,#ffcf7a);box-shadow:0 0 10px 3px #ffd98acc,0 0 26px 10px #ffc96a55}
+.map-lamp-button:hover>span{box-shadow:0 0 0 3px #d7e3ff26,0 1px 3px #0007}
+.map-lamp-button:active>span{transform:scale(1.35)}
+@media(max-width:650px){.demo-embed .map-lamp-button>span{width:10px;height:10px}}
+@media(prefers-reduced-motion:reduce){.map-lamp-button>span{transition:none}}
