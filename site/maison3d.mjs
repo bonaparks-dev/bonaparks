@@ -138,7 +138,9 @@ ub(.45,1.15,1.85,3.95,1.25,0,0xf4f5f7);ub(1.14,1.14,1.16,3.95,1.2,0,0xcfd4da);  
 const bed=(x0,y0,x1,y1,cover,head)=>{ub(x0,y0,x1,y1,.3,0,0xb78752);ub(x0+.05,y0+.05,x1-.05,y1-.05,.16,.3,cover);const h=head==='back';ub(x0,h?y1-.12:y0,x1,h?y1:y0+.12,.75,0,0xb78752);const w=(x1-x0)/2;for(const k of [0,1])ub(x0+.12+k*w,h?y1-.62:y0+.2,x0+w-.12+k*w,h?y1-.2:y0+.62,.1,.46,0xffffff);};
 bed(-2.9,1.5,-.95,3.75,0xe8dfe2,'back');ub(-3.35,3.2,-2.95,3.7,.5,0,0xc59a66);                       // master
 bed(2.45,1.35,4.3,3.5,0xb9bcc4,'back');ub(2.0,3.4,2.4,3.85,.5,0,0xc59a66);                           // guest
-for(const [x,y,c] of [[-3.1,-1.7,0xf0a070],[-2.0,-2.6,0xf2f2f2]]){ub(x,y,x+.75,y+1.3,.5,0,0xffffff);ub(x+.06,y+.06,x+.69,y+1.24,.08,.3,c);}   // two cots
+// the children's room: two single beds, one along each wall, a bedside table between them
+for(const [x,c] of [[-3.35,0xf0a070],[-1.55,0x7fc6a4]]){ub(x,-2.75,x+.9,-.8,.28,0,0xb78752);ub(x+.04,-2.71,x+.86,-.92,.15,.28,c);ub(x,-.92,x+.9,-.8,.7,0,0xb78752);ub(x+.15,-1.42,x+.75,-1.02,.09,.43,0xffffff);}
+ub(-2.3,-1.3,-1.7,-.82,.48,0,0xc59a66);
 ub(-3.35,.1,-2.55,.85,.85,0,0xf4f5f7);ub(-3.38,-3.4,-3.3,-2.6,.5,.5,0x10151d);                       // chest of drawers, a small TV
 ub(-.45,-3.35,.35,-1.6,.55,0,0xffffff,{roughness:.2});ub(-.33,-3.23,.23,-1.72,.05,.5,0xa8c7dc,{roughness:.2},false);ub(.5,-2.75,.92,-2.2,.42,0,0xffffff,{roughness:.2});ub(.35,-.95,.92,-.3,.8,0,0xd9b98f);ub(.4,-.9,.87,-.35,.08,.8,0xffffff,{roughness:.2});
 bed(1.7,-3.25,3.45,-1.2,0x3f8fd6,'front');ub(3.6,-3.3,4.05,-2.85,.5,0,0xc59a66);                     // the blue bed
