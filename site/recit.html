@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#05080d">
+  <meta name="description" content="Parks 3D : votre maison vue d’en haut, ses lumières, son portail et ses alertes, racontés en une soirée.">
+  <title>Parks 3D · Votre maison, vue d’en haut</title>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="recit.css?v=1">
+  <script type="module" src="recit.mjs?v=1"></script>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+<header class="bar">
+  <a class="mark" href="recit.html" aria-label="Parks 3D, accueil">Parks <b>3D</b></a>
+  <nav aria-label="Navigation principale">
+    <a href="#soiree">La soirée</a><a href="#vues">Les vues</a><a href="#alerte">L’alerte</a><a href="#app">L’app</a>
+    <a class="pill" href="index.html#demo">Essayer</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <p class="eyebrow">Parks 3D</p>
+    <h1>Votre maison,<br>vue d’en haut.</h1>
+    <p class="lead">Chaque pièce, chaque lumière, le portail et le jardin sur une seule image. Vous regardez, vous touchez, la maison répond.</p>
+    <p class="actions"><a class="button" href="index.html#demo">Essayer la maison pilote</a><a class="link" href="#soiree">Voir une soirée <span aria-hidden="true">↓</span></a></p>
+    <figure class="hero-picture"><img src="recit/propriete.webp" width="2400" height="1400" fetchpriority="high" alt="La maison pilote vue d’en haut : la maison, le jardin, le portail et la piscine"></figure>
+  </section>
+
+  <section class="story" id="soiree" data-story="evening" aria-label="Une soirée à la maison">
+    <div class="pin">
+      <div class="stage" data-stage>
+        <img class="base" src="recit/propriete.webp" width="2400" height="1400" alt="" loading="lazy">
+        <div class="lit" data-room="entry"></div>
+        <div class="lit" data-room="patio"></div>
+        <div class="lit" data-room="house"></div>
+        <div class="lit" data-room="garden"></div>
+        <div class="glow pool" data-room="pool"></div>
+        <div class="gate" data-gate><i></i><i></i></div>
+        <div class="car" data-car></div>
+      </div>
+      <div class="captions" aria-live="off">
+        <article data-at="0"><time>19:02</time><h2>Le soir tombe.</h2><p>La maison passe doucement en mode soirée. Rien à faire.</p></article>
+        <article data-at="0.22"><time>19:04</time><h2>Vous arrivez.</h2><p>Le portail s’ouvre, l’entrée s’éclaire avant même que vous coupiez le moteur.</p></article>
+        <article data-at="0.44"><time>19:05</time><h2>Pièce après pièce.</h2><p>La terrasse, puis le séjour et la cuisine. La lumière vous précède.</p></article>
+        <article data-at="0.64"><time>21:30</time><h2>Dehors aussi.</h2><p>Le jardin et la piscine s’allument ensemble, d’un seul geste.</p></article>
+        <article data-at="0.84"><time>23:00</time><h2>Bonne nuit.</h2><p>Tout s’éteint, le portail est fermé. La maison veille.</p></article>
+      </div>
+      <div class="progress" aria-hidden="true"><i data-progress></i></div>
+    </div>
+  </section>
+
+  <section class="views" id="vues">
+    <p class="eyebrow">Trois vues</p>
+    <h2>Une seule maison,<br>à la bonne distance.</h2>
+    <p class="lead">L’ensemble pour le jardin et le portail. Le rez-de-chaussée pour la vie de tous les jours. L’étage pour les chambres.</p>
+    <div class="trio">
+      <figure><img src="recit/propriete.webp" width="2400" height="1400" loading="lazy" alt="Vue d’ensemble de la propriété"><figcaption><b>Ensemble</b>Jardin, portail, piscine.</figcaption></figure>
+      <figure><img src="recit/rdc.webp" width="1400" height="1299" loading="lazy" alt="Rez-de-chaussée vu d’en haut : cuisine, séjour, salle d’eau et terrasse"><figcaption><b>Rez-de-chaussée</b>Cuisine, séjour, terrasse.</figcaption></figure>
+      <figure><img src="supranu/etage_quality_v25.webp" width="4096" height="4096" loading="lazy" alt="Étage : les chambres et la salle de bain"><figcaption><b>Étage</b>Chambres et volets.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="story alert" id="alerte" data-story="alert" aria-label="Une alerte dans le jardin">
+    <div class="pin">
+      <div class="stage night" data-stage>
+        <img class="base" src="recit/propriete.webp" width="2400" height="1400" alt="" loading="lazy">
+        <div class="lit" data-room="house" style="opacity:1"></div>
+        <svg class="trace" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><polygon data-cone/><polyline data-trail/></svg>
+        <div class="camera" data-camera></div>
+        <div class="person" data-person></div>
+      </div>
+      <div class="captions">
+        <article data-at="0"><time>02:14</time><h2>Tout le monde dort.</h2><p>La maison est calme. Les caméras du jardin regardent pour vous.</p></article>
+        <article data-at="0.3"><time>02:15</time><h2>Un mouvement, côté droit.</h2><p>La caméra du jardin suit la personne et montre son chemin sur l’image.</p></article>
+        <article data-at="0.62"><time>02:15</time><h2>Vous le savez tout de suite.</h2><p>Le téléphone, l’écran central et les enceintes relaient l’alerte. Les volets de l’étage se ferment.</p></article>
+      </div>
+      <aside class="notice" data-notice aria-hidden="true">
+        <span>Alerte · démonstration</span>
+        <strong>Personne non identifiée dans le jardin, à droite.</strong>
+        <ul><li>Téléphones <b>Notification reçue</b></li><li>Écran central <b>Alerte affichée</b></li><li>Enceintes <b>Annonce en cours</b></li></ul>
+      </aside>
+      <div class="progress" aria-hidden="true"><i data-progress></i></div>
+    </div>
+  </section>
+
+  <section class="pocket" id="app">
+    <div class="pocket-text">
+      <p class="eyebrow">L’app Bonaparks</p>
+      <h2>La même maison,<br>dans votre poche.</h2>
+      <p class="lead">Sur iPhone et iPad. Touchez une ampoule pour l’allumer, changez d’étage, rejouez une scène. À l’horizontale, la maison prend tout l’écran.</p>
+      <ul class="facts">
+        <li><b>Une ampoule par pièce</b>Pas de menus : la lampe est l’interrupteur.</li>
+        <li><b>Quatre scènes d’une minute</b>Arrivée, départ, après-midi en famille, mouvement inhabituel.</li>
+        <li><b>Votre propre maison</b>Scannez vos pièces avec l’iPhone pour remplacer la maison pilote.</li>
+      </ul>
+    </div>
+    <div class="phones">
+      <figure class="phone"><img src="recit/app-1.webp" width="603" height="1311" loading="lazy" alt="L’app Bonaparks sur iPhone : le rez-de-chaussée et ses ampoules"></figure>
+      <figure class="phone second"><img src="recit/app-2.webp" width="603" height="1311" loading="lazy" alt="L’app Bonaparks sur iPhone : une alerte dans le jardin"></figure>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>Entrez. La maison est ouverte.</h2>
+    <p class="lead">La maison pilote se visite dans le navigateur, sans compte.</p>
+    <p class="actions"><a class="button" href="index.html#demo">Essayer la maison pilote</a><a class="link" href="comment-ca-marche.html">Comment ça marche <span aria-hidden="true">→</span></a></p>
+    <p class="fine">Maison pilote : personnages, équipements et alertes simulés. Rien n’est suivi ni commandé.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>Parks 3D · Bonaparks</span>
+  <nav aria-label="Liens utiles"><a href="comment-ca-marche.html">Le projet</a><a href="compte.html">Mon accès</a><a href="aide.html">Aide</a><a href="mentions-legales.html">Mentions légales</a><a href="confidentialite-web.html">Confidentialité</a></nav>
+</footer>
+</body>
+</html>
