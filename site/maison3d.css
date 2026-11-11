@@ -6,7 +6,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:400 13
 svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,.tag.press:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.app{display:grid;grid-template-columns:minmax(0,1fr) 390px;height:100vh;height:100dvh}
+.app{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,36vw,390px);height:100vh;height:100dvh}
 
 .scene{position:relative;min-width:0;overflow:hidden;background:radial-gradient(120% 90% at 50% 40%,#161d30 0,#0a0e18 58%,#06080e 100%);transition:background 1s}
 .scene.day{background:radial-gradient(120% 90% at 50% 40%,#cfe0f3 0,#9db6d2 60%,#7893b3 100%)}
@@ -30,7 +30,7 @@ button:focus-visible,.tag.press:focus-visible{outline:2px solid var(--accent);ou
 .hint{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);margin:0;color:var(--soft);font-size:12px;text-align:center;width:max-content;max-width:calc(100% - 32px);transition:opacity .6s;pointer-events:none}
 .hint.gone{opacity:0}
 
-.panel{overflow-y:auto;padding:22px 20px 26px;background:linear-gradient(180deg,#0b101b,#080c16);border-left:1px solid var(--line);scrollbar-width:thin;scrollbar-color:#1d3a57 transparent}
+.panel{overflow-y:auto;padding:22px max(20px,env(safe-area-inset-right)) 26px 20px;background:linear-gradient(180deg,#0b101b,#080c16);border-left:1px solid var(--line);scrollbar-width:thin;scrollbar-color:#1d3a57 transparent}
 .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .panel h1{margin:0;font:600 19px/1.2 'Manrope',system-ui,sans-serif;letter-spacing:-.02em}
 .chip{font-size:10px;color:var(--soft);border:1px solid var(--line);border-radius:99px;padding:5px 10px}
@@ -78,7 +78,7 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .lights small{display:block;color:var(--soft);font-size:9px;letter-spacing:.06em}
 .fine{margin:22px 0 0;color:#647084;font-size:10.5px}
 
-@media(max-width:900px){
+@media(max-width:700px){
   html,body{height:auto}
   .app{grid-template-columns:1fr;height:auto}
   .scene{height:58vh;height:58dvh;position:sticky;top:0;z-index:2}
@@ -86,3 +86,8 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
   .status{display:none}.hint{font-size:11px;bottom:12px}.toast{bottom:40px}
 }
 @media(prefers-reduced-motion:reduce){.toast,.hint,.tag,.scene{transition:none}}
+
+/* In the Bonaparks app: no way out to the site; and, when asked, the house alone. */
+.in-app .mark{visibility:hidden;width:26px}
+.only-scene .app{grid-template-columns:1fr}.only-scene .panel,.only-scene .hint,.only-scene .status{display:none}
+.only-scene .scene{height:100vh;height:100dvh;position:relative}

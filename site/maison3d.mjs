@@ -5,6 +5,8 @@
 import * as T from './vendor/three.module.min.js';
 
 const $=id=>document.getElementById(id);
+// Inside the Bonaparks app the same page is shown: ?app hides the way back to the site, ?vue=scene keeps the house alone.
+{const q=new URLSearchParams(location.search),root=document.documentElement;root.classList.toggle('in-app',q.has('app'));root.classList.toggle('only-scene',q.get('vue')==='scene');}
 const canvas=$('view'),stageEl=$('scene'),labelsEl=$('labels');
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const X=u=>(u-470)*0.03396,Z=v=>(v-470)*0.021227;            // render units to metres, the house near the middle
