@@ -49,9 +49,9 @@ const doors=[];
 function door(x0,z0,x1,z1,y=0){const w=Math.hypot(x1-x0,z1-z0),pivot=new T.Group();pivot.position.set(x0,0,z0);pivot.rotation.y=Math.atan2(-(z1-z0),x1-x0);
  const leaf=new T.Mesh(new T.BoxGeometry(w-.04,WALL-.02,.045),mat(0x8d7a69,{roughness:.6}));leaf.position.set(w/2,(WALL-.02)/2+.01,0);leaf.castShadow=true;
  const knob=new T.Mesh(new T.SphereGeometry(.035,10,8),mat(0xd8dde4,{metalness:.8,roughness:.25}));knob.position.set(w-.14,.66,.05);const knob2=knob.clone();knob2.position.z=-.05;
- pivot.add(leaf,knob,knob2);parent.add(pivot);
+ leaf.userData.door=knob.userData.door=knob2.userData.door=doors.length;pivot.add(leaf,knob,knob2);parent.add(pivot);
  for(const [x,z] of [[x0,z0],[x1,z1]]){const j=new T.Mesh(new T.BoxGeometry(.07,WALL,.13),mat(0x2f3742));j.position.set(x,WALL/2,z);j.rotation.y=pivot.rotation.y;j.castShadow=true;parent.add(j);}
- doors.push({pivot,base:pivot.rotation.y,x:(x0+x1)/2,z:(z0+z1)/2,y,open:0});}
+ doors.push({pivot,base:pivot.rotation.y,x:(x0+x1)/2,z:(z0+z1)/2,y,open:0,held:false});}
 /** A window in a wall along x: a, b its two sides and z its line, in metres; out is +1 when outside is towards +z. */
 function windowAt(a,b,z,out,up,cut=WALL){
  const piece=(x0,z0,x1,z1,h,y0,color,o,shadow)=>{const m=new T.Mesh(new T.BoxGeometry(x1-x0,h,z1-z0),typeof color==='number'?mat(color,o):color);m.position.set((x0+x1)/2,y0+h/2,(z0+z1)/2);return put(m,shadow);};
@@ -242,9 +242,10 @@ const ray=new T.Raycaster(),ndc=new T.Vector2();
 const shown=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
 function pick(e){const r=canvas.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(ndc,camera);
  const lamp=ray.intersectObjects(hits,false).find(h=>!!lamps.get(h.object.userData.lamp).up===floorUp||!lamps.get(h.object.userData.lamp).up&&!indoor.has(h.object.userData.lamp));if(lamp)return {lamp:lamp.object.userData.lamp};
- for(const h of ray.intersectObjects(house.children,true)){if(!shown(h.object))continue;const d=h.object.userData;if(d.gate)return {gate:true};if(d.room)return {room:d.room};}
+ for(const h of ray.intersectObjects(house.children,true)){if(!shown(h.object))continue;const d=h.object.userData;if(d.gate)return {gate:true};if(d.door!==undefined)return {door:d.door};if(d.room)return {room:d.room};}
  return null;}
-function tap(e){const hit=pick(e);if(!hit)return;if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.room)enter(hit.room);}
+function tap(e){const hit=pick(e);if(!hit)return;if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
+function swing(i){const d=doors[i];d.held=!d.held;say(`Porte · <b>${d.held?'Ouverte':'Fermée'}</b>`);}
 function view(id){const [a,b,c,d]=rooms[id].rect,w=Math.abs(X(c)-X(a)),dz=Math.abs(Z(d)-Z(b));return {target:new T.Vector3((X(a)+X(c))/2,.6+(rooms[id].up||0),(Z(b)+Z(d))/2),az:orbit.az,pol:clamp(orbit.pol,.55,.85),dist:clamp(Math.max(w,dz)*2.6/Math.min(1,camera.aspect),11,36)};}
 function enter(id){if(!rooms[id])return;manual();if(focused===id){leave();return;}focused=id;flyTo(view(id));back.hidden=false;say(`<b>${rooms[id].name}</b>`);}
 function leave(){focused=null;back.hidden=true;flyTo(home);}
@@ -349,7 +350,7 @@ function frame(now){
  const poolLevel=lamps.get('pool').level;water.material.emissiveIntensity=.1+.75*poolLevel;spa.material.emissiveIntensity=.12+.7*poolLevel;tex.water.offset.x=now*.00001;tex.water.offset.y=now*.000006;
  tv.material.emissiveIntensity=.9*lamps.get('living').level*night;glass.emissiveIntensity=.15+.5*Math.max(lamps.get('kitchen').level,lamps.get('living').level)*night;
  shutter.open+=(shutter.target-shutter.open)*Math.min(1,dt*(reduce?60:1.6));for(const b of shutters){const closed=Math.max(.03,1-shutter.open);b.mesh.scale.y=closed;b.mesh.position.y=b.top-b.height*closed/2;}
- for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
+ for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
  renderer.render(scene,camera);
@@ -361,4 +362,4 @@ car.position.set(X(parked[0]),0,Z(parked[1]));mode('evening',true);place();reque
 // The house is first seen from above, like a plan, then the view comes down to three quarters.
 setTimeout(()=>{if(!playing&&!focused)flyTo(home,reduce?1:2600);},reduce?0:500);
 // Used by the page's own checks.
-window.parks3d={orbit,flyTo,home,enter,leave,toggle,mode,toggleGate,play,stop,floor};
+window.parks3d={orbit,flyTo,home,enter,leave,toggle,mode,toggleGate,play,stop,floor,swing};
