@@ -41,7 +41,18 @@ const ground=(a,b,c,d,y,map,room)=>{const m=box(a,b,c,d,.05,y,0xffffff,{map},fal
 const WALL=1.3,wall=(u0,v0,u1,v1,h=WALL)=>{box(u0,v0,u1,v1,h,0,0xe9edf4);return box(u0-.4,v0-.6,u1+.4,v1+.6,.05,h,0xf6f8fb);};   // a wall and its cut top
 const wallH=(u0,u1,v,h)=>wall(u0,v-2.6,u1,v+2.6,h),wallV=(u,v0,v1,h)=>wall(u-1.6,v0,u+1.6,v1,h);
 const glass=mat(0x9fd0ee,{roughness:.1,metalness:.2,transparent:true,opacity:.55,emissive:0x2a5d86,emissiveIntensity:.35});
-const windowH=(u0,u1,v)=>{box(u0,v-1.2,u1,v+1.2,.55,.75,glass,undefined,false);box(u0-.6,v-2.9,u1+.6,v+2.9,.07,.7,0x39424f);};
+// Real windows: the wall is open above a sill, with a frame, two panes and a roller shutter outside.
+const SILL=.62,dark=0x2f3742,shutters=[];
+const slats=surface((g,s)=>{g.fillStyle='#e9e7e1';g.fillRect(0,0,s,s);g.fillStyle='#c5c2ba';for(let i=0;i<s;i+=16)g.fillRect(0,i,s,3);},64,[1,3]);
+/** A window in a wall along x: a, b its two sides and z its line, in metres; out is +1 when outside is towards +z. */
+function windowAt(a,b,z,out,up,cut=WALL){
+ const piece=(x0,z0,x1,z1,h,y0,color,o,shadow)=>{const m=new T.Mesh(new T.BoxGeometry(x1-x0,h,z1-z0),typeof color==='number'?mat(color,o):color);m.position.set((x0+x1)/2,y0+h/2,(z0+z1)/2);return put(m,shadow);};
+ piece(a,z-.055,b,z+.055,SILL,0,0xe9edf4);piece(a-.04,z-.1,b+.04,z+.1,.045,SILL,0xf6f8fb);                       // the low wall and its sill
+ for(const x of [a,(a+b)/2-.02,b-.04])piece(x,z-.035,x+.04,z+.035,cut-SILL-.045,SILL+.045,dark);piece(a,z-.035,b,z+.035,.04,cut-.04,dark);
+ piece(a+.04,z-.008,b-.04,z+.008,cut-SILL-.085,SILL+.045,glass,undefined,false);
+ const blind=piece(a+.01,z+out*.075-.012,b-.01,z+out*.075+.012,cut-SILL,SILL,0xffffff,{map:slats,roughness:.7});
+ shutters.push({mesh:blind,top:cut,height:cut-SILL,up:!!up});
+}
 
 // ---------- the land
 box(0,60,1000,950,.3,-.31,0x1d2a22,undefined,false);
@@ -71,10 +82,10 @@ const rooms={
 };
 for(const [id,r] of Object.entries(rooms)){if(!r.map)continue;const [a,b,c,d]=r.rect;ground(a,b,c,d,.08,r.map,id);}
 box(300,581,570,690,.02,.075,0xffffff,{map:tex.paving},false).userData.room='terrace';
-wallH(325,573,224);wallV(327,224,584);wallV(571,224,584);                      // back, left, right
+wallH(325,352,224);wallH(412,482,224);wallH(538,573,224);windowAt(X(352),X(412),Z(224),-1);windowAt(X(482),X(538),Z(224),-1);     // back wall, with its two windows
+wallV(327,224,584);wallV(571,224,584);                                         // left, right
 wallH(325,497,466);wallH(541,573,466);                                          // between the living room and the laundry, with its door
 wallV(385,315,398);wallV(385,432,466);wallH(327,385,315);                       // the shower room, with its door
-windowH(352,412,224);windowH(482,538,224);
 // outside stairs to the upper floor
 for(let i=0;i<14;i++)box(575,640-i*16-16,612,640-i*16,.19*(i+1),0,0xdfe2e8);
 box(575,372,612,416,2.75,0,0xdfe2e8);box(612,372,614.5,656,.9,.19,0x2c3340,undefined,false);
@@ -111,7 +122,8 @@ const uroom=(id,name,x0,y0,x1,y1,map)=>{rooms[id]={name,rect:[ru(x0),rv(y1),ru(x
 ub(-3.6,-3.65,4.85,4.15,.22,-.22,0xd8dce3);                                                       // the slab
 uroom('master','Chambre du fond · gauche',-3.45,.95,.4,4,tex.wood);uroom('guest','Chambre du fond · droite',1.9,.95,4.7,4,tex.wood);uroom('landing','Dressing',.4,.95,1.9,4,tex.wood);
 uroom('children','Chambre des enfants',-3.45,-3.5,-.6,.95,tex.wood);uroom('bathup','Salle de bain',-.6,-3.5,1,0,tex.bath);uroom('blue','Chambre au lit bleu',1,-3.5,4.7,0,tex.wood);uroom('hallup','Couloir du haut',-.6,0,4.7,.95,tex.tile);
-uw(-3.5,3.95,4.75,4.05);uw(-3.5,-3.55,4.75,-3.45);uw(-3.5,-3.55,-3.4,4.05);uw(4.65,-3.55,4.75,0);uw(4.65,.8,4.75,4.05);   // outer walls, the door from the landing on the right
+for(const [y,out,wins] of [[4,-1,[[-1.75,-.45],[2.6,3.8]]],[-3.5,1,[[-1.85,-.8],[1.65,3.15]]]]){let x=-3.5;for(const [a,b] of wins){uw(x,y-.05,a,y+.05);windowAt(sx(a),sx(b),sz(y),out,true);x=b;}uw(x,y-.05,4.75,y+.05);}
+uw(-3.5,-3.55,-3.4,4.05);uw(4.65,-3.55,4.75,0);uw(4.65,.8,4.75,4.05);   // outer walls, the door from the landing on the right
 uw(-3.45,.9,-1.5,1);uw(.4,.9,2,1);uw(2.85,.9,4.7,1);                                                // back rooms, with their doors on the hall
 uw(-.65,-3.5,-.55,.05);uw(.95,-3.5,1.05,0);uw(-.6,-.05,.05,.05);uw(.8,-.05,3.3,.05);uw(4.05,-.05,4.7,.05);            // front rooms
 ub(.45,1.15,1.85,3.95,1.25,0,0xf4f5f7);ub(1.14,1.14,1.16,3.95,1.2,0,0xcfd4da);                       // wardrobes between the two back rooms
@@ -122,7 +134,6 @@ for(const [x,y,c] of [[-3.1,-1.7,0xf0a070],[-2.0,-2.6,0xf2f2f2]]){ub(x,y,x+.75,y
 ub(-3.35,.1,-2.55,.85,.85,0,0xf4f5f7);ub(-3.38,-3.4,-3.3,-2.6,.5,.5,0x10151d);                       // chest of drawers, a small TV
 ub(-.45,-3.35,.35,-1.6,.55,0,0xffffff,{roughness:.2});ub(-.33,-3.23,.23,-1.72,.05,.5,0xa8c7dc,{roughness:.2},false);ub(.5,-2.75,.92,-2.2,.42,0,0xffffff,{roughness:.2});ub(.35,-.95,.92,-.3,.8,0,0xd9b98f);ub(.4,-.9,.87,-.35,.08,.8,0xffffff,{roughness:.2});
 bed(1.7,-3.25,3.45,-1.2,0x3f8fd6,'front');ub(3.6,-3.3,4.05,-2.85,.5,0,0xc59a66);                     // the blue bed
-for(const [x0,x1,y] of [[-1.75,-.45,4],[2.6,3.8,4],[-1.85,-.8,-3.5],[1.65,3.15,-3.5]]){ub(x0,y-.03,x1,y+.03,.55,.75,glass,undefined,false);ub(x0-.03,y-.07,x1+.03,y+.07,.07,.7,0x39424f);}
 // the pergola over the terrace, level with the upper floor
 for(const v of [584,637,690])box(298,v-1.5,572,v+1.5,.12,-.2,0xc9a36b);for(const u of [300,436,570])box(u-1.2,584,u+1.2,690,.1,-.1,0xc9a36b);
 for(const [a,b] of [[303,433],[439,567]])for(const [c,d] of [[588,634],[640,687]])box(a,c,b,d,.03,-.04,0xf1ece2,{roughness:.9});
@@ -151,6 +162,9 @@ const car=new T.Group(),beams=new T.SpotLight(0xfff0cc,0,14,.5,.6,1.4);{
  beams.position.set(0,.8,2);beams.target.position.set(0,0,9);car.add(beams,beams.target);
  house.add(car);}
 const parked=[185,520],street=[185,-40];   // the gate opens on the drive, clear of the carport
+const resident=new T.Group();{const m=(g,c,y,o)=>{const k=new T.Mesh(g,mat(c,o));k.position.y=y;k.castShadow=true;resident.add(k);return k;};
+ m(new T.CapsuleGeometry(.17,.5,6,12),0x2f3f5c,.5);m(new T.CapsuleGeometry(.2,.42,6,12),0xe88f6f,1.08);m(new T.SphereGeometry(.15,18,14),0xe8c0a2,1.56);
+ const hair=m(new T.SphereGeometry(.165,18,14),0x4a3326,1.6);hair.scale.set(1,.85,1);hair.position.z=-.03;resident.visible=false;house.add(resident);}
 const person=new T.Group();{const body=new T.Mesh(new T.CapsuleGeometry(.2,.75,6,12),mat(0x2b2f38));body.position.y=.82;const head=new T.Mesh(new T.SphereGeometry(.16,16,12),mat(0x3a3f4a));head.position.y=1.55;
  const ring=new T.Mesh(new T.TorusGeometry(.48,.03,8,40),new T.MeshBasicMaterial({color:0xff8f7d}));ring.rotation.x=Math.PI/2;ring.position.y=.12;body.castShadow=head.castShadow=true;person.add(body,head,ring);person.visible=false;house.add(person);}
 
@@ -233,27 +247,30 @@ for(const b of document.querySelectorAll('[data-floor]'))b.addEventListener('cli
 // ---------- state: lamps, gate, ambiance, and the dashboard that shows it
 const toast=$('toast'),statusEl=$('status'),listEl=$('list');let toastTimer=0;
 function say(html){toast.innerHTML=html;toast.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('on'),1900);}
-const clim={on:false,set:23};
+const clim={on:false,set:23},shutter={open:1,target:1};
 function refresh(){
  const n=[...lamps.values()].filter(l=>l.on).length;
  statusEl.textContent=`${n} lumière${n>1?'s':''} allumée${n>1?'s':''} · Portail ${gate.target?'ouvert':'fermé'}`;
- $('count').textContent=`${n}/${lamps.size}`;$('active').textContent=`${n+(gate.target?1:0)+(clim.on?1:0)} / ${lamps.size+2} actifs`;
+ $('count').textContent=`${n}/${lamps.size}`;$('active').textContent=`${n+(gate.target?1:0)+(clim.on?1:0)+(shutter.target?0:1)} / ${lamps.size+3} actifs`;
+ $('shutter-state').textContent=shutter.target?'Ouverts':'Fermés';$('shutter-tile').setAttribute('aria-pressed',String(!shutter.target));
  $('gate-state').textContent=gate.target?'Ouvert':'Fermé';$('gate-tile').setAttribute('aria-pressed',String(!!gate.target));gateTag.el.textContent='Portail · '+(gate.target?'Ouvert':'Fermé');
  $('clim-state').textContent=clim.on?`ON · ${clim.set},0 °C demandés`:'OFF · 26,0 °C';$('clim-set').textContent=clim.set+' °C';$('clim-power').setAttribute('aria-pressed',String(clim.on));
  for(const b of listEl.querySelectorAll('button')){const l=lamps.get(b.dataset.lamp);b.setAttribute('aria-pressed',String(l.on));b.querySelector('small').textContent=l.on?'ALLUMÉE':'ÉTEINTE';}
 }
 function set(id,on,quiet){const l=lamps.get(id);if(!l||l.on===on)return;l.on=on;l.pulse=1;if(!quiet)say(`${l.name} · <b>${on?'Allumée':'Éteinte'}</b>`);refresh();}
 const toggle=id=>{manual();set(id,!lamps.get(id).on);};
+function setShutters(open,quiet){if(!!shutter.target===!!open)return;shutter.target=open?1:0;if(!quiet)say(`Volets · <b>${open?'Ouverts':'Fermés'}</b>`);refresh();}
 function setGate(open,quiet){if(!!gate.target===!!open)return;gate.target=open?1:0;if(!quiet)say(`Portail · <b>${open?'Ouvert':'Fermé'}</b>`);refresh();}
 const toggleGate=()=>{manual();setGate(!gate.target);};
 for(const l of lampList){const li=document.createElement('li');li.innerHTML=`<button data-lamp="${l.id}" aria-pressed="false"><i></i><span>${l.name}<small></small></span></button>`;li.firstChild.addEventListener('click',()=>toggle(l.id));listEl.append(li);}
 const modes={day:{night:0,on:[]},evening:{night:1,on:['kitchen','living','dining','laundry','terrace','garden1','garden2','pool','entry','children','blue','hallup']},night:{night:1,on:['entry']}};
+const modeShutters={day:true,evening:true,night:false};
 let night=1,nightTarget=1;
 function mode(name,quiet){const m=modes[name];nightTarget=m.night;for(const id of lamps.keys())set(id,m.on.includes(id),true);stageEl.classList.toggle('day',!m.night);
  for(const b of document.querySelectorAll('[data-mode]'))b.setAttribute('aria-pressed',String(b.dataset.mode===name));
  if(!quiet)say({day:'Bonjour · <b>Lumière du jour</b>',evening:'Soirée · <b>Lumières douces</b>',night:'Bonne nuit · <b>Tout s’éteint</b>'}[name]);refresh();}
-for(const b of document.querySelectorAll('[data-mode]'))b.addEventListener('click',()=>{manual();mode(b.dataset.mode);});
-$('gate-tile').addEventListener('click',toggleGate);
+for(const b of document.querySelectorAll('[data-mode]'))b.addEventListener('click',()=>{manual();mode(b.dataset.mode);setShutters(modeShutters[b.dataset.mode],true);});
+$('gate-tile').addEventListener('click',toggleGate);$('shutter-tile').addEventListener('click',()=>{manual();setShutters(!shutter.target);});
 $('all-on').addEventListener('click',()=>{manual();for(const id of lamps.keys())set(id,true,true);say('Éclairage · <b>Tout allumé</b>');});
 $('all-off').addEventListener('click',()=>{manual();for(const id of lamps.keys())set(id,false,true);say('Éclairage · <b>Tout éteint</b>');});
 $('clim-power').addEventListener('click',()=>{clim.on=!clim.on;say(`Clim · RDC · <b>${clim.on?'Allumée':'Éteinte'}</b>`);refresh();});
@@ -265,25 +282,38 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&focused)leave();});
 const along=(pts,t)=>{const n=pts.length-1,k=clamp(t,0,1)*n,i=Math.min(n-1,Math.floor(k)),f=k-i,a=pts[i],b=pts[i+1];return {u:a[0]+(b[0]-a[0])*f,v:a[1]+(b[1]-a[1])*f,heading:Math.atan2(X(b[0])-X(a[0]),Z(b[1])-Z(a[1]))};};
 const driveIn=[street,[185,120],[185,215],[185,340],[185,430],parked],walkIn=[[950,330],[880,345],[800,395],[735,450],[690,470]];
 const DURATION=30,gateView={target:new T.Vector3(X(190),.5,Z(330)),az:-.9,pol:.95,dist:30};
+// The way from the car to the upper floor: across the gravel, along the terrace, up the outside stairs, into the hall.
+const outside=[[185,566],[236,640],[300,700],[560,712],[593,668],[593,640,0],[593,416,2.75],[593,395,2.75]].map(([u,v,y=0])=>[X(u),Z(v),y]);
+const inside=[[X(593),Z(395),2.75],[sx(4.3),sz(.42),2.75],[sx(3.65),sz(.42),2.75],[sx(3.65),sz(-.6),2.75],[sx(3.9),sz(-2),2.75]];
+const stroll=(pts,t)=>{const n=pts.length-1,k=clamp(t,0,1)*n,i=Math.min(n-1,Math.floor(k)),f=k-i,a=pts[i],b=pts[i+1];return {x:a[0]+(b[0]-a[0])*f,y:a[2]+(b[2]-a[2])*f,z:a[1]+(b[1]-a[1])*f,heading:Math.atan2(b[0]-a[0],b[1]-a[1])};};
+const walk=(pts,t)=>{const p=stroll(pts,t);resident.position.set(p.x,p.y,p.z);resident.rotation.y=p.heading;resident.position.y+=Math.abs(Math.sin(performance.now()*.012))*.04*(t>0&&t<1?1:0);};
+const upstairsView=()=>({target:new T.Vector3(sx(1.2),3,sz(-.2)),az:-.5,pol:.78,dist:25});
 const scenes={
- arrival:{steps:[[0,'Le portail s’ouvre.'],[5,'La voiture rejoint sa place.'],[15,'La terrasse, puis le séjour s’allument.'],[24,'La maison vous accueille.']],
-  start(){mode('night',true);set('entry',false,true);flyTo(gateView,1600);},
-  at(t,s){setGate(t>1&&t<14,true);set('entry',t>1.5,true);set('garage',t>9,true);set('terrace',t>15,true);set('laundry',t>17,true);set('living',t>19,true);set('dining',t>20,true);set('kitchen',t>21,true);
-   const p=along(driveIn,between(t,3,12));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t<12?p.heading:0;beams.intensity=t>2&&t<14?40:0;if(t>14&&!s.back){s.back=true;flyTo(home,2200);}}},
- departure:{steps:[[0,'Les lumières s’éteignent, pièce après pièce.'],[10,'Le portail s’ouvre.'],[14,'La voiture repart.'],[23,'Le portail se referme. La maison veille.']],
-  start(){mode('evening',true);flyTo(home,1200);},
-  at(t,s){for(const [id,at] of [['kitchen',2],['dining',3],['living',4.5],['laundry',6],['terrace',7.5],['garden1',8.5],['garden2',8.5],['pool',9]])set(id,t<at,true);set('entry',true,true);
-   setGate(t>10&&t<23,true);const p=along([...driveIn].reverse(),between(t,13,22));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t>13?p.heading:0;beams.intensity=t>12&&t<22?40:0;car.visible=t<22;
-   if(t>10&&!s.gone){s.gone=true;flyTo(gateView,1800);}}},
- intrusion:{steps:[[0,'Il est 2 h 14. Tout le monde dort.'],[4,'Une personne entre dans le jardin, à droite.'],[9,'Individu non identifié : l’alerte est relayée.'],[16,'Le jardin s’éclaire. La caméra suit la personne.']],
+ arrival:{steps:[[0,'Le portail s’ouvre.'],[5,'La voiture rejoint sa place.'],[12,'Elle descend de voiture. La terrasse et le séjour s’allument.'],[19,'Elle monte à l’étage : les volets s’ouvrent tout seuls.'],[26,'Bienvenue à la maison.']],
+  start(){mode('night',true);set('entry',false,true);shutter.target=0;shutter.open=0;flyTo(gateView,1600);},
+  at(t,s){setGate(t>1&&t<13,true);set('entry',t>1.5,true);set('garage',t>9,true);set('terrace',t>13,true);set('laundry',t>14,true);set('living',t>15,true);set('dining',t>15.6,true);set('kitchen',t>16.2,true);
+   const p=along(driveIn,between(t,3,11.5));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t<11.5?p.heading:0;beams.intensity=t>2&&t<13?40:0;
+   resident.visible=t>12;walk(outside,clamp((t-12)/7.5,0,1));if(t>19.5)walk(inside,clamp((t-19.5)/5,0,1));
+   if(t>12.5&&!s.out){s.out=true;flyTo({target:new T.Vector3(X(420),1,Z(640)),az:-.35,pol:.95,dist:30},1800);}
+   if(t>19&&!s.up){s.up=true;floor(true,true);flyTo(upstairsView(),1500);}
+   setShutters(t>20.5,true);set('hallup',t>20,true);set('blue',t>22.5,true);set('children',t>23.5,true);}},
+ departure:{steps:[[0,'Elle quitte la chambre. Les lumières s’éteignent.'],[5,'Plus personne à l’étage : les volets se ferment tout seuls.'],[12,'Elle rejoint la voiture. Le portail s’ouvre.'],[17,'La voiture repart.'],[26,'Le portail se referme. La maison veille.']],
+  start(){mode('evening',true);shutter.target=1;shutter.open=1;floor(true,true);flyTo(upstairsView(),1200);},
+  at(t,s){resident.visible=t<14.5;if(t<5)walk([...inside].reverse(),clamp(t/4.5,0,1));else walk([...outside].reverse(),clamp((t-5)/9,0,1));
+   set('blue',t<1.5,true);set('children',t<2.5,true);set('hallup',t<4.5,true);setShutters(t<5,true);
+   if(t>8&&!s.down){s.down=true;floor(false,true);flyTo({target:new T.Vector3(X(420),1,Z(640)),az:-.35,pol:.95,dist:30},1500);}
+   for(const [id,at] of [['kitchen',8.5],['dining',9],['living',9.5],['laundry',10.5],['terrace',11.5],['garden1',12],['garden2',12],['pool',12.5]])set(id,t<at,true);set('entry',true,true);
+   setGate(t>12&&t<26,true);const p=along([...driveIn].reverse(),between(t,16,25));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t>16?p.heading:0;beams.intensity=t>15&&t<25?40:0;car.visible=t<25;
+   if(t>14&&!s.gone){s.gone=true;flyTo(gateView,1800);}}},
+ intrusion:{steps:[[0,'Il est 2 h 14. Tout le monde dort.'],[4,'Une personne entre dans le jardin, à droite.'],[9,'Individu non identifié : l’alerte est relayée.'],[16,'Le jardin s’éclaire. Les volets de l’étage se ferment.']],
   start(){mode('night',true);flyTo({target:new T.Vector3(X(790),.5,Z(430)),az:.55,pol:.98,dist:27},1800);},
   at(t){const p=along(walkIn,between(t,4,24));person.visible=t>4;person.position.set(X(p.u),0,Z(p.v));person.rotation.y=p.heading;motionTag.show=t>6;motionTag.pos.set(X(p.u),2.1,Z(p.v));
-   $('alert').hidden=t<9;set('garden1',t>16,true);set('garden2',t>16.6,true);}}
+   $('alert').hidden=t<9;set('garden1',t>16,true);set('garden2',t>16.6,true);if(t>16)setShutters(false,true);}}
 };
 let playing=null;
 function play(name){stop(true);if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};focused=null;back.hidden=true;s.start();$('transport').hidden=false;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed',String(b.dataset.scene===name));}
-function stop(quiet){if(!playing)return;playing=null;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
+function stop(quiet){if(!playing)return;playing=null;resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed','false');if(!quiet)flyTo(home);}
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
@@ -306,6 +336,7 @@ function frame(now){
  }
  const poolLevel=lamps.get('pool').level;water.material.emissiveIntensity=.1+.75*poolLevel;spa.material.emissiveIntensity=.12+.7*poolLevel;tex.water.offset.x=now*.00001;tex.water.offset.y=now*.000006;
  tv.material.emissiveIntensity=.9*lamps.get('living').level*night;glass.emissiveIntensity=.15+.5*Math.max(lamps.get('kitchen').level,lamps.get('living').level)*night;
+ shutter.open+=(shutter.target-shutter.open)*Math.min(1,dt*(reduce?60:1.6));for(const b of shutters){const closed=Math.max(.03,1-shutter.open);b.mesh.scale.y=closed;b.mesh.position.y=b.top-b.height*closed/2;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
  renderer.render(scene,camera);
