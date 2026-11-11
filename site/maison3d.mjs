@@ -51,9 +51,9 @@ ground(288,205,616,692,.03,tex.paving);ground(674,680,952,925,.03,tex.paving);gr
 for(const [a,b,c,d] of [[0,60,1000,68],[0,942,1000,950],[0,60,8,950],[992,60,1000,950]]){box(a,b,c,d,.75,0,0xdcd8cf);box(a-.5,b-.8,c+.5,d+.8,.06,.75,0xeeebe4);}
 const hedge=(a,b,c,d,h=1.15)=>box(a,b,c,d,h,0,0xffffff,{map:tex.hedge,roughness:1});
 hedge(12,205,44,940);hedge(44,915,985,940);hedge(955,215,985,915);hedge(314,196,985,214,1.35);       // hedges, the back one at the gate
-wallH(47,84,200,1.05);wallH(174,300,200,1.05);                                                       // the wall each side of the gate
+wallH(47,135,200,1.05);wallH(235,300,200,1.05);                                                       // the wall each side of the gate
 function tree(u,v,s=1){cyl(u,v,.11*s,1.5*s,0,0x6b4a32);for(const [dx,dy,dz,r] of [[0,2.1,0,1],[.55,1.75,.2,.7],[-.5,1.8,-.3,.72],[.1,1.7,.55,.6]]){const m=new T.Mesh(new T.IcosahedronGeometry(r*s,1),mat(0x3b8742,{roughness:1,flatShading:true}));m.position.set(X(u)+dx*s,dy*s,Z(v)+dz*s);put(m);}}
-tree(270,150,1);tree(262,330,.9);tree(262,430,.9);tree(640,700,.65);tree(600,772,.65);
+tree(288,140,1);tree(262,330,.9);tree(262,430,.9);tree(640,700,.65);tree(600,772,.65);
 const pot=(u,v)=>{cyl(u,v,.17,.32,0,0xb9744f);const m=new T.Mesh(new T.IcosahedronGeometry(.3,1),mat(0x3f8f49,{flatShading:true,roughness:1}));m.position.set(X(u),.58,Z(v));put(m);};
 pot(300,596);pot(560,596);pot(690,706);
 // carport: posts and a slatted roof
@@ -110,8 +110,8 @@ cyl(801,683,.98,.55,0,0xece9e2);const spa=cyl(801,683,.74,.05,.53,0x38b8e6,{roug
 
 // ---------- gate, car, and the person of the alert scene
 const gate={open:0,target:0,leaves:[]};
-for(const u of [84,174]){box(u-4,194,u+4,206,1.55,0,0xdcd8cf);box(u-5,192.5,u+5,207.5,.07,1.55,0xeeebe4);}
-for(const side of [0,1]){const pivot=new T.Group();pivot.position.set(X(side?174:84),0,Z(200));const w=(X(174)-X(84))/2-.06;
+for(const u of [135,235]){box(u-4,194,u+4,206,1.55,0,0xdcd8cf);box(u-5,192.5,u+5,207.5,.07,1.55,0xeeebe4);}
+for(const side of [0,1]){const pivot=new T.Group();pivot.position.set(X(side?235:135),0,Z(200));const w=(X(235)-X(135))/2-.06;
  for(let i=0;i<7;i++){const m=new T.Mesh(new T.BoxGeometry(w,.14,.06),mat(0xa8845a));m.position.set(side?-w/2:w/2,.2+i*.17,0);m.userData.gate=true;m.castShadow=true;pivot.add(m);}
  house.add(pivot);gate.leaves.push(pivot);}
 const car=new T.Group(),beams=new T.SpotLight(0xfff0cc,0,14,.5,.6,1.4);{
@@ -122,7 +122,7 @@ const car=new T.Group(),beams=new T.SpotLight(0xfff0cc,0,14,.5,.6,1.4);{
  for(const x of [-.6,.6]){add(new T.BoxGeometry(.34,.14,.05),new T.MeshBasicMaterial({color:0xfff3cf}),x,.7,2.16);add(new T.BoxGeometry(.34,.1,.05),new T.MeshBasicMaterial({color:0xd0322f}),x,.72,-2.16);}
  beams.position.set(0,.8,2);beams.target.position.set(0,0,9);car.add(beams,beams.target);
  house.add(car);}
-const parked=[178,520],street=[129,-40];
+const parked=[185,520],street=[185,-40];   // the gate opens on the drive, clear of the carport
 const person=new T.Group();{const body=new T.Mesh(new T.CapsuleGeometry(.2,.75,6,12),mat(0x2b2f38));body.position.y=.82;const head=new T.Mesh(new T.SphereGeometry(.16,16,12),mat(0x3a3f4a));head.position.y=1.55;
  const ring=new T.Mesh(new T.TorusGeometry(.48,.03,8,40),new T.MeshBasicMaterial({color:0xff8f7d}));ring.rotation.x=Math.PI/2;ring.position.y=.12;body.castShadow=head.castShadow=true;person.add(body,head,ring);person.visible=false;house.add(person);}
 
@@ -131,7 +131,7 @@ const halo=(()=>{const c=document.createElement('canvas');c.width=c.height=128;c
 const lampList=[
  {id:'kitchen',name:'Cuisine',at:[388,272],h:1.9,power:9},{id:'living',name:'Séjour',at:[530,345],h:1.9,power:12},{id:'dining',name:'Salle à manger',at:[492,364],h:1.75,power:9},
  {id:'bath',name:'Salle d’eau',at:[357,392],h:1.9,power:7},{id:'laundry',name:'Buanderie',at:[440,522],h:1.9,power:11},{id:'terrace',name:'Terrasse',at:[450,632],h:2,power:11},
- {id:'stairs',name:'Escalier',at:[593,470],h:3.1,power:8},{id:'entry',name:'Portail',at:[129,235],h:1.7,power:12},{id:'garage',name:'Garage',at:[82,400],h:2,power:11},
+ {id:'stairs',name:'Escalier',at:[593,470],h:3.1,power:8},{id:'entry',name:'Portail',at:[185,238],h:1.7,power:12},{id:'garage',name:'Garage',at:[82,400],h:2,power:11},
  {id:'garden1',name:'Jardin · haut',at:[760,300],h:.7,power:9,low:true},{id:'garden2',name:'Jardin · bas',at:[850,560],h:.7,power:9,low:true},{id:'gazebo',name:'Gazebo',at:[595,667],h:2,power:8},
  {id:'pool',name:'Piscine',at:[830,784],h:-.5,power:14,cool:true}
 ];
@@ -152,7 +152,7 @@ for(const def of lampList){
 // ---------- small labels, as on a dashboard: a few readings, no more
 const tags=[];
 function tag(text,u,v,h,o={}){const el=document.createElement(o.press?'button':'span');el.className='tag'+(o.alert?' alert':'')+(o.press?' press':'');el.textContent=text;if(o.press)el.addEventListener('click',o.press);labelsEl.append(el);const t={el,pos:new T.Vector3(X(u),h,Z(v)),show:true};tags.push(t);return t;}
-const gateTag=tag('Portail · Fermé',129,200,2.1,{press:()=>toggleGate()});
+const gateTag=tag('Portail · Fermé',185,200,2.1,{press:()=>toggleGate()});
 const tempTag=tag('24,5°',500,290,1.9);tag('68 %',345,425,1.7);const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
 
 // ---------- the camera: an orbit with inertia
@@ -226,8 +226,8 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&focused)leave();});
 
 // ---------- scenes: thirty seconds each, played in the house itself
 const along=(pts,t)=>{const n=pts.length-1,k=clamp(t,0,1)*n,i=Math.min(n-1,Math.floor(k)),f=k-i,a=pts[i],b=pts[i+1];return {u:a[0]+(b[0]-a[0])*f,v:a[1]+(b[1]-a[1])*f,heading:Math.atan2(X(b[0])-X(a[0]),Z(b[1])-Z(a[1]))};};
-const driveIn=[street,[129,120],[129,215],[150,340],[178,430],parked],walkIn=[[950,330],[880,345],[800,395],[735,450],[690,470]];
-const DURATION=30,gateView={target:new T.Vector3(X(170),.5,Z(330)),az:-.9,pol:.95,dist:30};
+const driveIn=[street,[185,120],[185,215],[185,340],[185,430],parked],walkIn=[[950,330],[880,345],[800,395],[735,450],[690,470]];
+const DURATION=30,gateView={target:new T.Vector3(X(190),.5,Z(330)),az:-.9,pol:.95,dist:30};
 const scenes={
  arrival:{steps:[[0,'Le portail s’ouvre.'],[5,'La voiture rejoint sa place.'],[15,'La terrasse, puis le séjour s’allument.'],[24,'La maison vous accueille.']],
   start(){mode('night',true);set('entry',false,true);flyTo(gateView,1600);},
