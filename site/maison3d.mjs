@@ -48,7 +48,7 @@ const slats=surface((g,s)=>{g.fillStyle='#e9e7e1';g.fillRect(0,0,s,s);g.fillStyl
 const doors=[];
 function door(x0,z0,x1,z1,y=0){const w=Math.hypot(x1-x0,z1-z0),pivot=new T.Group();pivot.position.set(x0,0,z0);pivot.rotation.y=Math.atan2(-(z1-z0),x1-x0);
  const leaf=new T.Mesh(new T.BoxGeometry(w-.04,WALL-.02,.045),mat(0x8d7a69,{roughness:.6}));leaf.position.set(w/2,(WALL-.02)/2+.01,0);leaf.castShadow=true;
- const knob=new T.Mesh(new T.SphereGeometry(.035,10,8),mat(0xd8dde4,{metalness:.8,roughness:.25}));knob.position.set(w-.14,.95,.05);const knob2=knob.clone();knob2.position.z=-.05;
+ const knob=new T.Mesh(new T.SphereGeometry(.035,10,8),mat(0xd8dde4,{metalness:.8,roughness:.25}));knob.position.set(w-.14,.66,.05);        // halfway up the cut door, where the eye expects itconst knob2=knob.clone();knob2.position.z=-.05;
  pivot.add(leaf,knob,knob2);parent.add(pivot);
  for(const [x,z] of [[x0,z0],[x1,z1]]){const j=new T.Mesh(new T.BoxGeometry(.07,WALL,.13),mat(0x2f3742));j.position.set(x,WALL/2,z);j.rotation.y=pivot.rotation.y;j.castShadow=true;parent.add(j);}
  doors.push({pivot,base:pivot.rotation.y,x:(x0+x1)/2,z:(z0+z1)/2,y,open:0});}
