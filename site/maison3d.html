@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="robots" content="noindex">
   <link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#05070c">
   <meta name="description" content="La maison pilote de Parks 3D en trois dimensions : tournez autour, entrez dans une pièce, allumez une lampe.">
   <title>Parks 3D · La maison en trois dimensions</title>
+  <meta property="og:title" content="Parks 3D · La maison en trois dimensions"><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D">
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="maison3d.css?v=2">
   <script type="module" src="maison3d.mjs?v=2"></script>
@@ -34,7 +34,7 @@
     <canvas id="view" aria-hidden="true"></canvas>
     <div class="labels" id="labels"></div>
     <header class="top">
-      <a class="mark" href="recit.html" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
+      <a class="mark" href="/" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
       <p class="status" id="status" aria-live="polite"></p>
       <div class="who" id="who" aria-label="Présences simulées"><span title="Personnes"><svg><use href="#i-people"/></svg><b>0</b></span><span title="Animaux"><svg><use href="#i-paw"/></svg><b>0</b></span><span title="Voitures"><svg><use href="#i-car"/></svg><b>0</b></span></div>
     </header>
@@ -86,6 +86,7 @@
     <ul class="lights" id="list"></ul>
 
     <p class="fine">Maison pilote · Personnages, équipements et alertes simulés.</p>
+    <nav class="site-links" aria-label="Le site"><a href="comment-ca-marche.html">Le projet</a><a href="index.html">Démo classique</a><a href="compte.html">Mon accès</a><a href="aide.html">Aide</a><a href="mentions-legales.html">Mentions légales</a></nav>
   </aside>
 </div>
 <noscript><p style="padding:24px;color:#fff">La maison en trois dimensions a besoin de JavaScript.</p></noscript>

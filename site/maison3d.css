@@ -98,3 +98,7 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .who-tag{font-size:10px;padding:3px 8px;background:rgba(10,14,22,.82);border-color:rgba(159,216,255,.5)}
 .only-scene .who{display:none}
 @media(max-width:700px){.who{right:auto;left:max(18px,env(safe-area-inset-left));top:calc(max(16px,env(safe-area-inset-top)) + 40px)}.back{top:calc(max(16px,env(safe-area-inset-top)) + 82px)}}
+
+/* Links to the rest of the site, under the dashboard. Not shown inside the app. */
+.site-links{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:11px}.site-links a{color:var(--soft);text-decoration:none}.site-links a:hover{color:var(--ink)}
+.in-app .site-links{display:none}
