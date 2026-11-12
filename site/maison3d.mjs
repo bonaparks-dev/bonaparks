@@ -377,7 +377,7 @@ function frame(now){
   const t=reduce?0:((now/1000+i*2.3)%(f.every*2))/f.every,k=t<1?between(t,.25,.75):1-between(t-1,.25,.75),moving=!reduce&&((t%1)>.25&&(t%1)<.75);
   f.node.position.set(f.a[0]+(f.b[0]-f.a[0])*k,f.y+(moving?Math.abs(Math.sin(now*.011+i))*.035:0),f.a[1]+(f.b[1]-f.a[1])*k);
   const dir=t<1?1:-1;f.node.rotation.y=Math.atan2((f.b[0]-f.a[0])*dir,(f.b[1]-f.a[1])*dir);}
- for(const f of family){f.tag.show=f.node.visible;f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
+ for(const f of family){f.tag.show=f.node.visible&&orbit.dist<(camera.aspect<1?26:44);f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
  {const people=playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
