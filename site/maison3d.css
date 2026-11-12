@@ -91,3 +91,10 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .in-app .mark{visibility:hidden;width:26px}
 .only-scene .app{grid-template-columns:1fr}.only-scene .panel,.only-scene .hint,.only-scene .status{display:none}
 .only-scene .scene{height:100vh;height:100dvh;position:relative}
+
+/* Who is at home: three small counters beside the floor switch, and a name over each one. Simulated. */
+.who{position:absolute;right:150px;top:max(14px,env(safe-area-inset-top));display:flex;gap:12px;padding:7px 12px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);color:var(--ink);font-size:12px;pointer-events:none}
+.who span{display:flex;align-items:center;gap:5px}.who svg{width:14px;height:14px;color:var(--soft)}.who b{font-weight:600;font-variant-numeric:tabular-nums}
+.who-tag{font-size:10px;padding:3px 8px;background:rgba(10,14,22,.82);border-color:rgba(159,216,255,.5)}
+.only-scene .who{display:none}
+@media(max-width:700px){.who{right:auto;left:max(18px,env(safe-area-inset-left));top:calc(max(16px,env(safe-area-inset-top)) + 40px)}.back{top:calc(max(16px,env(safe-area-inset-top)) + 82px)}}

@@ -183,6 +183,21 @@ const parked=[185,520],street=[185,-40];   // the gate opens on the drive, clear
 const resident=new T.Group();{const m=(g,c,y,o)=>{const k=new T.Mesh(g,mat(c,o));k.position.y=y;k.castShadow=true;resident.add(k);return k;};
  m(new T.CapsuleGeometry(.17,.5,6,12),0x2f3f5c,.5);m(new T.CapsuleGeometry(.2,.42,6,12),0xe88f6f,1.08);m(new T.SphereGeometry(.15,18,14),0xe8c0a2,1.56);
  const hair=m(new T.SphereGeometry(.165,18,14),0x4a3326,1.6);hair.scale.set(1,.85,1);hair.position.z=-.03;resident.visible=false;house.add(resident);}
+// The family at home: each one strolls a few steps in a room, the dog in the garden. Simulated, like the rest.
+function figure(shirt,hair,size=1,long=false){const g=new T.Group(),m=(geo,c,y)=>{const k=new T.Mesh(geo,mat(c));k.position.y=y*size;k.castShadow=true;g.add(k);return k;};
+ m(new T.CapsuleGeometry(.17*size,.5*size,6,12),0x2f3f5c,.5);m(new T.CapsuleGeometry(.2*size,.42*size,6,12),shirt,1.08);m(new T.SphereGeometry(.15*size,18,14),0xe8c0a2,1.56);
+ const h=m(new T.SphereGeometry(.165*size,18,14),hair,1.6);h.scale.set(1,long?1.05:.85,1);h.position.z=-.03*size;if(long)h.position.y-=.05*size;g.add(halo3(.42*size));g.userData.tall=1.78*size;return g;}
+const halo3=r=>{const ring=new T.Mesh(new T.TorusGeometry(r,.028,8,40),new T.MeshBasicMaterial({color:0x9fd8ff}));ring.rotation.x=Math.PI/2;ring.position.y=.13;return ring;};
+function dogFigure(){const g=new T.Group(),m=(geo,x,y,z)=>{const k=new T.Mesh(geo,mat(0xb48a5a));k.position.set(x,y,z);k.castShadow=true;g.add(k);return k;};
+ m(new T.BoxGeometry(.24,.24,.6),0,.36,0);m(new T.BoxGeometry(.2,.2,.24),0,.52,.36);m(new T.BoxGeometry(.06,.2,.06),0,.5,-.32);for(const [x,z] of [[-.08,.2],[.08,.2],[-.08,-.2],[.08,-.2]])m(new T.BoxGeometry(.06,.26,.06),x,.13,z);g.add(halo3(.5));g.userData.tall=.8;return g;}
+const family=[
+ {node:figure(0x6fb5a0,0x4a3326),label:'Personne',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
+ {node:figure(0xe88f6f,0x2c1f18,1,true),label:'Personne',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
+ {node:figure(0x7aa2e3,0x6b4a2f,.72),label:'Enfant',a:[X(440),Z(530)],b:[X(500),Z(540)],y:0,up:false,every:7},
+ {node:figure(0xf2c14e,0x3a2a20,.66,true),label:'Enfant',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
+ {node:dogFigure(),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
+];
+family[3].a=[sx(-2.1),sz(-.2)];family[3].b=[sx(-2.1),sz(.6)];for(const f of family)house.add(f.node);
 const person=new T.Group();{const body=new T.Mesh(new T.CapsuleGeometry(.2,.75,6,12),mat(0x2b2f38));body.position.y=.82;const head=new T.Mesh(new T.SphereGeometry(.16,16,12),mat(0x3a3f4a));head.position.y=1.55;
  const ring=new T.Mesh(new T.TorusGeometry(.48,.03,8,40),new T.MeshBasicMaterial({color:0xff8f7d}));ring.rotation.x=Math.PI/2;ring.position.y=.12;body.castShadow=head.castShadow=true;person.add(body,head,ring);person.visible=false;house.add(person);}
 
@@ -214,6 +229,7 @@ for(const def of lampList){
 // ---------- small labels, as on a dashboard: a few readings, no more
 const tags=[];
 function tag(text,u,v,h,o={}){const el=document.createElement(o.press?'button':'span');el.className='tag'+(o.alert?' alert':'')+(o.press?' press':'');el.textContent=text;if(o.press)el.addEventListener('click',o.press);labelsEl.append(el);const t={el,pos:new T.Vector3(X(u),h,Z(v)),show:true};tags.push(t);return t;}
+for(const f of family){f.tag=tag(f.label,0,0,0);f.tag.el.classList.add('who-tag');}
 const gateTag=tag('Portail · Fermé',185,200,2.1,{press:()=>toggleGate()});
 const tempTag=tag('24,5°',500,290,1.9);tempTag.low=true;tag('68 %',345,425,1.7).low=true;const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
 
@@ -264,7 +280,7 @@ function floor(up,quiet){floorUp=!!up;upper.visible=floorUp;focused=null;back.hi
 for(const b of document.querySelectorAll('[data-floor]'))b.addEventListener('click',()=>{manual();floor(b.dataset.floor==='up');});
 
 // ---------- state: lamps, gate, ambiance, and the dashboard that shows it
-const toast=$('toast'),statusEl=$('status'),listEl=$('list');let toastTimer=0;
+const toast=$('toast'),statusEl=$('status'),listEl=$('list'),who=$('who');let toastTimer=0;
 function say(html){toast.innerHTML=html;toast.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('on'),1900);}
 const clim={on:false,set:23},shutter={open:1,target:1};
 function refresh(){
@@ -356,6 +372,13 @@ function frame(now){
  const poolLevel=lamps.get('pool').level;water.material.emissiveIntensity=.1+.75*poolLevel;spa.material.emissiveIntensity=.12+.7*poolLevel;tex.water.offset.x=now*.00001;tex.water.offset.y=now*.000006;
  tv.material.emissiveIntensity=.9*lamps.get('living').level*night;glass.emissiveIntensity=.15+.5*Math.max(lamps.get('kitchen').level,lamps.get('living').level)*night;
  shutter.open+=(shutter.target-shutter.open)*Math.min(1,dt*(reduce?60:1.6));for(const b of shutters){const closed=Math.max(.03,1-shutter.open);b.mesh.scale.y=closed;b.mesh.position.y=b.top-b.height*closed/2;}
+ // the family is at home when no scene plays; each one walks there and back, with a pause at each end
+ for(const [i,f] of family.entries()){const here=!playing&&f.up===floorUp||!playing&&!f.up&&!floorUp;f.node.visible=!playing&&(f.up?floorUp:true);if(!f.node.visible)continue;
+  const t=reduce?0:((now/1000+i*2.3)%(f.every*2))/f.every,k=t<1?between(t,.25,.75):1-between(t-1,.25,.75),moving=!reduce&&((t%1)>.25&&(t%1)<.75);
+  f.node.position.set(f.a[0]+(f.b[0]-f.a[0])*k,f.y+(moving?Math.abs(Math.sin(now*.011+i))*.035:0),f.a[1]+(f.b[1]-f.a[1])*k);
+  const dir=t<1?1:-1;f.node.rotation.y=Math.atan2((f.b[0]-f.a[0])*dir,(f.b[1]-f.a[1])*dir);}
+ for(const f of family){f.tag.show=f.node.visible;f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
+ {const people=playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
