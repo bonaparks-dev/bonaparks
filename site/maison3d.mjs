@@ -8,16 +8,20 @@ const $=id=>document.getElementById(id);
 // Inside the Bonaparks app the same page is shown: ?app hides the way back to the site, ?vue=scene keeps the house alone.
 {const q=new URLSearchParams(location.search),root=document.documentElement;root.classList.toggle('in-app',q.has('app'));root.classList.toggle('only-scene',q.get('vue')==='scene');}
 const canvas=$('view'),stageEl=$('scene'),labelsEl=$('labels');
+// Inside the app, the page says when the house is drawn or when it cannot be, so the app can show something else.
+const tell=word=>{try{window.webkit?.messageHandlers?.parks3d?.postMessage(word);}catch{}};
+let drawn=false;addEventListener('error',()=>{if(!drawn)tell('failed');});addEventListener('unhandledrejection',()=>{if(!drawn)tell('failed');});
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const X=u=>(u-470)*0.03396,Z=v=>(v-470)*0.021227;            // render units to metres, the house near the middle
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t),between=(t,a,b)=>ease(clamp((t-a)/(b-a),0,1));
 
-const renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true});
+let renderer;try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true});}catch(error){tell('failed');throw error;}
+canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();tell('failed');});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
 const scene=new T.Scene(),camera=new T.PerspectiveCamera(32,1,.5,400);
 const sky=new T.HemisphereLight(0x8fa4ff,0x262b4a,1),sun=new T.DirectionalLight(0xfff1d6,0);
-sun.position.set(-16,26,13);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-.0004;sun.shadow.normalBias=.03;sun.shadow.radius=4;
+const small=Math.min(innerWidth,innerHeight)<500;sun.position.set(-16,26,13);sun.castShadow=true;sun.shadow.mapSize.set(small?1024:2048,small?1024:2048);sun.shadow.bias=-.0004;sun.shadow.normalBias=.03;sun.shadow.radius=4;
 Object.assign(sun.shadow.camera,{left:-22,right:22,top:16,bottom:-16,near:1,far:80});scene.add(sky,sun);
 
 // ---------- surfaces drawn once on a canvas: tiles, grain, grass. No picture files.
@@ -355,7 +359,7 @@ function frame(now){
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
- renderer.render(scene,camera);
+ renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
  const w=canvas.clientWidth,h=canvas.clientHeight;
  for(const t of tags){v3.copy(t.pos).project(camera);const off=!t.show||(t.low&&floorUp)||v3.z>1||Math.abs(v3.x)>1.05||Math.abs(v3.y)>1.05;t.el.style.opacity=off?0:1;t.el.style.pointerEvents=off?'none':'';t.el.style.transform=`translate(-50%,-50%) translate(${((v3.x+1)/2*w).toFixed(1)}px,${((1-v3.y)/2*h).toFixed(1)}px)`;}
  requestAnimationFrame(frame);
