@@ -8,9 +8,9 @@
   <title>Parks 3D · La maison en trois dimensions</title>
   <meta property="og:title" content="Parks 3D · La maison en trois dimensions"><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="maison3d.css?v=7">
+  <link rel="stylesheet" href="maison3d.css?v=10">
   <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=2"></script>
-  <script type="module" src="maison3d.mjs?v=14"></script>
+  <script type="module" src="maison3d.mjs?v=17"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -38,7 +38,10 @@
       <a class="mark" href="/" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
       <nav class="spaces" aria-label="Lieux en trois dimensions"><a href="maison3d.html" aria-current="page">Maison</a><a href="penthouse3d.html">Résidence</a><a href="business3d.html">Business</a><a href="club3d.html">Club</a></nav>
       <p class="status" id="status" aria-live="polite"></p>
-      <div class="who" id="who" aria-label="Présences simulées"><span title="Personnes"><svg><use href="#i-people"/></svg><b>0</b></span><span title="Animaux"><svg><use href="#i-paw"/></svg><b>0</b></span><span title="Voitures"><svg><use href="#i-car"/></svg><b>0</b></span></div>
+      <button class="who" id="who" aria-label="Présences simulées" aria-expanded="false" aria-controls="whobox"><span title="Personnes"><svg><use href="#i-people"/></svg><b>0</b></span><span title="Animaux"><svg><use href="#i-paw"/></svg><b>0</b></span><span title="Voitures"><svg><use href="#i-car"/></svg><b>0</b></span></button>
+      <!-- Under the counter: who is where (touched to open), and the air of the house. -->
+      <div class="whobox" id="whobox" hidden><ul id="who-list"></ul></div>
+      <div class="air" id="air"><svg><use href="#i-air"/></svg><span><b id="air-now">24,5°</b><small id="air-mode">Clim · éteinte</small></span><button id="air-less" aria-label="Baisser la consigne">−</button><b id="air-set">23°</b><button id="air-more" aria-label="Monter la consigne">+</button><button class="pw" id="air-power" aria-pressed="false" aria-label="Allumer ou éteindre la clim"><svg><use href="#i-power"/></svg></button></div>
     </header>
     <div class="floors" role="group" aria-label="Niveau"><button data-floor="down" aria-pressed="true">RDC</button><button data-floor="up" aria-pressed="false">Étage</button><button data-floor="garden" aria-pressed="false">Jardin</button></div>
     <section class="intro" id="intro" aria-label="Bienvenue">

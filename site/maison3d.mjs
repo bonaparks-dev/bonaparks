@@ -258,7 +258,8 @@ function filmCam(c,targets){if(!targets.length)return;
   for(let y=0;y<200;y++)for(let x=0;x<320;x++){const i=((199-y)*320+x)*4,o=(y*320+x)*4;cctv.seed=(cctv.seed*16807)%2147483647;const n=(cctv.seed%17)-8,dx=(x-160)/160,dy=(y-100)/100,vig=1-.3*(dx*dx+dy*dy);
    if(ir){const v=Math.max(0,Math.min(255,((.3*b[i]+.59*b[i+1]+.11*b[i+2])*gain+lift+n)*vig));d[o]=d[o+1]=d[o+2]=v;}else{d[o]=Math.max(0,Math.min(255,(b[i]+n)*vig));d[o+1]=Math.max(0,Math.min(255,(b[i+1]+n)*vig));d[o+2]=Math.max(0,Math.min(255,(b[i+2]+n)*vig));}d[o+3]=255;}
   ctx.putImageData(img,0,0);}}
-function filmAll(){for(const c of cams)if(!c.guard)c.node.visible=signedIn;if(!signedIn)guard.cam.visible=guard.pole.visible;
+function filmAll(){if(!cams[0].badge){for(const c of cams)c.indoor=['salon','cuisine'].includes(c.id);makeBadges();const b=tag('',530,229,2.85,{press:()=>$('clim-power').click()});b.el.classList.add('ac-badge');b.el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>';b.el.setAttribute('aria-label','Allumer ou éteindre la clim');acUnit.userData.badge=b;}
+ acUnit.userData.badge.show=!floorUp;acUnit.userData.badge.el.classList.toggle('on',clim.on);for(const c of cams){c.node.visible=false;c.badge.show=signedIn&&!(floorUp&&c.indoor);c.badge.el.classList.toggle('alert',camAlert===c.id);c.badge.el.classList.toggle('on',camOpen===c.id&&camAlert!==c.id);}guard.pole.visible=false;
  if(!signedIn||document.documentElement.classList.contains('only-scene'))return;cctv.n++;
  for(const c of cams){const show=camOpen===c.id&&!(c.guard&&guard.cone.visible);c.cone.visible=show;if(show){const subj=c.id==='piscine'&&kid.visible?kid.position:c.aim;camCone(c,subj,camAlert===c.id);}c.node.userData.led?.material.color.setHex(camAlert===c.id?0xff3b30:0x7fd3a0);}
  // the open camera every other frame, the strip of thumbnails in turn on the other frames, the page's own feed (accueil) with the garden
@@ -280,6 +281,10 @@ for(const c of cams){c.pos=new T.Vector3(X(c.at[0]),c.at[2],Z(c.at[1]));c.aim=ne
  if(!c.guard){c.node.position.copy(c.pos);house.add(c.node);}c.node.lookAt(c.aim);c.node.traverse(o=>{o.userData.cam=c.id;});
  c.cone=new T.Mesh(new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute(new Float32Array(9),3)),new T.MeshBasicMaterial({color:0x7fd3a0,transparent:true,opacity:.16,side:T.DoubleSide,depthWrite:false}));house.add(c.cone);c.cone.visible=false;}
 const camById=id=>cams.find(c=>c.id===id);
+// Light, like the other badges of the house: a round glowing button on the wall, no camera body drawn.
+const camIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h8A1.5 1.5 0 0 1 15 8.5v7a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 4 15.5z"/><path d="m15 10.5 4.2-2.4c.4-.2.8 0 .8.5v6.8c0 .5-.4.7-.8.5L15 13.5"/></svg>';
+// made on the first frame: the labels layer (tag, tags) is set up further down
+const makeBadges=()=>{for(const c of cams){c.badge=tag('',c.at[0],c.at[1],c.at[2],{press:()=>openCam(camOpen===c.id?null:c.id)});c.badge.el.classList.add('cam-badge');c.badge.el.innerHTML=camIcon;c.badge.el.setAttribute('aria-label','Caméra '+c.name);c.badge.show=false;}};
 let camOpen=null,camAlert=null;
 function camCone(c,p,red){const d=c.cone.geometry.attributes.position,dx=p.x-c.pos.x,dz=p.z-c.pos.z,l=Math.hypot(dx,dz)||1,nx=-dz/l*1.3,nz=dx/l*1.3;
  d.setXYZ(0,c.pos.x,.06,c.pos.z);d.setXYZ(1,p.x+nx,.06,p.z+nz);d.setXYZ(2,p.x-nx,.06,p.z-nz);d.needsUpdate=true;c.cone.geometry.computeBoundingSphere();c.cone.material.color.setHex(red?0xff2d20:0x7fd3a0);c.cone.material.opacity=red?.34:.16;}
@@ -374,14 +379,14 @@ const back=$('back');back.addEventListener('click',leave);
 // Two floors: the upper one is set on the house when it is asked for.
 const indoor=new Set(['kitchen','living','dining','bath','laundry']);let floorUp=false;
 function floor(up,quiet){floorUp=!!up;upper.visible=floorUp;focused=null;back.hidden=true;home.target.y=floorUp?2.9:.4;flyTo(home,900);
- for(const b of document.querySelectorAll('[data-floor]'))b.setAttribute('aria-pressed',String((b.dataset.floor==='up')===floorUp));if(!quiet)say(floorUp?'<b>Étage</b>':'<b>Rez-de-chaussée</b>');}
+ for(const b of document.querySelectorAll('[data-floor]'))b.setAttribute('aria-pressed',String(b.dataset.floor!=='garden'&&(b.dataset.floor==='up')===floorUp));if(!quiet)say(floorUp?'<b>Étage</b>':'<b>Rez-de-chaussée</b>');}
 for(const b of document.querySelectorAll('[data-floor]'))b.addEventListener('click',()=>{manual();if(b.dataset.floor==='garden'){floor(false,true);flyTo({target:new T.Vector3(X(790),.4,Z(560)),az:.35,pol:.9,dist:24},1000);for(const o of document.querySelectorAll('[data-floor]'))o.setAttribute('aria-pressed',String(o===b));return;}floor(b.dataset.floor==='up');});
 
 // ---------- state: lamps, gate, ambiance, and the dashboard that shows it
 const toast=$('toast'),statusEl=$('status'),listEl=$('list'),who=$('who');let toastTimer=0;
 function say(html){toast.innerHTML=html;toast.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('on'),1900);}
 const clim={on:false,set:23},shutter={open:1,target:1};
-function refresh(){
+function refresh(){queueMicrotask(()=>typeof air==='function'&&air());
  const n=[...lamps.values()].filter(l=>l.on).length;
  statusEl.textContent=`Lumières allumées ${n} · ${gate.target?'Portail ouvert':'Portail fermé'}`;
  $('count').textContent=`${n}/${lamps.size}`;$('active').textContent=`Actifs ${n+(gate.target?1:0)+(clim.on?1:0)+(shutter.target?0:1)}/${lamps.size+3}`;
@@ -408,6 +413,32 @@ $('all-on').addEventListener('click',()=>{manual();for(const id of lamps.keys())
 $('all-off').addEventListener('click',()=>{manual();for(const id of lamps.keys())set(id,false,true);say('Éclairage · <b>Tout éteint</b>');});
 $('clim-power').addEventListener('click',()=>{clim.on=!clim.on;say(`Clim · RDC · <b>${clim.on?'Allumée':'Éteinte'}</b>`);refresh();});
 $('clim-less').addEventListener('click',()=>{clim.set=clamp(clim.set-1,17,28);refresh();});$('clim-more').addEventListener('click',()=>{clim.set=clamp(clim.set+1,17,28);refresh();});
+// Who is where: the counter opens the list; a name flies the view to them. The air of the house sits just below.
+const U=x=>x/0.03396+470,V=z=>z/0.021227+470;
+function placeOf(o,up){if(up)return 'Étage';const u=U(o.position.x),v=V(o.position.z);for(const r of Object.values(rooms)){const [a,b,c,d]=r.rect;if(u>=a&&u<=c&&v>=b&&v<=d)return r.name;}return 'Dehors';}
+function whoList(){const ul=$('who-list');if(!ul)return;const rows=[];
+ const people=family.filter(f=>!f.dog&&f.node.visible),pets=family.filter(f=>f.dog&&f.node.visible);
+ if(people.length)rows.push(['Personnes',people.map(f=>[f.label,placeOf(f.node,f.up),f.node])]);
+ if(pets.length)rows.push(['Animaux',pets.map(f=>[f.label,placeOf(f.node,false),f.node])]);
+ if(car.visible)rows.push(['Voitures',[['Voiture',placeOf(car,false),car]]]);
+ const html=rows.map(([g,list])=>`<li class="g">${g}</li>`+list.map(([n,w],i)=>`<li><button data-who="${g}|${i}"><b>${n}</b><small>${w}</small></button></li>`).join('')).join('')||'<li class="g">Aucune présence</li>';
+ if(ul.dataset.html!==html){ul.dataset.html=html;ul.innerHTML=html;for(const b of ul.querySelectorAll('[data-who]'))b.addEventListener('click',()=>{const [g,i]=b.dataset.who.split('|'),row=rows.find(r=>r[0]===g),o=row?.[1][+i]?.[2];if(o){manual();flyTo({target:o.position.clone().setY(.8),az:orbit.az,pol:.9,dist:12},900);}});}}
+$('who').addEventListener('click',()=>{const box=$('whobox'),open=box.hidden;box.hidden=!open;$('who').setAttribute('aria-expanded',String(open));if(open)whoList();});
+setInterval(()=>{if(!$('whobox').hidden)whoList();},1000);
+function air(){$('air-now').textContent=(clim.on?clim.set:24.5).toString().replace('.',',')+'°';$('air-mode').textContent=clim.on?'Clim · froid':'Clim · éteinte';$('air-set').textContent=clim.set+'°';$('air-power').setAttribute('aria-pressed',String(clim.on));$('air').classList.toggle('on',clim.on);}
+$('air-power').addEventListener('click',()=>$('clim-power').click());$('air-less').addEventListener('click',()=>$('clim-less').click());$('air-more').addEventListener('click',()=>$('clim-more').click());
+// The air conditioner of the living room, on the back wall: when it runs, its cold air is seen flowing into the room.
+const acUnit=new T.Group();{const body=new T.Mesh(new T.BoxGeometry(.95,.3,.24),mat(0xe9edf2,{roughness:.35}));const vent=new T.Mesh(new T.BoxGeometry(.85,.04,.02),new T.MeshBasicMaterial({color:0x2a3240}));vent.position.set(0,-.1,.125);
+ const glow=new T.Mesh(new T.BoxGeometry(.8,.02,.01),new T.MeshBasicMaterial({color:0x8fd3ff}));glow.position.set(0,-.13,.13);acUnit.add(body,vent,glow);acUnit.userData.glow=glow;}
+acUnit.position.set(X(530),2.32,Z(229)+.14);house.add(acUnit);
+const streaks=[],streakMat=new T.MeshBasicMaterial({color:0x6fc8ff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
+for(let i=0;i<46;i++){const m=new T.Mesh(new T.BoxGeometry(.018,.018,.42),streakMat.clone());m.userData={phase:Math.random(),lane:(Math.random()-.5)*.8,drop:.6+Math.random()*.7,speed:.35+Math.random()*.25};m.visible=false;house.add(m);streaks.push(m);}
+let airT=0;
+function airFlow(dt){airT+=dt;const on=clim.on&&!floorUp;acUnit.userData.glow.material.color.setHex(on?0x8fd3ff:0x3a4352);
+ for(const m of streaks){m.visible=on;if(!on)continue;const d=m.userData,p=(airT*d.speed+d.phase)%1;
+  // from the vent, forward into the room and gently down, spreading a little
+  const x=acUnit.position.x+d.lane*(1+p*1.8),y=acUnit.position.y-.14-p*p*d.drop*1.4,z=acUnit.position.z+.05+p*2.3;
+  m.position.set(x,y,z);m.lookAt(x+d.lane*.25,y-p*d.drop*1.2-.3,z+1);m.material.opacity=Math.sin(p*Math.PI)*.6;}}
 const hintEl=$('hint');let hinted=false;function hint(){if(hinted)return;hinted=true;setTimeout(()=>hintEl.classList.add('gone'),2500);}
 addEventListener('keydown',e=>{if(e.key==='Escape'&&focused)leave();});
 
@@ -518,14 +549,14 @@ function frame(now){
   const t=reduce?0:((now/1000+i*2.3)%(f.every*2))/f.every,k=t<1?between(t,.25,.75):1-between(t-1,.25,.75),moving=!reduce&&((t%1)>.25&&(t%1)<.75);
   f.node.position.set(f.a[0]+(f.b[0]-f.a[0])*k,f.y,f.a[1]+(f.b[1]-f.a[1])*k);A.animate(f.node,{speed:moving?.55:0,t:now/1000,dt});
   const dir=t<1?1:-1;f.node.rotation.y=Math.atan2((f.b[0]-f.a[0])*dir,(f.b[1]-f.a[1])*dir);}
- for(const f of family){f.tag.show=f.node.visible&&orbit.dist<(camera.aspect<1?26:44);f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
+ for(const f of family){f.tag.show=f.node.visible&&(!floorUp||f.up||f.dog||placeOf(f.node,false)==='Dehors'||placeOf(f.node,false)==='Jardin')&&orbit.dist<(camera.aspect<1?26:44);f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
  {const people=live.on?live.people:playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=live.on?live.pets:playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
  for(const who of [resident,person,kid,courier]){if(!who.visible){who.userData.last=null;continue;}const l=who.userData.last,v=l?Math.hypot(who.position.x-l.x,who.position.z-l.z)/Math.max(dt,.001):0;who.userData.last=who.position.clone();who.userData.v=(who.userData.v||0)*.8+Math.min(2,v)*.2;A.animate(who,{speed:who.userData.v,t:now/1000,dt});}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
  renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
- filmAll();
+ filmAll();airFlow(dt);
  const w=canvas.clientWidth,h=canvas.clientHeight;
  for(const t of tags){v3.copy(t.pos).project(camera);const off=!t.show||(t.low&&floorUp)||v3.z>1||Math.abs(v3.x)>1.05||Math.abs(v3.y)>1.05;t.el.style.opacity=off?0:1;t.el.style.pointerEvents=off?'none':'';t.el.style.transform=`translate(-50%,-50%) translate(${((v3.x+1)/2*w).toFixed(1)}px,${((1-v3.y)/2*h).toFixed(1)}px)`;}
  requestAnimationFrame(frame);

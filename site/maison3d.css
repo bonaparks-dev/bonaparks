@@ -93,7 +93,7 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .only-scene .scene{height:100vh;height:100dvh;position:relative}
 
 /* Who is at home: three small counters beside the floor switch, and a name over each one. Simulated. */
-.who{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 46px);display:flex;gap:12px;padding:7px 12px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);color:var(--ink);font-size:12px;pointer-events:none}
+.who{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 46px);display:flex;gap:12px;padding:7px 12px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);color:var(--ink);font:inherit;font-size:12px;cursor:pointer}.who:hover,.who[aria-expanded=true]{border-color:rgba(159,196,255,.5)}
 .who span{display:flex;align-items:center;gap:5px}.who svg{width:14px;height:14px;color:var(--soft)}.who b{font-weight:600;font-variant-numeric:tabular-nums}
 .who-tag{font-size:10px;padding:3px 8px;background:rgba(10,14,22,.82);border-color:rgba(159,216,255,.5)}
 .only-scene .who{display:none}
@@ -192,3 +192,34 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 
 /* Private: the cameras show only to someone signed in. */
 html:not(.cams-on) .camstrip,html:not(.cams-on) .camstrip-label,html:not(.cams-on) .camcard{display:none!important}
+
+/* The camera badges: light and round, a soft glow; red and pulsing when they see an alert. */
+.tag.cam-badge{width:30px;height:30px;padding:0;border-radius:50%;display:grid;place-items:center;background:rgba(14,19,28,.72);border:1px solid rgba(255,255,255,.22);box-shadow:0 0 0 4px rgba(127,211,160,.12),0 0 16px rgba(127,211,160,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer}
+.tag.cam-badge svg{width:15px;height:15px;fill:none;stroke:#eafaf2;stroke-width:1.7;stroke-linejoin:round}
+.tag.cam-badge.on{border-color:#9fc4ff;box-shadow:0 0 0 4px rgba(127,169,216,.2),0 0 18px rgba(127,169,216,.55)}
+.tag.cam-badge.alert{background:#ff453a;border-color:#ff8a80;box-shadow:0 0 0 5px rgba(255,69,58,.22),0 0 22px rgba(255,69,58,.7);animation:campulse 1.2s ease-in-out infinite}
+.tag.cam-badge.alert svg{stroke:#fff}
+@keyframes campulse{50%{box-shadow:0 0 0 9px rgba(255,69,58,.08),0 0 30px rgba(255,69,58,.85)}}
+html:not(.cams-on) .tag.cam-badge{display:none!important}
+
+/* Who is where, and the air: small panels under the counter, at the top right. */
+.whobox{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 86px);z-index:6;width:220px;max-height:46%;overflow:auto;padding:6px;border-radius:14px;background:rgba(10,14,22,.9);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.whobox[hidden]{display:none}.whobox ul{list-style:none;margin:0;padding:0}
+.whobox .g{padding:8px 8px 4px;font:600 9px/1 'Manrope',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.whobox button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px;border:0;border-radius:9px;background:none;color:var(--ink);font:inherit;font-size:12px;text-align:left}
+.whobox button:hover{background:rgba(255,255,255,.06)}.whobox small{color:var(--soft);font-size:11px}
+.air{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 86px);display:flex;align-items:center;gap:8px;padding:5px 6px 5px 11px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);color:var(--ink);font-size:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.whobox:not([hidden])~.air{display:none}
+.air>svg{width:15px;height:15px;color:var(--soft);fill:none;stroke:currentColor;stroke-width:1.7}.air.on>svg{color:#8fd3ff}
+.air span{display:flex;flex-direction:column;line-height:1.15;margin-right:2px}.air span b{font-weight:600}.air small{font-size:10px;color:var(--soft)}
+.air button{width:26px;height:26px;border:0;border-radius:50%;background:rgba(255,255,255,.07);color:var(--ink);font-size:14px;line-height:1}
+.air .pw svg{width:13px;height:13px}.air .pw[aria-pressed=true]{background:#8fd3ff;color:#0a0e16}
+.air>b{min-width:28px;text-align:center;font-variant-numeric:tabular-nums}
+.only-scene .air,.only-scene .whobox{display:none}
+.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 132px)}
+
+/* The air conditioner badge, round like the others; blue when the air runs. The dashboard card is now the pill under the counter. */
+.tag.ac-badge{width:30px;height:30px;padding:0;border-radius:50%;display:grid;place-items:center;background:rgba(14,19,28,.72);border:1px solid rgba(255,255,255,.22);box-shadow:0 0 14px rgba(143,211,255,.25);cursor:pointer}
+.tag.ac-badge svg{width:15px;height:15px;fill:none;stroke:#eaf3ff;stroke-width:2;stroke-linecap:round}
+.tag.ac-badge.on{background:#8fd3ff;border-color:#c9ecff;box-shadow:0 0 0 5px rgba(143,211,255,.2),0 0 22px rgba(143,211,255,.7)}.tag.ac-badge.on svg{stroke:#0a0e16}
+.panel .card.clim{display:none}
