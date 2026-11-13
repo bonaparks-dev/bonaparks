@@ -336,7 +336,7 @@ const sunTag=tag('Production · 0,0 kW',82,410,3.2);sunTag.show=false;const pool
 const courier=A.human({top:0xf0b429,bottom:0x3b3f46,hair:0x2a1d14,style:'court',accent:0xf0b429});courier.visible=false;house.add(courier);
 const parcel=new T.Mesh(new T.BoxGeometry(.45,.32,.36),mat(0xc89a62,{roughness:.9}));parcel.position.set(X(205),.16,Z(236));parcel.visible=false;house.add(parcel);
 const tempTag={el:document.createElement('span'),show:false};   // the temperature is read under the floor buttons, never on the house
-tag('68 %',345,425,1.7).low=true;const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
+const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
 
 // ---------- the camera: an orbit with inertia
 const centre=new T.Vector3(X(500),.4,Z(500));

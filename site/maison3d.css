@@ -231,3 +231,4 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 
 /* The temperature of each level, under its name in the floor buttons. */
 .floors button{display:flex;flex-direction:column;align-items:center;line-height:1.1}.floors button small{font-size:10px;font-weight:500;opacity:.7;font-variant-numeric:tabular-nums}
+.who,.whobox,.air{pointer-events:auto}
