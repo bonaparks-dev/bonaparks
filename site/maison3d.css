@@ -102,3 +102,25 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 /* Links to the rest of the site, under the dashboard. Not shown inside the app. */
 .site-links{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:11px}.site-links a{color:var(--soft);text-decoration:none}.site-links a:hover{color:var(--ink)}
 .in-app .site-links{display:none}
+
+/* The places of Parks 3D: the house, the residence, the venue, the club. Not shown inside the app. */
+.spaces{pointer-events:auto;display:flex;gap:2px;padding:3px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.spaces a{font-size:12px;color:var(--soft);text-decoration:none;padding:6px 12px;border-radius:99px;white-space:nowrap}
+.spaces a:hover{color:var(--ink)}.spaces a[aria-current=page]{background:rgba(184,217,255,.16);color:var(--ink);font-weight:600}
+.in-app .spaces,.only-scene .spaces{display:none}
+@media(max-width:1100px){.status{display:none}}
+@media(max-width:700px){.spaces{position:absolute;left:max(18px,env(safe-area-inset-left));top:calc(max(16px,env(safe-area-inset-top)) + 40px)}.spaces a{padding:6px 10px;font-size:11px}.back{top:calc(max(16px,env(safe-area-inset-top)) + 84px)}}
+/* On arrival: one sentence and the scenes to play. It steps aside at the first touch. */
+.intro{position:absolute;left:max(22px,env(safe-area-inset-left));bottom:54px;max-width:min(430px,calc(100% - 44px));padding:20px 22px 18px;border-radius:20px;background:rgba(10,14,22,.78);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 24px 70px rgba(0,0,0,.45);transition:opacity .45s,transform .45s}
+.intro.gone{opacity:0;transform:translateY(14px);pointer-events:none}
+.intro .eyebrow{margin:0 0 10px;font:600 11px/1 'Manrope',system-ui,sans-serif;letter-spacing:.04em;color:var(--accent)}
+.intro h2{margin:0;font:600 clamp(20px,2.2vw,27px)/1.18 'Manrope',system-ui,sans-serif;letter-spacing:-.02em}
+.intro>p:not(.eyebrow){margin:10px 0 14px;color:var(--soft);font-size:13px}
+.intro-scenes{display:grid;gap:7px}
+.intro-scenes button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13px;text-align:left;transition:border-color .2s,background .2s}
+.intro-scenes button:hover{border-color:#7fa9d8;background:var(--card2)}.intro-scenes svg{width:16px;height:16px;color:var(--accent)}
+.intro-free{margin-top:12px;border:0;background:none;padding:0;color:var(--accent);font-size:13px}.intro-free:hover{text-decoration:underline;text-underline-offset:4px}
+.in-app .intro,.only-scene .intro{display:none}
+.scene:has(.intro:not(.gone)) .hint{opacity:0}
+@media(max-width:700px){.intro{left:12px;right:12px;bottom:12px;max-width:none;padding:14px}.intro>p:not(.eyebrow){display:none}.intro h2{margin-bottom:12px;font-size:19px}.intro-scenes button{padding:8px 11px}.who{top:calc(max(14px,env(safe-area-inset-top)) + 84px)}}
+@media(prefers-reduced-motion:reduce){.intro{transition:none}}

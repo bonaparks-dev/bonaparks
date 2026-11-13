@@ -353,6 +353,10 @@ function stop(quiet){if(!playing)return;playing=null;resident.visible=false;$('t
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
 $('stop').addEventListener('click',()=>stop());
+// On arrival: a sentence and the scenes. A choice, or a first touch of the house, puts it away.
+const intro=$('intro'),dismiss=()=>intro?.classList.add('gone');
+for(const b of document.querySelectorAll('[data-intro]'))b.addEventListener('click',()=>{dismiss();if(b.dataset.intro!=='free')play(b.dataset.intro);});
+canvas.addEventListener('pointerdown',dismiss);
 
 // ---------- every frame
 const v3=new T.Vector3(),white=new T.Color(0xffffff),moon=new T.Color(0x9db4ff),noon=new T.Color(0xfff1d6);let last=performance.now();
