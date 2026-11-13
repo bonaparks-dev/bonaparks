@@ -285,11 +285,11 @@ function say(html){toast.innerHTML=html;toast.classList.add('on');clearTimeout(t
 const clim={on:false,set:23},shutter={open:1,target:1};
 function refresh(){
  const n=[...lamps.values()].filter(l=>l.on).length;
- statusEl.textContent=`${n} lumière${n>1?'s':''} allumée${n>1?'s':''} · Portail ${gate.target?'ouvert':'fermé'}`;
- $('count').textContent=`${n}/${lamps.size}`;$('active').textContent=`${n+(gate.target?1:0)+(clim.on?1:0)+(shutter.target?0:1)} / ${lamps.size+3} actifs`;
+ statusEl.textContent=`Lumières allumées ${n} · ${gate.target?'Portail ouvert':'Portail fermé'}`;
+ $('count').textContent=`${n}/${lamps.size}`;$('active').textContent=`Actifs ${n+(gate.target?1:0)+(clim.on?1:0)+(shutter.target?0:1)}/${lamps.size+3}`;
  $('shutter-state').textContent=shutter.target?'Ouverts':'Fermés';$('shutter-tile').setAttribute('aria-pressed',String(!shutter.target));
  $('gate-state').textContent=gate.target?'Ouvert':'Fermé';$('gate-tile').setAttribute('aria-pressed',String(!!gate.target));gateTag.el.textContent='Portail · '+(gate.target?'Ouvert':'Fermé');
- $('clim-state').textContent=clim.on?`ON · ${clim.set},0 °C demandés`:'OFF · 26,0 °C';$('clim-set').textContent=clim.set+' °C';$('clim-power').setAttribute('aria-pressed',String(clim.on));
+ $('clim-state').textContent=clim.on?`ON · ${clim.set},0 °C`:'OFF · 26,0 °C';$('clim-set').textContent=clim.set+' °C';$('clim-power').setAttribute('aria-pressed',String(clim.on));
  for(const b of listEl.querySelectorAll('button')){const l=lamps.get(b.dataset.lamp);b.setAttribute('aria-pressed',String(l.on));b.querySelector('small').textContent=l.on?'ALLUMÉE':'ÉTEINTE';}
 }
 function set(id,on,quiet){const l=lamps.get(id);if(!l||l.on===on)return;l.on=on;l.pulse=1;if(!quiet)say(`${l.name} · <b>${on?'Allumée':'Éteinte'}</b>`);refresh();}

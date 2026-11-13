@@ -119,8 +119,17 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .intro-scenes{display:grid;gap:7px}
 .intro-scenes button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13px;text-align:left;transition:border-color .2s,background .2s}
 .intro-scenes button:hover{border-color:#7fa9d8;background:var(--card2)}.intro-scenes svg{width:16px;height:16px;color:var(--accent)}
-.intro-free{margin-top:12px;border:0;background:none;padding:0;color:var(--accent);font-size:13px}.intro-free:hover{text-decoration:underline;text-underline-offset:4px}
+.intro-end{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}.intro-free{border:0;background:none;padding:0;color:var(--accent);font-size:13px}.intro-free:hover{text-decoration:underline;text-underline-offset:4px}
 .in-app .intro,.only-scene .intro{display:none}
 .scene:has(.intro:not(.gone)) .hint{opacity:0}
 @media(max-width:700px){.intro{left:12px;right:12px;bottom:12px;max-width:none;padding:14px}.intro>p:not(.eyebrow){display:none}.intro h2{margin-bottom:12px;font-size:19px}.intro-scenes button{padding:8px 11px}.who{top:calc(max(14px,env(safe-area-inset-top)) + 84px)}}
 @media(prefers-reduced-motion:reduce){.intro{transition:none}}
+
+/* The language choice sits in the head of the dashboard. Inside the app, the app's own language is used. */
+.panel-head .top-actions{display:flex}.panel-head .language-picker{margin-left:0}.panel-head .language-trigger{padding:7px 10px;min-height:0}
+.in-app .language-picker{display:none}
+
+/* The one thing to do next: get the app. */
+.get-app{display:inline-block;padding:8px 14px;border-radius:99px;background:var(--accent);color:#06101a;font-weight:600;font-size:12px;text-decoration:none;white-space:nowrap}
+.get-app:hover{background:#d3e7ff}.get-app.wide{display:block;text-align:center;margin-top:20px;padding:12px;font-size:13px}
+.in-app .get-app{display:none}

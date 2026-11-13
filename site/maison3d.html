@@ -8,7 +8,8 @@
   <title>Parks 3D · La maison en trois dimensions</title>
   <meta property="og:title" content="Parks 3D · La maison en trois dimensions"><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="maison3d.css?v=2">
+  <link rel="stylesheet" href="maison3d.css?v=3">
+  <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=2"></script>
   <script type="module" src="maison3d.mjs?v=2"></script>
 </head>
 <body>
@@ -49,7 +50,7 @@
         <button data-intro="departure"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button>
         <button data-intro="intrusion"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button>
       </div>
-      <button class="intro-free" data-intro="free">Explorer librement →</button>
+      <div class="intro-end"><button class="intro-free" data-intro="free">Explorer librement →</button><a class="get-app" href="https://apps.apple.com/app/id6820940465" rel="noopener">Télécharger l’app</a></div>
     </section>
     <button class="back" id="back" hidden>← Vue complète</button>
     <p class="toast" id="toast" role="status" aria-live="polite"></p>
@@ -57,7 +58,7 @@
   </main>
 
   <aside class="panel" aria-label="Tableau de bord de la maison">
-    <div class="panel-head"><h1>Maison connectée</h1><span class="chip">Mode aperçu</span></div>
+    <div class="panel-head"><h1>Maison connectée</h1><div class="top-actions"></div></div>
     <div class="modes" role="group" aria-label="Ambiance">
       <button data-mode="day" aria-pressed="false"><svg><use href="#i-sun"/></svg>Bonjour</button>
       <button data-mode="evening" aria-pressed="true"><svg><use href="#i-moon"/></svg>Soirée</button>
@@ -97,6 +98,7 @@
     <div class="row-title"><span class="label">Éclairage</span><span class="links"><button id="all-on">Tout allumer</button><button id="all-off">Tout éteindre</button></span></div>
     <ul class="lights" id="list"></ul>
 
+    <a class="get-app wide" href="https://apps.apple.com/app/id6820940465" rel="noopener">Télécharger l’app Bonaparks pour iPhone et iPad</a>
     <p class="fine">Maison pilote · Personnages, équipements et alertes simulés.</p>
     <nav class="site-links" aria-label="Le site"><a href="comment-ca-marche.html">Le projet</a><a href="index.html">Démo classique</a><a href="compte.html">Mon accès</a><a href="aide.html">Aide</a><a href="mentions-legales.html">Mentions légales</a></nav>
   </aside>

@@ -3,9 +3,10 @@ import {extraRows} from './i18n-extra.mjs';
 import {legalRows} from './i18n-legal.mjs';
 import {editorRows} from './i18n-editor.mjs';
 import {refinementRows} from './i18n-refinements.mjs';
+import {rows3D} from './i18n-3d.mjs';
 export const languages=[['fr','Français','FR'],['en','English','GB'],['it','Italiano','IT'],['es','Español','ES'],['de','Deutsch','DE'],['zh','中文','CN'],['ru','Русский','RU']];
 const indices={fr:-1,en:0,it:1,es:2,de:3,zh:4,ru:5},normalize=s=>s.replace(/\s+/g,' ').trim(),catalog=new Map();
-for(const [fr,...translations]of [...rows,...extraRows,...legalRows,...editorRows,...refinementRows]){const key=normalize(fr);catalog.set(key,translations);catalog.set(key.toLocaleLowerCase('fr'),translations);if(key.toLocaleUpperCase('fr')!==key)catalog.set(key.toLocaleUpperCase('fr'),translations.map(s=>s.toLocaleUpperCase()));}
+for(const [fr,...translations]of [...rows3D,...rows,...extraRows,...legalRows,...editorRows,...refinementRows]){const key=normalize(fr);catalog.set(key,translations);catalog.set(key.toLocaleLowerCase('fr'),translations);if(key.toLocaleUpperCase('fr')!==key)catalog.set(key.toLocaleUpperCase('fr'),translations.map(s=>s.toLocaleUpperCase()));}
 export function translate(source,language='fr'){
  const index=indices[language];if(index===undefined||index<0)return source;
  const key=normalize(source),exact=catalog.get(key);if(exact)return source.replace(source.trim(),exact[index]);
