@@ -547,6 +547,8 @@ $('stop').addEventListener('click',()=>stop());$('now-stop').addEventListener('c
  mark();document.addEventListener('parks-language',mark);new MutationObserver(mark).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});}
 // On arrival: a sentence and the scenes. A choice, or a first touch of the house, puts it away.
 const intro=$('intro'),dismiss=()=>intro?.classList.add('gone');
+// In the app there is no sentence of arrival: the house is there at once, with the scenes at its foot.
+if(document.documentElement.classList.contains('in-app'))dismiss();
 for(const b of document.querySelectorAll('[data-intro]'))b.addEventListener('click',()=>{dismiss();if(b.dataset.intro!=='free')play(b.dataset.intro);});
 canvas.addEventListener('pointerdown',()=>{if(member)dismiss();});
 
