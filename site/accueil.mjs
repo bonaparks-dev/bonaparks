@@ -1,44 +1,33 @@
-// The home page: the scroll drives one house in three dimensions (maison3d.html inside a frame, same site), from the
-// whole property to the ground floor, upstairs, then a simulated night alert seen by the garden camera.
+// The home page. Two views of the same house (maison3d.html, same site): one turns by itself under the title, the other
+// is the demo itself, with its floors, its dashboard and its scenes. While the alert scene plays, what the garden
+// camera saw shows under the demo. Nothing is ever written over the house. Everything is simulated.
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const story=document.querySelector('.story'),frame=$('house'),pin=document.querySelector('.pin');
-const captions=[...document.querySelectorAll('.captions article')];
-let house=null,phase=-1,drift=0;
+const quiet='.floors,.back,.toast,.now,.top,.spaces,.who,.hint,.fine,.labels,.tag{display:none!important}';
+function house(frame,css){return new Promise(done=>{let started=false;const ready=()=>{const doc=frame.contentDocument,win=frame.contentWindow;if(!doc||!win||started)return;started=true;
+ if(css){const s=doc.createElement('style');s.textContent=css;doc.head.append(s);}
+ const wait=()=>win.parks3d?done(win.parks3d):setTimeout(wait,120);wait();};
+ frame.addEventListener('load',ready);if(frame.contentDocument?.readyState==='complete'&&frame.contentWindow?.location.href!=='about:blank')ready();});}
 
-// The house in the frame: quiet, without its own controls, and turning slowly when nothing else asks it to move.
-frame.addEventListener('load',()=>{
- const doc=frame.contentDocument,win=frame.contentWindow;if(!doc||!win)return;
- const style=doc.createElement('style');style.textContent='.floors,.back,.toast,.now,.top,.spaces,.who,.hint,.fine,.labels{display:none!important}';doc.head.append(style);
- const wait=()=>{if(win.parks3d){house=win.parks3d;phase=-1;update();}else setTimeout(wait,120);};wait();
-});
+// 1. The house under the title turns slowly, on its own, like a product on its stand. No text, no controls on it.
+let turning=null,az=-.62;
+house($('turn'),quiet).then(h=>{turning=h;h.mode('evening',true);h.flyTo({target:h.home.target.clone(),az,pol:.86,dist:36},1200);});
+function spin(){if(turning&&!reduce){az+=.0016;turning.orbit.az=az;}requestAnimationFrame(spin);}
+requestAnimationFrame(spin);
 
-const phases=[
- ()=>{house.stop?.();house.floor(false,true);house.mode('evening',true);house.flyTo({target:house.home.target.clone(),az:-.62+drift,pol:.86,dist:36},1600);},
- ()=>{house.stop?.();house.floor(false,true);house.enter('living');},
- ()=>{house.stop?.();house.floor(true,true);setTimeout(()=>house.flyTo({target:house.home.target.clone().set(-.5,3,0),az:-.5,pol:.78,dist:22},1400),200);},
- ()=>{house.floor(false,true);house.play('intrusion');}
-];
-function update(){
- const r=story.getBoundingClientRect(),span=r.height-innerHeight,p=clamp(span>0?-r.top/span:0,0,1);
- // The house starts as a card under the title, like a product shot, and opens to the whole screen as the page moves.
- const grow=clamp((p-.005)/.07,0,1),g=grow*grow*(3-2*grow),side=Math.max(22,(innerWidth-1200)/2);
- pin.style.setProperty('--grow',g);pin.style.setProperty('--inset-x',((1-g)*side).toFixed(1)+'px');pin.style.setProperty('--inset-y',((1-g)*Math.min(70,innerHeight*.07)).toFixed(1)+'px');pin.style.setProperty('--radius',((1-g)*28).toFixed(1)+'px');
- let i=0;captions.forEach((c,k)=>{if(p>=Number(c.dataset.from)-.0001)i=k;});
- captions.forEach((c,k)=>c.classList.toggle('on',k===i&&p>=.08));
- if(house&&i!==phase){phase=i;try{phases[i]();}catch{}}
- // The alert shows once the garden camera has seen the person (the house says so with its own alert panel).
- const alerted=phase===3&&house&&frame.contentDocument?.getElementById('alert')?.hidden===false;
- pin.classList.toggle('show-alert',!!alerted);
- $('cursor').style.setProperty('--cursor',(10+clamp((p-.64)/.36,0,1)*78)+'%');
-}
-let queued=false;const ask=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;update();});};
-addEventListener('scroll',ask,{passive:true});addEventListener('resize',ask);
-// A slow turn of the whole property while the first caption is read.
-function tick(){if(house&&phase===0&&!reduce){drift+=.0016;house.orbit.az=-.62+drift;}
- if(phase===3){const s=Math.floor(performance.now()/1000)%60;$('clock').textContent=`02:15:${String(s).padStart(2,'0')}`;}
- update();requestAnimationFrame(tick);}
-requestAnimationFrame(tick);
+// 2. The demo. The chips above it start a scene; the alert scene opens what the camera saw.
+let demo=null;
+house($('house')).then(h=>{demo=h;});
+for(const b of document.querySelectorAll('[data-play]'))b.addEventListener('click',()=>{if(!demo)return;
+ for(const o of document.querySelectorAll('[data-play]'))o.classList.toggle('on',o===b);demo.play(b.dataset.play);});
+let t0=0;
+function watch(){
+ const doc=$('house').contentDocument,alerted=!!doc&&doc.getElementById('alert')?.hidden===false;
+ $('seen').classList.toggle('on',alerted);
+ if(alerted){if(!t0)t0=performance.now();const s=Math.floor((performance.now()-t0)/1000);$('clock').textContent=`02:15:${String(s%60).padStart(2,'0')}`;$('cursor').style.setProperty('--cursor',(10+clamp(s/22,0,1)*78)+'%');}else t0=0;
+ const playing=!!doc&&doc.getElementById('transport')?.hidden===false;if(!playing)for(const o of document.querySelectorAll('[data-play]'))o.classList.remove('on');
+ setTimeout(watch,250);}
+watch();
 
 // "Regardez de plus près": one picture per function.
 const shots={lumieres:'Une lampe par pièce, commandée d’un geste.',volets:'Les volets descendent tout seuls quand plus personne n’est à l’étage.',portail:'Le portail s’ouvre d’un geste, ou quand la voiture arrive.',intrusion:'La caméra repère une personne inconnue et trace son chemin en rouge.',scenario:'Arrivée, départ, nuit : une scène règle toute la maison d’un coup.'};
@@ -48,7 +37,6 @@ for(const b of document.querySelectorAll('[data-shot]'))b.addEventListener('clic
  $('closer-text').textContent=shots[b.dataset.shot];
 });
 
-// The languages at the foot of the page: kept for the next visit, the current one marked.
 // The language, as Apple places its country and region: at the foot of the page, with a globe.
 {const pick=$('lang'),mark=()=>{const now=(document.documentElement.lang||'fr').slice(0,2);pick.value=['fr','en','it'].includes(now)?now:'en';};
  pick.addEventListener('change',()=>{try{localStorage.setItem('parks.language',pick.value);}catch{}const u=new URL(location.href);u.searchParams.set('lang',pick.value);location.href=u;});
