@@ -79,17 +79,17 @@ function windowAt(a,b,z,out,up,cut=WALL){
 }
 
 // ---------- the land
-box(0,60,1000,950,.3,-.31,0x1d2a22,undefined,false);
-ground(10,66,990,945,-.01,tex.lawn,'garden');
-ground(47,66,294,612,.01,tex.gravel,'entry');ground(294,66,985,205,.01,tex.gravel);                 // gravel: entrance, and the lane behind the hedge
+box(0,190,1000,950,.3,-.31,0x1d2a22,undefined,false);   // the property starts at the gate line
+ground(10,196,990,945,-.01,tex.lawn,'garden');
+ground(47,203,294,612,.01,tex.gravel,'entry');ground(135,150,235,203,.01,tex.gravel);                 // gravel: the entrance, and the threshold outside the gate
 ground(288,205,616,692,.03,tex.paving);ground(674,680,952,925,.03,tex.paving);ground(600,640,690,700,.03,tex.paving);
 // the boundary wall opens on the street in front of the gate, where the car comes in
-for(const [a,b,c,d] of [[0,60,135,68],[235,60,1000,68],[0,942,1000,950],[0,60,8,950],[992,60,1000,950]]){box(a,b,c,d,.75,0,0xdcd8cf);box(a-.5,b-.8,c+.5,d+.8,.06,.75,0xeeebe4);}
+for(const [a,b,c,d] of [[0,942,1000,950],[0,190,8,950],[992,190,1000,950],[0,192,47,208]]){box(a,b,c,d,.75,0,0xdcd8cf);box(a-.5,b-.8,c+.5,d+.8,.06,.75,0xeeebe4);}
 const hedge=(a,b,c,d,h=1.15)=>box(a,b,c,d,h,0,0xffffff,{map:tex.hedge,roughness:1});
 hedge(12,205,44,940);hedge(44,915,985,940);hedge(955,215,985,915);hedge(314,196,985,214,1.35);       // hedges, the back one at the gate
 wallH(47,135,200,1.05);wallH(235,300,200,1.05);                                                       // the wall each side of the gate
 function tree(u,v,s=1){cyl(u,v,.11*s,1.5*s,0,0x6b4a32);for(const [dx,dy,dz,r] of [[0,2.1,0,1],[.55,1.75,.2,.7],[-.5,1.8,-.3,.72],[.1,1.7,.55,.6]]){const m=new T.Mesh(new T.IcosahedronGeometry(r*s,1),mat(0x3b8742,{roughness:1,flatShading:true}));m.position.set(X(u)+dx*s,dy*s,Z(v)+dz*s);put(m);}}
-tree(288,140,1);tree(262,330,.9);tree(262,430,.9);tree(640,700,.65);tree(600,772,.65);
+tree(300,250,1);tree(262,330,.9);tree(262,430,.9);tree(640,700,.65);tree(600,772,.65);
 const pot=(u,v)=>{cyl(u,v,.17,.32,0,0xb9744f);const m=new T.Mesh(new T.IcosahedronGeometry(.3,1),mat(0x3f8f49,{flatShading:true,roughness:1}));m.position.set(X(u),.58,Z(v));put(m);};
 pot(300,596);pot(560,596);pot(690,706);
 // carport: posts and a slatted roof
