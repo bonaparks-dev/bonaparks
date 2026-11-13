@@ -1,0 +1,18 @@
+# Donnees privees de la maison : ne jamais publier
+config.json
+reolink-acces.txt
+profils.json
+memoire.json
+memoire.json.tmp
+journal.jsonl
+apprentissage.json
+apprentissage.tmp
+portail.json
+portail.tmp
+photos/
+*.jpg
+*.png
+# Modeles telecharges (lourds, recuperes automatiquement)
+*.pt
+models/
+__pycache__/

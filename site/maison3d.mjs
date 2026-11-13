@@ -18,6 +18,8 @@ const canvas=$('view'),stageEl=$('scene'),labelsEl=$('labels');
 const tell=word=>{try{window.webkit?.messageHandlers?.parks3d?.postMessage(word);}catch{}};
 let drawn=false;addEventListener('error',()=>{if(!drawn)tell('failed');});addEventListener('unhandledrejection',()=>{if(!drawn)tell('failed');});
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+// ?live (local preview only): the real cameras of the home replace the simulated family, see maison3d-live.mjs.
+const live={on:false,people:0,pets:0,tap:null};
 const X=u=>(u-470)*0.03396,Z=v=>(v-470)*0.021227;            // render units to metres, the house near the middle
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t),between=(t,a,b)=>ease(clamp((t-a)/(b-a),0,1));
 
@@ -150,9 +152,25 @@ ub(.45,1.15,1.85,3.95,1.25,0,0xf4f5f7);ub(1.14,1.14,1.16,3.95,1.2,0,0xcfd4da);  
 const bed=(x0,y0,x1,y1,cover,head)=>{ub(x0,y0,x1,y1,.3,0,0xb78752);ub(x0+.05,y0+.05,x1-.05,y1-.05,.16,.3,cover);const h=head==='back';ub(x0,h?y1-.12:y0,x1,h?y1:y0+.12,.75,0,0xb78752);const w=(x1-x0)/2;for(const k of [0,1])ub(x0+.12+k*w,h?y1-.62:y0+.2,x0+w-.12+k*w,h?y1-.2:y0+.62,.1,.46,0xffffff);};
 bed(-2.9,1.5,-.95,3.75,0xe8dfe2,'back');ub(-3.35,3.2,-2.95,3.7,.5,0,0xc59a66);                       // master
 bed(2.45,1.35,4.3,3.5,0xb9bcc4,'back');ub(2.0,3.4,2.4,3.85,.5,0,0xc59a66);                           // guest
-// the children's room: two single beds, one along each wall
-for(const [x,c] of [[-3.35,0xf0a070],[-1.55,0x7fc6a4]]){ub(x,-2.75,x+.9,-.8,.28,0,0xb78752);ub(x+.04,-2.71,x+.86,-.92,.15,.28,c);ub(x,-.92,x+.9,-.8,.7,0,0xb78752);ub(x+.15,-1.42,x+.75,-1.02,.09,.43,0xffffff);}
-ub(-3.35,.1,-2.55,.85,.85,0,0xf4f5f7);ub(-3.38,-3.4,-3.3,-2.6,.5,.5,0x10151d);                       // chest of drawers, a small TV
+// the children's room, from the Matterport scan (top view) and its camera: the cot with bars against the left wall,
+// the child's bed (no bars) against the bathroom wall, both in the middle of the room; the chest of drawers on the hall side,
+// shelves, a toy box and the TV on the wall on the window side.
+const crib=(x0,y0,x1,y1,sheet,bars)=>{const W=0xf4f1ec,h=bars?.92:.55,m=.045;
+ for(const [x,y] of [[x0,y0],[x1-m,y0],[x0,y1-m],[x1-m,y1-m]])ub(x,y,x+m,y+m,h,0,W);                                  // corner posts
+ ub(x0,y0,x1,y1,.05,bars?.3:.18,W);ub(x0+.04,y0+.04,x1-.04,y1-.04,.12,bars?.35:.23,0xffffff);ub(x0+.06,y0+.06,x1-.06,y1-.06,.03,bars?.47:.35,sheet);
+ ub(x0+.12,y0+.08,x1-.12,y0+.36,.07,bars?.5:.38,0xffffff);                                                               // pillow, window side
+ if(!bars){ub(x0,y0,x1,y0+m,.55,0,W);ub(x0,y1-m,x1,y1,.4,0,W);return;}                                                    // a child's bed: head and foot boards only
+ ub(x0,y0,x0+m,y1,.04,h-.04,W);ub(x1-m,y0,x1,y1,.04,h-.04,W);ub(x0,y0,x1,y0+m,.04,h-.04,W);ub(x0,y1-m,x1,y1,.04,h-.04,W); // top rails
+ for(let y=y0+.1;y<y1-.06;y+=.1){ub(x0+.01,y,x0+.035,y+.022,h-.36,.32,W);ub(x1-.035,y,x1-.01,y+.022,h-.36,.32,W);}         // bars
+ for(let x=x0+.1;x<x1-.06;x+=.1){ub(x,y0+.01,x+.022,y0+.035,h-.36,.32,W);ub(x,y1-.035,x+.022,y1-.01,h-.36,.32,W);}};
+const cots=[[-3.42,-1.95,-2.7,-.63,0xf0a070,true],[-1.34,-1.95,-.62,-.63,0xf2f2f0,false]];
+for(const c of cots)crib(...c);
+ub(-2.55,-1.9,-1.45,-.7,.012,.05,0xdcd3e8,{roughness:1},false);                                                           // the rug between the beds
+ub(-3.42,.42,-2.55,.9,.9,0,0xf4f5f7);ub(-3.38,.46,-2.59,.86,.04,.9,0xe9e4dc);                                            // chest of drawers / changing table, hall side
+ub(-3.42,-3.43,-2.4,-2.98,.8,0,0xf4f5f7);for(let i=0;i<3;i++)ub(-3.36+i*.33,-3.0,-3.08+i*.33,-2.96,.26,.12,[0xe7d9f2,0xd6e6f5,0xf5e2cf][i]); // shelves and their bins
+ub(-2.1,-3.43,-1.35,-3.05,.36,0,0xd9534f);ub(-2.08,-3.41,-1.37,-3.07,.03,.36,0xf2c14e);                                  // toy box
+ub(-3.44,-3.3,-3.4,-2.45,.5,1.15,0x10151d,{roughness:.3});                                                               // the TV on the wall, above the shelves// the beds in plan units, for the live view: a child seen in a bed lies on its mattress
+const cotsPlan=cots.map(([x0,y0,x1,y1,,bars])=>({rect:[ru(x0),rv(y1),ru(x1),rv(y0)],mattress:bars?.5:.38,up:true}));
 ub(-.45,-3.35,.35,-1.6,.55,0,0xffffff,{roughness:.2});ub(-.33,-3.23,.23,-1.72,.05,.5,0xa8c7dc,{roughness:.2},false);ub(.5,-2.75,.92,-2.2,.42,0,0xffffff,{roughness:.2});ub(.35,-.95,.92,-.3,.8,0,0xd9b98f);ub(.4,-.9,.87,-.35,.08,.8,0xffffff,{roughness:.2});
 bed(1.7,-3.25,3.45,-1.2,0x3f8fd6,'front');ub(3.6,-3.3,4.05,-2.85,.5,0,0xc59a66);                     // the blue bed
 // a door in every opening of the upper floor
@@ -272,11 +290,11 @@ function pick(e){const r=canvas.getBoundingClientRect();ndc.set((e.clientX-r.lef
  const lamp=ray.intersectObjects(hits,false).find(h=>!!lamps.get(h.object.userData.lamp).up===floorUp||!lamps.get(h.object.userData.lamp).up&&!indoor.has(h.object.userData.lamp));if(lamp)return {lamp:lamp.object.userData.lamp};
  for(const h of ray.intersectObjects(house.children,true)){if(!shown(h.object))continue;const d=h.object.userData;if(d.gate)return {gate:true};if(d.door!==undefined)return {door:d.door};if(d.room)return {room:d.room};}
  return null;}
-function tap(e){const hit=pick(e);if(!hit)return;if(!member&&!hit.room){invite();return;}if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
+function tap(e){if(live.tap?.(e))return;const hit=pick(e);if(!hit)return;if(!member&&!hit.room){invite();return;}if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
 function swing(i){const d=doors[i];d.held=!d.held;say(`Porte · <b>${d.held?'Ouverte':'Fermée'}</b>`);}
 function view(id){const [a,b,c,d]=rooms[id].rect,w=Math.abs(X(c)-X(a)),dz=Math.abs(Z(d)-Z(b));return {target:new T.Vector3((X(a)+X(c))/2,.6+(rooms[id].up||0),(Z(b)+Z(d))/2),az:orbit.az,pol:clamp(orbit.pol,.55,.85),dist:clamp(Math.max(w,dz)*2.6/Math.min(1,camera.aspect),11,36)};}
-function enter(id){if(!rooms[id])return;manual();if(focused===id){leave();return;}focused=id;flyTo(view(id));back.hidden=false;say(`<b>${rooms[id].name}</b>`);}
-function leave(){focused=null;back.hidden=true;flyTo(home);}
+function enter(id){if(!rooms[id])return;manual();if(focused===id){leave();return;}focused=id;flyTo(view(id));back.hidden=false;say(`<b>${rooms[id].name}</b>`);live.enter?.(id);}
+function leave(){focused=null;back.hidden=true;flyTo(home);live.leave?.();}
 function invite(){say('Créez votre accès pour piloter la maison');intro?.classList.remove('gone');}
 
 const back=$('back');back.addEventListener('click',leave);
@@ -388,12 +406,12 @@ function frame(now){
  tv.material.emissiveIntensity=.9*lamps.get('living').level*night;glass.emissiveIntensity=.15+.5*Math.max(lamps.get('kitchen').level,lamps.get('living').level)*night;
  shutter.open+=(shutter.target-shutter.open)*Math.min(1,dt*(reduce?60:1.6));for(const b of shutters){const closed=Math.max(.03,1-shutter.open);b.mesh.scale.y=closed;b.mesh.position.y=b.top-b.height*closed/2;}
  // the family is at home when no scene plays; each one walks there and back, with a pause at each end
- for(const [i,f] of family.entries()){const here=!playing&&f.up===floorUp||!playing&&!f.up&&!floorUp;f.node.visible=!playing&&(f.up?floorUp:true);if(!f.node.visible)continue;
+ for(const [i,f] of family.entries()){const here=!playing&&f.up===floorUp||!playing&&!f.up&&!floorUp;f.node.visible=!playing&&!live.on&&(f.up?floorUp:true);if(!f.node.visible)continue;
   const t=reduce?0:((now/1000+i*2.3)%(f.every*2))/f.every,k=t<1?between(t,.25,.75):1-between(t-1,.25,.75),moving=!reduce&&((t%1)>.25&&(t%1)<.75);
   f.node.position.set(f.a[0]+(f.b[0]-f.a[0])*k,f.y+(moving?Math.abs(Math.sin(now*.011+i))*.035:0),f.a[1]+(f.b[1]-f.a[1])*k);
   const dir=t<1?1:-1;f.node.rotation.y=Math.atan2((f.b[0]-f.a[0])*dir,(f.b[1]-f.a[1])*dir);}
  for(const f of family){f.tag.show=f.node.visible&&orbit.dist<(camera.aspect<1?26:44);f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
- {const people=playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
+ {const people=live.on?live.people:playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=live.on?live.pets:playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
@@ -407,3 +425,4 @@ car.position.set(X(parked[0]),0,Z(parked[1]));mode('evening',true);place();reque
 setTimeout(()=>{if(!playing&&!focused)flyTo(home,reduce?1:2600);},reduce?0:500);
 // Used by the page's own checks.
 window.parks3d={orbit,flyTo,home,enter,leave,toggle,mode,toggleGate,play,stop,floor,swing};
+if(new URLSearchParams(location.search).has('live')){admit();import('./maison3d-live.mjs').then(m=>m.start({T,house,camera,canvas,X,Z,figure,dogFigure,mat,tag,say,live,car,setGate,rooms,beds:cotsPlan,floorUp:()=>floorUp,setFloor:floor})).catch(e=>say('Mode live indisponible · '+e.message));}

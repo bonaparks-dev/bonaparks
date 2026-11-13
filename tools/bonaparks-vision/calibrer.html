@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bonaparks Vision</title>
+<style>
+:root{--bg:#080c17;--panel:#101725;--line:#ffffff14;--text:#f1f4ff;--muted:#a0abc0;--blue:#5289ff;--ok:#7fd3a0;--warn:#f0b46a;--alert:#ee827b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 70% 600px at 80% 0,#183b762e,transparent),var(--bg);color:var(--text);font:14px/1.5 'DM Sans',system-ui,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 28px;border-bottom:1px solid var(--line)}
+h1{font:650 20px Manrope,system-ui,sans-serif;margin:0;letter-spacing:-.5px}h1 b{color:#8eafff;font-weight:500}
+nav{display:flex;gap:4px;padding:4px;background:#080f1e;border:1px solid #7484b01f;border-radius:10px}
+nav button{background:none;border:1px solid transparent;color:#99abc5;border-radius:7px;padding:8px 14px;font:inherit;cursor:pointer}
+nav button[aria-pressed=true]{color:#eaf2ff;background:linear-gradient(130deg,#284b83,#1f3660);border-color:#4976b46b}
+main{padding:22px 28px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px}
+.stage{position:relative;border:1px solid #748fc933;border-radius:16px;overflow:hidden;background:#101d41}
+.stage img.plan{display:block;width:100%;filter:brightness(.8) saturate(.8)}
+.stage .layer{position:absolute;inset:0;width:100%;height:100%}
+.stage img.warp{position:absolute;inset:0;width:100%;height:100%;opacity:.9;mix-blend-mode:normal;pointer-events:none}
+aside{display:flex;flex-direction:column;gap:12px}
+.card{background:linear-gradient(130deg,#151f3152,#0d1321);border:1px solid #93b4ef1b;border-radius:14px;padding:14px}
+.card h3{margin:0 0 8px;font:600 13px Manrope,sans-serif}
+.cam{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.cam:first-of-type{border-top:0}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px;background:#55627a}
+.dot.on{background:var(--ok);box-shadow:0 0 10px #7fd3a088}.tag{font-size:11px;color:var(--muted)}
+.det{font-size:12px;color:#c8d5ec}.det b{color:var(--warn)}
+button.act{background:linear-gradient(115deg,#407ff4,#3157cf);border:1px solid #89b4ff66;color:#fff;border-radius:9px;padding:9px 14px;font:600 12px inherit;cursor:pointer}
+button.ghost{background:#c0d5ff0a;border:1px solid #7686a64a;color:#c8d5ec;border-radius:9px;padding:9px 14px;font:inherit;cursor:pointer}
+select{background:#0d1424;color:var(--text);border:1px solid #7686a64a;border-radius:8px;padding:8px}
+.calib{display:grid;grid-template-columns:1fr 1fr;gap:16px;grid-column:1/-1}
+.calib .stage{cursor:crosshair}.calib .stage img{display:block;width:100%}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;grid-column:1/-1}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+@media(max-width:900px){main{grid-template-columns:1fr}.calib{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bonaparks <b>Vision</b></h1>
+  <nav><button data-tab="live" aria-pressed="true">Live</button><button data-tab="calib" aria-pressed="false">Calibrer</button></nav>
+</header>
+
+<main id="live">
+  <div class="stage" id="liveStage">
+    <img class="plan" src="/plan.jpg" alt="Plan de la maison">
+    <div id="warps"></div>
+    <svg class="layer" id="tracks" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg>
+  </div>
+  <aside>
+    <div class="card"><h3>Caméras</h3><div id="cams"><p class="tag">Connexion au Hub…</p></div></div>
+    <div class="card"><h3>Présences en direct</h3><div id="who" class="det">—</div>
+      <div class="legend" style="margin-top:10px"><span><i style="background:#ee827b"></i>Personne</span><span><i style="background:#f4bd6d"></i>Animal</span></div></div>
+    <div class="card"><h3>Affichage</h3>
+      <label class="tag"><input type="checkbox" id="showWarp" checked> Projeter les vidéos sur le plan</label>
+    </div>
+    <p class="tag">Tout est traité sur ce PC. Aucune image n'est envoyée en ligne.</p>
+  </aside>
+</main>
+
+<main id="calib" hidden>
+  <div class="toolbar">
+    <select id="camSel"></select>
+    <button class="ghost" id="reset">Recommencer</button>
+    <button class="act" id="save" disabled>Enregistrer le calibrage</button>
+    <span class="tag" id="status"></span>
+  </div>
+  <p class="hint" style="grid-column:1/-1">Clique 4 repères au sol sur l'image de la caméra (coins de pièce, de tapis, de dalle…), puis les <b>mêmes 4 repères, dans le même ordre</b>, sur le plan.</p>
+  <div class="calib">
+    <div class="stage" id="camStage"><img id="camImg" alt="Image de la caméra"><svg class="layer" id="camPts" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div>
+    <div class="stage" id="planStage"><img src="/plan.jpg" alt="Plan"><img class="warp" id="previewWarp" alt=""><svg class="layer" id="planPts" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div>
+  </div>
+</main>
+
+<script>
+const COLORS={personne:'#ee827b',animal:'#f4bd6d'};
+const ICON={personne:'👤',animal:'🐾'};
+let state={cameras:[],tracks:[]};
+const $=s=>document.querySelector(s);
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $('#live').hidden=b.dataset.tab!=='live';$('#calib').hidden=b.dataset.tab!=='calib';
+});
+
+// ---- Live
+function connect(){
+  const es=new EventSource('/events');
+  es.onmessage=e=>{state=JSON.parse(e.data);renderLive();};
+  es.onerror=()=>{$('#cams').innerHTML='<p class="tag">Hub injoignable, nouvelle tentative…</p>';};
+}
+let warpTick=0;
+function renderLive(){
+  $('#cams').innerHTML=state.cameras.map(c=>`<div class="cam"><span><span class="dot ${c.online?'on':''}"></span>${c.name}</span><span class="tag">${!c.online?'hors ligne':c.calibrated?'calibrée':'à calibrer'}</span></div>`).join('');
+  const t=state.tracks;
+  $('#who').innerHTML=t.length?t.map(p=>`${ICON[p.kind]} <b>${p.kind}</b> · vue par ${p.cameras.map(id=>state.cameras.find(c=>c.id===id)?.name||id).join(' + ')}`).join('<br>'):'Personne n’est détecté pour le moment.';
+  $('#tracks').innerHTML=t.map(p=>`<polyline points="${p.trail.map(q=>q.join(',')).join(' ')}" fill="none" stroke="${COLORS[p.kind]}" stroke-opacity=".55" stroke-width="3" vector-effect="non-scaling-stroke"/><circle cx="${p.plan[0]}" cy="${p.plan[1]}" r="9" fill="${COLORS[p.kind]}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>`).join('');
+  if(++warpTick%3===0&&$('#showWarp').checked){
+    const host=$('#warps');
+    state.cameras.filter(c=>c.online&&c.calibrated).forEach(c=>{
+      let img=host.querySelector(`[data-cam="${c.id}"]`);
+      if(!img){img=new Image();img.className='warp';img.dataset.cam=c.id;host.append(img);}
+      const next=new Image();next.onload=()=>{img.src=next.src;};next.src=`/warp/${c.id}.png?t=${Date.now()}`;
+    });
+  }
+}
+$('#showWarp').onchange=e=>{$('#warps').hidden=!e.target.checked;};
+connect();
+
+// ---- Calibrage
+let imgPts=[],planPts=[],cam=null;
+function pt(ev,el){const r=el.getBoundingClientRect();return [(ev.clientX-r.left)/r.width,(ev.clientY-r.top)/r.height];}
+function draw(svg,pts,color){svg.innerHTML=pts.map((p,i)=>`<circle cx="${p[0]*1000}" cy="${p[1]*1000}" r="9" fill="${color}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="${p[0]*1000+14}" y="${p[1]*1000+6}" fill="#fff" font-size="28" font-weight="700">${i+1}</text>`).join('')+(pts.length>2?`<polygon points="${pts.map(p=>p[0]*1000+','+p[1]*1000).join(' ')}" fill="${color}22" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/>`:'');}
+function refresh(){draw($('#camPts'),imgPts,'#5289ff');draw($('#planPts'),planPts,'#7fd3a0');$('#save').disabled=!(imgPts.length===4&&planPts.length===4);$('#status').textContent=`Caméra ${imgPts.length}/4 · Plan ${planPts.length}/4`;}
+$('#camStage').onclick=e=>{if(imgPts.length<4){imgPts.push(pt(e,$('#camStage')));refresh();}};
+$('#planStage').onclick=e=>{if(planPts.length<4){planPts.push(pt(e,$('#planStage')));refresh();}};
+$('#reset').onclick=()=>{imgPts=[];planPts=[];refresh();};
+$('#camSel').onchange=()=>{cam=$('#camSel').value;imgPts=[];planPts=[];$('#camImg').src=`/frame/${cam}.jpg?t=${Date.now()}`;$('#previewWarp').src='';refresh();};
+$('#save').onclick=async()=>{
+  const body={image:imgPts,plan:planPts.map(p=>[p[0]*1000,p[1]*1000])};
+  const r=await fetch(`/calibration/${cam}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  $('#status').textContent=r.ok?'Calibrage enregistré ✔':'Erreur : '+await r.text();
+  setTimeout(()=>{$('#previewWarp').src=`/warp/${cam}.png?t=${Date.now()}`;},1500);
+};
+fetch('/state').then(r=>r.json()).then(s=>{$('#camSel').innerHTML=s.cameras.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');$('#camSel').onchange();});
+</script>
+</body>
+</html>

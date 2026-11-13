@@ -1,0 +1,19 @@
+{
+  "hub": "ADRESSE_IP_DU_HUB_REOLINK",
+  "credentials_file": "reolink-acces.txt",
+  "listen": "127.0.0.1",
+  "port": 8790,
+  "plan_size": [1000, 1000],
+  "model": "yolo11m.pt",
+  "confidence": 0.35,
+  "fuse_distance": 45,
+  "cameras": [
+    {"id": "salon", "name": "Salon", "channel": 2, "zone": "living", "imgsz": 960, "calibration": null},
+    {"id": "dehors", "name": "Jardin", "channel": 4, "zone": "garden", "on_motion": false, "calibration": null},
+    {"id": "enfants", "name": "Chambre des enfants", "channel": 1, "zone": "children", "imgsz": 960, "calibration": null}
+  ],
+  "beds": [
+    {"room": "enfants", "name": "le lit à barreaux", "rect": [329.9, 445.1, 351.1, 507.3]},
+    {"room": "enfants", "name": "le lit de l'enfant", "rect": [391.1, 445.1, 412.3, 507.3]}
+  ]
+}
