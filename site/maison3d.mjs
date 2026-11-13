@@ -5,6 +5,12 @@
 import * as T from './vendor/three.module.min.js';
 
 const $=id=>document.getElementById(id);
+// Three steps. A visitor watches the scenes. With an access (or inside the app) the demo house can be explored and
+// driven, with its dashboard. One's own house, with its real actions, comes from the plans made in the app.
+let member=new URLSearchParams(location.search).has('app');
+const admit=()=>{member=true;document.documentElement.classList.remove('visitor');dispatchEvent(new Event('resize'));};
+if(member)document.documentElement.classList.remove('visitor');
+else fetch('/.netlify/functions/parks-access',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(d?.authenticated)admit();}).catch(()=>{});
 // Inside the Bonaparks app the same page is shown: ?app hides the way back to the site, ?vue=scene keeps the house alone.
 {const q=new URLSearchParams(location.search),root=document.documentElement;root.classList.toggle('in-app',q.has('app'));root.classList.toggle('only-scene',q.get('vue')==='scene');}
 const canvas=$('view'),stageEl=$('scene'),labelsEl=$('labels');
@@ -266,11 +272,12 @@ function pick(e){const r=canvas.getBoundingClientRect();ndc.set((e.clientX-r.lef
  const lamp=ray.intersectObjects(hits,false).find(h=>!!lamps.get(h.object.userData.lamp).up===floorUp||!lamps.get(h.object.userData.lamp).up&&!indoor.has(h.object.userData.lamp));if(lamp)return {lamp:lamp.object.userData.lamp};
  for(const h of ray.intersectObjects(house.children,true)){if(!shown(h.object))continue;const d=h.object.userData;if(d.gate)return {gate:true};if(d.door!==undefined)return {door:d.door};if(d.room)return {room:d.room};}
  return null;}
-function tap(e){const hit=pick(e);if(!hit)return;if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
+function tap(e){const hit=pick(e);if(!hit)return;if(!member&&!hit.room){invite();return;}if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
 function swing(i){const d=doors[i];d.held=!d.held;say(`Porte · <b>${d.held?'Ouverte':'Fermée'}</b>`);}
 function view(id){const [a,b,c,d]=rooms[id].rect,w=Math.abs(X(c)-X(a)),dz=Math.abs(Z(d)-Z(b));return {target:new T.Vector3((X(a)+X(c))/2,.6+(rooms[id].up||0),(Z(b)+Z(d))/2),az:orbit.az,pol:clamp(orbit.pol,.55,.85),dist:clamp(Math.max(w,dz)*2.6/Math.min(1,camera.aspect),11,36)};}
 function enter(id){if(!rooms[id])return;manual();if(focused===id){leave();return;}focused=id;flyTo(view(id));back.hidden=false;say(`<b>${rooms[id].name}</b>`);}
 function leave(){focused=null;back.hidden=true;flyTo(home);}
+function invite(){say('Créez votre accès pour piloter la maison');intro?.classList.remove('gone');}
 
 const back=$('back');back.addEventListener('click',leave);
 // Two floors: the upper one is set on the house when it is asked for.
@@ -346,13 +353,13 @@ const scenes={
    $('alert').hidden=t<9;set('garden1',t>16,true);set('garden2',t>16.6,true);if(t>16)setShutters(false,true);}}
 };
 let playing=null;
-function play(name){stop(true);if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};focused=null;back.hidden=true;s.start();$('transport').hidden=false;
+function play(name){if(!scenes[name])return;stop(true);$('now').hidden=false;if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};focused=null;back.hidden=true;s.start();$('transport').hidden=false;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed',String(b.dataset.scene===name));}
-function stop(quiet){if(!playing)return;playing=null;resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
+function stop(quiet){if(!playing)return;playing=null;$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed','false');if(!quiet)flyTo(home);}
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
-$('stop').addEventListener('click',()=>stop());
+$('stop').addEventListener('click',()=>stop());$('now-stop').addEventListener('click',()=>stop());
 // The languages at the foot of the page: the choice is kept for the next visit, and the current one is marked.
 {const mark=()=>{const now=(document.documentElement.lang||'fr').slice(0,2);for(const a of document.querySelectorAll('#langs a'))a.toggleAttribute('aria-current',a.dataset.lang===now);};
  for(const a of document.querySelectorAll('#langs a'))a.addEventListener('click',e=>{e.preventDefault();try{localStorage.setItem('parks.language',a.dataset.lang);}catch{}const u=new URL(location.href);u.searchParams.set('lang',a.dataset.lang);location.href=u;});
@@ -360,13 +367,13 @@ $('stop').addEventListener('click',()=>stop());
 // On arrival: a sentence and the scenes. A choice, or a first touch of the house, puts it away.
 const intro=$('intro'),dismiss=()=>intro?.classList.add('gone');
 for(const b of document.querySelectorAll('[data-intro]'))b.addEventListener('click',()=>{dismiss();if(b.dataset.intro!=='free')play(b.dataset.intro);});
-canvas.addEventListener('pointerdown',dismiss);
+canvas.addEventListener('pointerdown',()=>{if(member)dismiss();});
 
 // ---------- every frame
 const v3=new T.Vector3(),white=new T.Color(0xffffff),moon=new T.Color(0x9db4ff),noon=new T.Color(0xfff1d6);let last=performance.now();
 function frame(now){
  const dt=clamp((now-last)/1000,0,.05);last=now;      // never backwards: a first frame can be stamped before the page finished loading
- if(playing){const t=(now-playing.t0)/1000;playing.s.at(Math.min(t,DURATION),playing.state);$('bar').style.transform=`scaleX(${clamp(t/DURATION,0,1)})`;$('caption').textContent=playing.s.steps.filter(s=>s[0]<=t).pop()[1];if(t>DURATION+1.5)stop();}
+ if(playing){const t=(now-playing.t0)/1000;playing.s.at(Math.min(t,DURATION),playing.state);{const k=`scaleX(${clamp(t/DURATION,0,1)})`,line=playing.s.steps.filter(s=>s[0]<=t).pop()[1];$('bar').style.transform=k;$('now-bar').style.transform=k;if($('caption').textContent!==line){$('caption').textContent=line;$('now-caption').textContent=line;}}if(t>DURATION+1.5)stop();}
  if(fly){const k=ease(clamp((now-fly.t0)/fly.ms,0,1)),a=fly.from,b=fly.to;orbit.target.lerpVectors(a.target,b.target,k);orbit.az=a.az+(b.az-a.az)*k;orbit.pol=a.pol+(b.pol-a.pol)*k;orbit.dist=a.dist+(b.dist-a.dist)*k;if(k>=1)fly=null;}
  else if(!pointers.size&&!reduce){orbit.az+=orbit.vaz;orbit.pol=clamp(orbit.pol+orbit.vpol,.03,1.2);const f=Math.pow(.0015,dt);orbit.vaz*=f;orbit.vpol*=f;}
  place();

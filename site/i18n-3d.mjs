@@ -35,6 +35,8 @@ const rows3d=[
 ['Lumière du jour','Daylight','Luce del giorno'],['Lumières douces','Soft lights','Luci soffuse'],['Tout s’éteint','Everything switches off','Tutto si spegne'],
 ['Lumières allumées','Lights on','Luci accese'],['Portail fermé','Gate closed','Cancello chiuso'],['Portail ouvert','Gate open','Cancello aperto'],['Actifs','Active','Attivi'],
 ['Télécharger l’app','Get the app','Scarica l’app'],['Télécharger l’app Bonaparks pour iPhone et iPad','Get the Bonaparks app for iPhone and iPad','Scarica l’app Bonaparks per iPhone e iPad'],
+['Créer mon accès pour piloter la maison','Create my account to control the home','Crea il mio accesso per comandare la casa'],['Créez votre accès pour piloter la maison','Create your account to control the home','Crea il tuo accesso per comandare la casa'],
+['Choisissez une scène et regardez la maison réagir.','Pick a scene and watch the home respond.','Scegli una scena e guarda la casa reagire.'],
 ['Le portail s’ouvre.','The gate opens.','Il cancello si apre.'],['La voiture rejoint sa place.','The car pulls into its spot.','L’auto raggiunge il suo posto.'],
 ['Elle descend de voiture. La terrasse et le séjour s’allument.','She gets out of the car. The terrace and the living room light up.','Scende dall’auto. La terrazza e il soggiorno si accendono.'],
 ['Elle monte à l’étage : les volets s’ouvrent tout seuls.','She goes upstairs: the shutters open by themselves.','Sale al piano superiore: le tapparelle si aprono da sole.'],

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" class="visitor">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -44,14 +44,15 @@
     <section class="intro" id="intro" aria-label="Bienvenue">
       <p class="eyebrow">Parks 3D</p>
       <h2>Votre maison, vue d’en haut.<br>Regardez-la vivre.</h2>
-      <p>Choisissez une scène, ou explorez librement.</p>
+      <p class="member-only">Choisissez une scène, ou explorez librement.</p><p class="visitor-only">Choisissez une scène et regardez la maison réagir.</p>
       <div class="intro-scenes">
         <button data-intro="arrival"><svg><use href="#i-home"/></svg>Tout le monde rentre</button>
         <button data-intro="departure"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button>
         <button data-intro="intrusion"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button>
       </div>
-      <div class="intro-end"><button class="intro-free" data-intro="free">Explorer librement →</button><a class="get-app" href="https://apps.apple.com/app/id6820940465" rel="noopener">Télécharger l’app</a></div>
+      <div class="intro-end"><button class="intro-free member-only" data-intro="free">Explorer librement →</button><a class="intro-free visitor-only" href="compte.html?next=maison">Créer mon accès pour piloter la maison →</a><a class="get-app" href="https://apps.apple.com/app/id6820940465" rel="noopener">Télécharger l’app</a></div>
     </section>
+    <div class="now" id="now" hidden><button id="now-stop" aria-label="Arrêter le scénario">■</button><span id="now-caption"></span><div class="bar"><i id="now-bar"></i></div></div>
     <button class="back" id="back" hidden>← Vue complète</button>
     <p class="toast" id="toast" role="status" aria-live="polite"></p>
     <p class="hint" id="hint">Glissez pour tourner · Molette ou deux doigts pour zoomer · Touchez une pièce, une lampe ou une porte</p>
