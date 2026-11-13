@@ -226,3 +226,5 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 
 .whobox .av{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px/1 'Manrope',system-ui,sans-serif;font-style:normal;color:#0a0e16;background:linear-gradient(135deg,#9fc4ff,#7fd3a0)}
 .whobox button span{flex:1;min-width:0;display:flex;flex-direction:column}.whobox em{font-style:normal;font-size:10px;color:var(--soft)}
+/* Phones: the counter sits lower (under the places), so the air, the list and the camera card go under it. */
+@media(max-width:700px){.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 124px);right:12px}.who{right:12px}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 168px);right:12px;width:min(260px,62%)}}
