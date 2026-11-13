@@ -255,3 +255,13 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 .whobox .ren{flex:none;width:28px;height:28px;padding:0;margin-left:2px;display:grid;place-items:center;border-radius:8px;color:var(--soft)}.whobox .ren:hover{color:var(--ink);background:rgba(255,255,255,.06)}
 .whobox .ren svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .whobox .ren-input{width:100%;margin:3px 4px;padding:8px 10px;border-radius:9px;border:1px solid #7fa9d8;background:#0b1120;color:var(--ink);font:inherit;font-size:13px}
+
+/* The temperatures are buttons: the air control of a level opens under it only when its temperature is touched. */
+.floor-temps{pointer-events:auto}
+.floor-temps>*{display:inline-flex;align-items:center;justify-content:center;gap:3px;padding:2px 0;border:0;background:none;font:inherit;font-size:11px;color:var(--soft);font-variant-numeric:tabular-nums;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.floor-temps>button{cursor:pointer;border-radius:99px}.floor-temps>button:hover,.floor-temps>button[aria-expanded=true]{color:var(--ink);background:rgba(255,255,255,.08)}
+.floor-temps i{display:none;font-style:normal;font-size:10px;color:#8fd3ff}.floor-temps .cold i{display:inline}.floor-temps .cold{color:#cdeaff}
+.airs .air{display:none}.airs .air.open{display:flex}
+.who{top:calc(max(14px,env(safe-area-inset-top)) + 64px)}.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 104px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 148px)}
+.air-open .who{top:calc(max(14px,env(safe-area-inset-top)) + 96px)}.air-open .whobox{top:calc(max(14px,env(safe-area-inset-top)) + 136px)}
+@media(max-width:700px){.who{top:calc(max(14px,env(safe-area-inset-top)) + 86px)}.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 126px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 170px)}.air-open .who{top:calc(max(14px,env(safe-area-inset-top)) + 118px)}.air-open .whobox{top:calc(max(14px,env(safe-area-inset-top)) + 158px)}}

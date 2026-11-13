@@ -8,9 +8,9 @@
   <title>Parks 3D · La maison en trois dimensions</title>
   <meta property="og:title" content="Parks 3D · La maison en trois dimensions"><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="maison3d.css?v=17">
+  <link rel="stylesheet" href="maison3d.css?v=18">
   <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=2"></script>
-  <script type="module" src="maison3d.mjs?v=24"></script>
+  <script type="module" src="maison3d.mjs?v=25"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -44,7 +44,7 @@
       <div class="airs" id="airs"><div class="air" id="air-down" data-air="down"><button class="pw" aria-pressed="false" aria-label="Clim RDC : allumer ou éteindre"><svg><use href="#i-air"/></svg></button><button class="less" aria-label="Clim RDC : baisser">−</button><b>23°</b><button class="more" aria-label="Clim RDC : monter">+</button></div><div class="air" id="air-up" data-air="up"><button class="pw" aria-pressed="false" aria-label="Clim Étage : allumer ou éteindre"><svg><use href="#i-air"/></svg></button><button class="less" aria-label="Clim Étage : baisser">−</button><b>23°</b><button class="more" aria-label="Clim Étage : monter">+</button></div></div>
     </header>
     <div class="floors" role="group" aria-label="Niveau"><button data-floor="down" aria-pressed="true">RDC</button><button data-floor="up" aria-pressed="false">Étage</button><button data-floor="garden" aria-pressed="false">Jardin</button></div>
-    <div class="floor-temps" id="floor-temps" aria-label="Température par niveau"><span id="temp-down">24,5°</span><span id="temp-up">23,8°</span><span id="temp-garden">18,2°</span></div>
+    <div class="floor-temps" id="floor-temps" aria-label="Température par niveau"><button data-temp="down" aria-expanded="false" aria-label="Clim RDC"><i aria-hidden="true">❄</i><span id="temp-down">24,5°</span></button><button data-temp="up" aria-expanded="false" aria-label="Clim Étage"><i aria-hidden="true">❄</i><span id="temp-up">23,8°</span></button><span class="t"><span id="temp-garden">18,2°</span></span></div>
     <section class="intro" id="intro" aria-label="Bienvenue">
       <p class="eyebrow">Parks 3D</p>
       <h2>Votre maison, vue d’en haut.<br>Regardez-la vivre.</h2>

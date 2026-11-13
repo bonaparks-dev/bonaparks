@@ -442,13 +442,16 @@ $('who').addEventListener('click',()=>{const box=$('whobox'),open=box.hidden;box
 setInterval(()=>{if(!$('whobox').hidden)whoList();},1000);
 // The air: one small control under each level that has a unit (the living room below, the landing upstairs over the front door).
 const clims={down:clim,up:{on:false,set:22}};
-function air(){for(const [k,c] of Object.entries(clims)){const el=$('air-'+k);if(!el)continue;el.querySelector('b').textContent=c.set+'°';el.querySelector('.pw').setAttribute('aria-pressed',String(c.on));el.classList.toggle('on',c.on);}
+function air(){for(const [k,c] of Object.entries(clims)){const el=$('air-'+k);if(!el)continue;el.querySelector('b').textContent=c.set+'°';el.querySelector('.pw').setAttribute('aria-pressed',String(c.on));el.classList.toggle('on',c.on);document.querySelector(`[data-temp="${k}"]`)?.classList.toggle('cold',c.on);}
  const bs=[...document.querySelectorAll('.floors button')],box=$('airs');if(box&&bs[0]){const base=bs[0].offsetLeft;box.style.width=document.querySelector('.floors').offsetWidth+'px';for(const [k,i] of [['down',0],['up',1]]){const el=$('air-'+k);if(el)el.style.marginLeft=(bs[i].offsetLeft-base)+'px';}}}
 for(const [k,c] of Object.entries(clims)){const el=$('air-'+k);if(!el)continue;
  const go=f=>()=>{f();if(k==='down')refresh();else{air();say(`Clim · Étage · <b>${c.on?'Allumée · '+c.set+' °C':'Éteinte'}</b>`);}};
  el.querySelector('.pw').addEventListener('click',k==='down'?()=>$('clim-power').click():go(()=>{c.on=!c.on;}));
  el.querySelector('.less').addEventListener('click',k==='down'?()=>$('clim-less').click():go(()=>{c.set=clamp(c.set-1,17,28);}));
  el.querySelector('.more').addEventListener('click',k==='down'?()=>$('clim-more').click():go(()=>{c.set=clamp(c.set+1,17,28);}));}
+// The air controls stay folded: touching a temperature opens the control of that level, touching it again folds it.
+for(const t of document.querySelectorAll('[data-temp]'))t.addEventListener('click',()=>{const k=t.dataset.temp,open=!$('air-'+k).classList.contains('open');
+ for(const o of document.querySelectorAll('[data-temp]')){const on=open&&o===t;$('air-'+o.dataset.temp).classList.toggle('open',on);o.setAttribute('aria-expanded',String(on));}document.documentElement.classList.toggle('air-open',open);air();});
 addEventListener('resize',()=>air());setTimeout(air,300);
 // The air conditioner of the living room, on the back wall: when it runs, its cold air is seen flowing into the room.
 const acUnit=new T.Group();{const body=new T.Mesh(new T.BoxGeometry(.95,.3,.24),mat(0xe9edf2,{roughness:.35}));const vent=new T.Mesh(new T.BoxGeometry(.85,.04,.02),new T.MeshBasicMaterial({color:0x2a3240}));vent.position.set(0,-.1,.125);
@@ -581,7 +584,7 @@ function frame(now){
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  {const f=v=>v.toFixed(1).replace('.',',')+'°',down=clim.on?clim.set:24.5,garden=nightTarget?18.2:26.4,t=[['temp-down',down],['temp-up',clims.up.on?clims.up.set:23.8],['temp-garden',garden]];for(const [id,v] of t){const e=$(id);if(e&&e.textContent!==f(v))e.textContent=f(v);}}
- {const bs=document.querySelectorAll('.floors button'),ts=document.querySelectorAll('#floor-temps span');bs.forEach((b,i)=>{const w=b.offsetWidth+'px';if(ts[i]&&ts[i].style.width!==w)ts[i].style.width=w;});}
+ {const bs=document.querySelectorAll('.floors button'),ts=document.querySelectorAll('#floor-temps>*');bs.forEach((b,i)=>{const w=b.offsetWidth+'px';if(ts[i]&&ts[i].style.width!==w)ts[i].style.width=w;});}
  renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
  filmAll();airFlow(dt);
  const w=canvas.clientWidth,h=canvas.clientHeight;
