@@ -335,7 +335,8 @@ const leakTag=tag('Fuite d’eau',372,505,1.4,{alert:true});leakTag.show=false;c
 const sunTag=tag('Production · 0,0 kW',82,410,3.2);sunTag.show=false;const poolTag=tag('Enfant près du bassin',760,700,1.6,{alert:true});poolTag.show=false;
 const courier=A.human({top:0xf0b429,bottom:0x3b3f46,hair:0x2a1d14,style:'court',accent:0xf0b429});courier.visible=false;house.add(courier);
 const parcel=new T.Mesh(new T.BoxGeometry(.45,.32,.36),mat(0xc89a62,{roughness:.9}));parcel.position.set(X(205),.16,Z(236));parcel.visible=false;house.add(parcel);
-const tempTag=tag('24,5°',500,290,1.9);tempTag.low=true;tag('68 %',345,425,1.7).low=true;const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
+const tempTag={el:document.createElement('span'),show:false};   // the temperature is read under the floor buttons, never on the house
+tag('68 %',345,425,1.7).low=true;const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
 
 // ---------- the camera: an orbit with inertia
 const centre=new T.Vector3(X(500),.4,Z(500));
@@ -556,7 +557,7 @@ function frame(now){
  for(const who of [resident,person,kid,courier]){if(!who.visible){who.userData.last=null;continue;}const l=who.userData.last,v=l?Math.hypot(who.position.x-l.x,who.position.z-l.z)/Math.max(dt,.001):0;who.userData.last=who.position.clone();who.userData.v=(who.userData.v||0)*.8+Math.min(2,v)*.2;A.animate(who,{speed:who.userData.v,t:now/1000,dt});}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
- tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
+ {const f=v=>v.toFixed(1).replace('.',',')+'°',down=clim.on?clim.set:24.5,garden=nightTarget?18.2:26.4,t=[['temp-down',down],['temp-up',clim.on?clim.set+.6:23.8],['temp-garden',garden]];for(const [id,v] of t){const e=$(id);if(e&&e.textContent!==f(v))e.textContent=f(v);}}
  renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
  filmAll();airFlow(dt);
  const w=canvas.clientWidth,h=canvas.clientHeight;

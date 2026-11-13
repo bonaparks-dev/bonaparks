@@ -228,3 +228,6 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 .whobox button span{flex:1;min-width:0;display:flex;flex-direction:column}.whobox em{font-style:normal;font-size:10px;color:var(--soft)}
 /* Phones: the counter sits lower (under the places), so the air, the list and the camera card go under it. */
 @media(max-width:700px){.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 124px);right:12px}.who{right:12px}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 168px);right:12px;width:min(260px,62%)}}
+
+/* The temperature of each level, under its name in the floor buttons. */
+.floors button{display:flex;flex-direction:column;align-items:center;line-height:1.1}.floors button small{font-size:10px;font-weight:500;opacity:.7;font-variant-numeric:tabular-nums}
