@@ -353,6 +353,10 @@ function stop(quiet){if(!playing)return;playing=null;resident.visible=false;$('t
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
 $('stop').addEventListener('click',()=>stop());
+// The languages at the foot of the page: the choice is kept for the next visit, and the current one is marked.
+{const mark=()=>{const now=(document.documentElement.lang||'fr').slice(0,2);for(const a of document.querySelectorAll('#langs a'))a.toggleAttribute('aria-current',a.dataset.lang===now);};
+ for(const a of document.querySelectorAll('#langs a'))a.addEventListener('click',e=>{e.preventDefault();try{localStorage.setItem('parks.language',a.dataset.lang);}catch{}const u=new URL(location.href);u.searchParams.set('lang',a.dataset.lang);location.href=u;});
+ mark();document.addEventListener('parks-language',mark);new MutationObserver(mark).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});}
 // On arrival: a sentence and the scenes. A choice, or a first touch of the house, puts it away.
 const intro=$('intro'),dismiss=()=>intro?.classList.add('gone');
 for(const b of document.querySelectorAll('[data-intro]'))b.addEventListener('click',()=>{dismiss();if(b.dataset.intro!=='free')play(b.dataset.intro);});

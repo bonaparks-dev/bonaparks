@@ -133,3 +133,9 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .get-app{display:inline-block;padding:8px 14px;border-radius:99px;background:var(--accent);color:#06101a;font-weight:600;font-size:12px;text-decoration:none;white-space:nowrap}
 .get-app:hover{background:#d3e7ff}.get-app.wide{display:block;text-align:center;margin-top:20px;padding:12px;font-size:13px}
 .in-app .get-app{display:none}
+
+/* The languages, at the foot of the page. */
+.langs{display:flex;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:12px}
+.langs a{color:var(--soft);text-decoration:none;padding:6px 11px;border-radius:99px;border:1px solid var(--line)}
+.langs a:hover{color:var(--ink)}.langs a[aria-current]{color:#06101a;background:var(--accent);border-color:var(--accent);font-weight:600}
+.in-app .langs{display:none}
