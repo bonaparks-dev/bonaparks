@@ -1,0 +1,81 @@
+/* The club in three dimensions. It wears the dashboard of the pilot house (maison3d.css);
+   only what differs is written here. */
+:root{--gold:#ffcf7a;--pink:#ff7ab8}
+.scene{background:#04050a}
+[hidden]{display:none!important}
+.loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;padding:10px 18px;border-radius:99px;background:rgba(14,19,28,.8);border:1px solid rgba(255,255,255,.1);color:var(--soft);font-size:12px;white-space:nowrap;transition:opacity .5s;pointer-events:none}
+.loading.gone{opacity:0}
+.loading.failed{color:#ffd9d2;border-color:var(--alert)}
+.storeys button{padding:7px 12px}
+.views{top:auto;bottom:max(16px,env(safe-area-inset-bottom))}
+.inside{top:calc(max(16px,env(safe-area-inset-top)) + 80px);border-color:rgba(255,207,122,.5);color:var(--gold)}
+.top{padding-bottom:30px;background:linear-gradient(rgba(4,5,10,.6),rgba(4,5,10,0))}
+.hint{padding:7px 14px;border-radius:16px;background:rgba(14,19,28,.7);border:1px solid rgba(255,255,255,.08)}
+.tag.zone{background:rgba(10,14,22,.72);border-color:rgba(255,255,255,.22);font-weight:500;color:#dbe4f2}
+.tag.gear{font-size:10px;padding:3px 9px;background:rgba(12,16,26,.84);border-color:rgba(255,217,138,.5);color:#f3ead6}
+.tag.staff{border-color:rgba(255,217,138,.6)}
+/* a table on the map: the colour of its category; taken, it fades; the visitor's own wears gold */
+.tag.table{display:flex;align-items:center;gap:5px;font-size:10px;padding:3px 8px 3px 6px;background:rgba(8,10,18,.82);border-color:var(--tier,#fff)}
+.tag.table::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--tier,#fff);box-shadow:0 0 6px var(--tier,#fff)}
+.tag.table[data-state=taken]{color:#8b93a3;border-color:rgba(255,255,255,.16);background:rgba(8,10,18,.6)}
+.tag.table[data-state=taken]::before{background:#5a6272;box-shadow:none}
+.tag.table[data-state=mine]{border-color:var(--gold);color:#fff3d6;background:rgba(48,36,10,.9)}
+.tag.table.chosen{outline:2px solid #fff;outline-offset:1px}
+/* from far, a table is only its dot */
+.tag.table.far{padding:0;gap:0;border:0;background:none;box-shadow:none;font-size:0;line-height:0}
+.tag.table.far::before{width:9px;height:9px;border:1.5px solid rgba(4,5,10,.85)}
+.tag.table.far[data-state=taken]::before{width:7px;height:7px;background:#586070}
+.tiles{grid-template-columns:repeat(2,1fr)}
+.alert.order{border-color:#7a6230;background:linear-gradient(120deg,#33290f,#221c10)}
+.alert.order span{color:var(--gold)}.alert.order ul{color:#c9bfa5}
+.lineup{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px 12px}
+.lineup>svg{color:var(--soft)}.lineup b{display:block;font-weight:500}.lineup small{color:var(--soft);font-size:10px}
+.lineup ol{grid-column:1/3;list-style:none;margin:0;padding:8px 0 0;border-top:1px solid var(--line);font-size:11.5px;color:var(--soft)}
+.lineup li{display:flex;gap:12px;padding:3px 0}.lineup time{min-width:52px;color:#647084;font-variant-numeric:tabular-nums}
+.lineup li.now{color:var(--ink)}.lineup li.now time{color:var(--pink)}
+.tiers{display:flex;flex-wrap:wrap;gap:6px}
+.tiers button{display:flex;align-items:center;gap:6px;padding:5px 10px 5px 8px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--soft);font-size:10.5px}
+.tiers button i{width:8px;height:8px;border-radius:50%;background:var(--tier)}
+.tiers button b{font-weight:500;color:var(--ink)}
+.tiers button[aria-pressed=true]{border-color:var(--tier);background:var(--card2)}
+.booking{border-color:color-mix(in srgb,var(--tier,#2b3a52) 55%,#1c2638);margin:0 0 16px}
+.booking .bk-close{flex:none;width:26px;height:26px;padding:0;border-radius:50%;font-size:15px;line-height:1;color:var(--soft)}
+.bk-head{display:flex;align-items:center;gap:10px}
+.bk-head i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--tier,#fff);box-shadow:0 0 9px var(--tier,#fff)}
+.bk-head div{flex:1;min-width:0}.bk-head b{display:block;font:600 14px/1.25 'Manrope',system-ui,sans-serif}.bk-head small{color:var(--soft);font-size:10.5px}
+.bk-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.bk-facts div{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card2)}
+.bk-facts dt{font-size:9px;color:var(--soft);letter-spacing:.04em}.bk-facts dd{margin:3px 0 0;font:600 14px/1.2 'Manrope',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.bk-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.booking button{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card2);font-size:11.5px}
+.booking button:hover{border-color:#2b3a52}
+.booking button.primary{background:var(--gold);border-color:var(--gold);color:#1a1204;font-weight:600}
+.booking button.primary[disabled]{opacity:.45;cursor:default}
+.booking form{display:grid;gap:9px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.booking label{font-size:10px;color:var(--soft)}
+.booking input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#0a0f19;color:var(--ink);font:inherit}
+.booking input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.booking .setpoint{grid-column:auto;padding:0;border:0}
+.booking .setpoint button{width:28px;height:28px;padding:0}
+.bk-times{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bk-times button[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.bk-done{margin:12px 0 0;padding:10px 12px;border-radius:9px;border:1px solid #7a6230;background:#231c0d;color:#f3e6c4;font-size:11.5px}
+.bk-note{margin:10px 0 0;color:#647084;font-size:10px}
+.table-list{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.table-list button{display:flex;align-items:center;gap:6px;width:100%;padding:7px 6px 7px 8px;border:1px solid var(--line);border-radius:9px;background:var(--card);font-size:10.5px;text-align:left;white-space:nowrap;overflow:hidden}
+.table-list button::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--tier)}
+.table-list button:hover{border-color:#2b3a52}
+.table-list button[data-state=taken]{color:#5f6878}.table-list button[data-state=taken]::before{background:#3d4554}
+.table-list button[data-state=mine]{border-color:var(--gold);color:var(--gold)}
+.table-list button[aria-pressed=true]{background:var(--card2);border-color:#7fa9d8}
+.table-list li[hidden]{display:none}
+.lights i{background:radial-gradient(circle at 35% 30%,#aab2be,#667080)}
+.lights [aria-pressed=true]{border-color:color-mix(in srgb,var(--c,#ffd98a) 45%,#1c2638)}
+.lights [aria-pressed=true] i{background:radial-gradient(circle at 40% 35%,#fff,var(--c,#ffe7b0) 60%);box-shadow:0 0 9px 2px var(--c,#ffd98a)}
+.rooms{display:flex;flex-wrap:wrap;gap:6px}
+.rooms button{padding:6px 11px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--soft);font-size:11px;transition:border-color .2s,color .2s}
+.rooms button:hover{color:var(--ink);border-color:#2b3a52}
+.rooms button[aria-pressed=true]{color:var(--ink);border-color:#7fa9d8;background:var(--card2)}
+@media(max-width:700px){.storeys button{padding:7px 9px;font-size:11px}.views{bottom:34px}.hint{max-width:calc(100% - 150px);left:16px;transform:none;text-align:left}.table-list{grid-template-columns:repeat(4,1fr)}}
+@media(prefers-reduced-motion:reduce){.loading{transition:none}}
+.only-scene .views{bottom:max(16px,env(safe-area-inset-bottom))}
