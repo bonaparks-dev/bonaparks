@@ -3,7 +3,7 @@
 // camera saw shows under the demo. Nothing is ever written over the house. Everything is simulated.
 const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const quiet='.floors,.back,.toast,.now,.top,.spaces,.who,.hint,.fine,.labels,.tag{display:none!important}';
+const quiet='.floors,.floor-temps,.airs,.whobox,.camcard,.demo-scenes,.intro,.back,.toast,.now,.top,.spaces,.who,.hint,.fine,.labels,.tag{display:none!important}';
 function house(frame,css){return new Promise(done=>{let started=false;const ready=()=>{const doc=frame.contentDocument,win=frame.contentWindow;if(!doc||!win||started)return;started=true;
  if(css){const s=doc.createElement('style');s.textContent=css;doc.head.append(s);}
  const wait=()=>win.parks3d?done(win.parks3d):setTimeout(wait,120);wait();};
@@ -29,6 +29,21 @@ function watch(){
  const playing=!!doc&&doc.getElementById('transport')?.hidden===false;if(!playing)for(const o of document.querySelectorAll('[data-play]'))o.classList.remove('on');
  setTimeout(watch,250);}
 watch();
+
+// The story: the chapter in the middle of the screen plays its scene in the house that stays on screen.
+let story=null,storyScene=null;
+house($('story'),quiet).then(h=>{story=h;h.flyTo({target:h.home.target.clone(),az:-.62,pol:.86,dist:44},800);pick();});
+const chapters=[...document.querySelectorAll('.chapter')];
+function pick(){if(!story)return;const phone=matchMedia('(max-width:820px)').matches,stageBottom=phone?$('story').getBoundingClientRect().bottom:0,mid=phone?(stageBottom+innerHeight)/2:innerHeight*.5;let best=null,d=1e9;
+ // on a phone the house fills the top: the chapter is the one whose title shows in the space under it
+ for(const c of chapters){const r=(phone?c.querySelector('h2'):c).getBoundingClientRect(),k=Math.abs((r.top+r.bottom)/2-mid);if(r.bottom>0&&r.top<innerHeight&&k<d){d=k;best=c;}}
+ for(const c of chapters)c.classList.toggle('on',c===best);
+ const inView=$('scenarios').getBoundingClientRect(),visible=inView.bottom>0&&inView.top<innerHeight;
+ const want=visible&&best?best.dataset.scene:null;if(want===storyScene)return;storyScene=want;if(want&&!reduce)story.play(want);else story.stop?.();}
+// The zoom wall: 0 at the top of its section, 1 when the house in the middle fills the screen.
+function zoom(){const z=$('zoom'),g=$('zoom-grid');if(!z||!g||reduce)return;const r=z.getBoundingClientRect(),run=Math.max(1,r.height-innerHeight);
+ const p=clamp(-r.top/run,0,1),ease=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;g.style.setProperty('--p',ease.toFixed(4));}
+addEventListener('scroll',()=>requestAnimationFrame(()=>{zoom();pick();}),{passive:true});zoom();addEventListener('resize',pick);
 
 // "Regardez de plus près": one picture per function.
 const shots={lumieres:'Une lampe par pièce, commandée d’un geste.',volets:'Les volets descendent tout seuls quand plus personne n’est à l’étage.',portail:'Le portail s’ouvre d’un geste, ou quand la voiture arrive.',intrusion:'La caméra repère une personne inconnue et trace son chemin en rouge.',scenario:'Un enfant s’approche de la piscine : les parents sont prévenus avant qu’il n’atteigne le bord.'};

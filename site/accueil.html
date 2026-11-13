@@ -9,9 +9,9 @@
   <meta name="description" content="Pilotez les lumières, les volets, le portail et les caméras depuis une vue 3D de votre maison. L’app Bonaparks pour iPhone et iPad.">
   <meta property="og:title" content="Parks 3D · Votre maison. Vivante."><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D"><meta property="og:image" content="https://bonaparks.com/accueil/hero.webp?v=2">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="accueil.css?v=4">
+  <link rel="stylesheet" href="accueil.css?v=6">
   <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=3"></script>
-  <script type="module" src="accueil.mjs?v=6"></script>
+  <script type="module" src="accueil.mjs?v=8"></script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -19,7 +19,7 @@
 <header class="bar">
   <div class="bar-in">
     <a class="mark" href="/" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
-    <nav aria-label="Navigation principale"><a href="#demo">Démo</a><a href="#lieux">Lieux</a><a href="#vie-privee">Vie privée</a><a href="#questions">Questions</a></nav>
+    <nav aria-label="Navigation principale"><a href="#scenarios">Scénarios</a><a href="#demo">Démo</a><a href="#lieux">Lieux</a><a href="#vie-privee">Vie privée</a><a href="#questions">Questions</a></nav>
     <div class="top-actions"><a class="pill" href="#telecharger">Télécharger</a></div>
   </div>
 </header>
@@ -32,13 +32,23 @@
     <p class="actions"><a class="button" href="#telecharger">Télécharger l’app</a><a class="link" href="maison3d.html">Visiter la maison <span aria-hidden="true">›</span></a></p>
   </section>
 
-  <!-- 1. The house turns by itself, nothing written over it. -->
-  <section class="turn" aria-label="La maison pilote">
-    <div class="turn-frame"><iframe id="turn" title="Maison pilote en 3D" src="maison3d.html?app=1&amp;vue=scene" loading="eager" tabindex="-1"></iframe></div>
+  <!-- Apple-like: a wall of pictures that zooms into the house in the middle as the page scrolls. -->
+  <section class="zoom" id="zoom" aria-hidden="true">
+    <div class="zoom-stick"><div class="zoom-grid" id="zoom-grid"><figure class="tile"><img src="accueil/lumieres.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/lieu-penthouse3d.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/volets.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/portail.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile mid"><img src="accueil/hero.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/intrusion.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/lieu-business3d.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/scenario.webp?v=2" alt="" loading="eager" decoding="async"></figure><figure class="tile"><img src="accueil/lieu-club3d.webp?v=2" alt="" loading="eager" decoding="async"></figure></div></div>
   </section>
 
-  <section class="statement" id="decouvrir">
-    <p>Une seule vue pour toute la maison. <span>Ce qui s’allume, ce qui s’ouvre, ce que voient les caméras. En temps réel.</span></p>
+  <!-- 1. The scenes, told as a story: the house stays on screen while the page scrolls; each chapter plays its scene. -->
+  <section class="story" id="scenarios" aria-label="Les scénarios">
+    <div class="story-stage"><iframe id="story" title="La maison pilote joue chaque scénario" src="maison3d.html?app=1&amp;vue=scene" loading="eager" tabindex="-1"></iframe></div>
+    <div class="story-text">
+      <article class="chapter" data-scene="arrival"><p class="kicker">Le soir</p><h2>Vous rentrez. Elle est déjà prête.</h2><p>Le portail a reconnu la voiture. La maison était prête avant que vous ne passiez la porte.</p></article>
+      <article class="chapter" data-scene="departure"><p class="kicker">Le matin</p><h2>Vous partez. Elle ferme tout.</h2><p>Lumières éteintes, volets et portail fermés, alarme activée. Vous n’avez rien eu à vérifier.</p></article>
+      <article class="chapter" data-scene="delivery"><p class="kicker">L’après-midi</p><h2>On sonne. Vous voyez qui.</h2><p>Vous avez vu qui sonnait et ouvert depuis votre téléphone. Le colis vous attend à l’abri, derrière le portail.</p></article>
+      <article class="chapter" data-scene="pool"><p class="kicker">En famille</p><h2>Un enfant près de la piscine.</h2><p>Les parents ont été prévenus en 2 secondes, avant que l’enfant n’atteigne le bord.</p></article>
+      <article class="chapter" data-scene="leak"><p class="kicker">Sans prévenir</p><h2>Une fuite d’eau. Coupée.</h2><p>Fuite détectée et vanne fermée en 4 secondes. Environ 2 000 € de dégâts évités.</p></article>
+      <article class="chapter" data-scene="solar"><p class="kicker">Au soleil</p><h2>Elle travaille quand le soleil brille.</h2><p>Le lave-linge et la piscine ont tourné au soleil. Ce mois-ci : environ 46 € économisés.</p></article>
+      <article class="chapter" data-scene="intrusion"><p class="kicker">La nuit</p><h2>Elle veille pour vous.</h2><p>Alerte reçue en 3 secondes. Volets fermés, jardin éclairé, vidéo gardée sur votre réseau.</p></article>
+    </div>
   </section>
 
   <!-- 2. The demo itself: floors, dashboard, scenes. -->
@@ -73,6 +83,21 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="account" id="compte" aria-label="Votre compte">
+    <h2 class="title">Votre maison vous attend.</h2>
+    <p class="lead">Créez votre compte pour retrouver votre maison, ou connectez-vous. Avec Google ou par e-mail.</p>
+    <p class="actions"><a class="button" href="compte.html?next=maison">Créer mon compte</a><a class="link" href="compte.html?next=maison">Me connecter <span aria-hidden="true">›</span></a></p>
+  </section>
+
+  <!-- 1. The house turns by itself, nothing written over it. -->
+  <section class="turn" aria-label="La maison pilote">
+    <div class="turn-frame"><iframe id="turn" title="Maison pilote en 3D" src="maison3d.html?app=1&amp;vue=scene" loading="eager" tabindex="-1"></iframe></div>
+  </section>
+
+  <section class="statement" id="decouvrir">
+    <p>Une seule vue pour toute la maison. <span>Ce qui s’allume, ce qui s’ouvre, ce que voient les caméras. En temps réel.</span></p>
   </section>
 
   <section class="closer" id="regarder">

@@ -183,3 +183,37 @@ body{background:radial-gradient(120% 60% at 50% 0%,#111826 0,#05070c 55%) no-rep
 
 /* The demo melts into the page: no box, the edges fade into the night. */
 .demo-frame{background:transparent;box-shadow:none;border-radius:0;max-width:1400px;height:min(86vh,820px)}
+
+/* The story of the scenes, as Apple tells a product: the house sticks on screen, the chapters scroll beside it
+   (under it on a phone, behind the house when they leave). Nothing is written over the house. */
+.story{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:0 clamp(24px,4vw,64px);max-width:1400px;margin:0 auto;padding:0 22px}
+.story-stage{grid-column:2;grid-row:1;position:sticky;top:64px;height:calc(100vh - 88px);border-radius:28px;overflow:hidden;
+ -webkit-mask:radial-gradient(90% 85% at 50% 50%,#000 72%,transparent 100%);mask:radial-gradient(90% 85% at 50% 50%,#000 72%,transparent 100%)}
+.story-stage iframe{width:100%;height:100%;border:0;display:block;pointer-events:none}
+.story-text{grid-column:1;grid-row:1}
+.chapter{min-height:92vh;display:flex;flex-direction:column;justify-content:center;opacity:.28;transition:opacity .5s}
+.chapter.on{opacity:1}
+.chapter .kicker{margin:0 0 10px;font:600 15px/1 'Manrope',system-ui,sans-serif;color:var(--blue);letter-spacing:.01em}
+.chapter h2{margin:0;font:600 clamp(30px,3.6vw,52px)/1.06 'Manrope',system-ui,sans-serif;letter-spacing:-.025em;text-wrap:balance}
+.chapter p:not(.kicker){margin:16px 0 0;max-width:26em;color:var(--soft);font-size:clamp(17px,1.5vw,21px);line-height:1.45}
+.chapter:first-child{padding-top:10vh}.chapter:last-child{min-height:100vh}
+@media(max-width:820px){
+ .story{display:block;padding:0}
+ .story-stage{position:sticky;top:52px;height:52vh;border-radius:0;z-index:2;background:var(--bg)}
+ .story-text{padding:0 22px}
+ .chapter{min-height:46vh;justify-content:flex-start;padding:4vh 0}.chapter:first-child{padding-top:4vh}.chapter:last-child{min-height:60vh}
+ .chapter h2{font-size:28px}
+}
+.account{padding:clamp(90px,15vh,160px) 22px;text-align:center;border-top:1px solid var(--line)}
+
+/* The zoom wall: sticky for the length of the section; the script sets --p from 0 to 1 as it scrolls. */
+.zoom{height:230vh;position:relative}
+.zoom-stick{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center}
+.zoom-grid{--p:0;display:grid;grid-template-columns:repeat(3,min(30vw,46vh*1.6));gap:clamp(14px,2vw,28px);transform:scale(calc(1 + var(--p) * 2.35));transform-origin:50% 50%;will-change:transform}
+.tile{margin:0;aspect-ratio:16/10;border-radius:clamp(14px,1.6vw,26px);overflow:hidden;background:var(--card);box-shadow:0 30px 60px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.06);opacity:calc(1 - var(--p) * 1.6)}
+.tile.mid{opacity:1;border-radius:calc(clamp(14px,1.6vw,26px) * (1 - var(--p)))}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:820px){.zoom{height:200vh}.zoom-grid{grid-template-columns:repeat(3,42vw)}}
+@media(prefers-reduced-motion:reduce){.zoom{height:auto}.zoom-stick{position:static;height:auto;padding:40px 0}.zoom-grid{transform:none}.tile{opacity:1}}
+/* The chapters come in: they slide up and light as they reach the middle. */
+.chapter{transform:translateY(30px);transition:opacity .6s,transform .8s cubic-bezier(.2,.7,.2,1)}.chapter.on{transform:none}
