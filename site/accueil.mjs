@@ -22,7 +22,7 @@ for(const b of document.querySelectorAll('[data-play]'))b.addEventListener('clic
  for(const o of document.querySelectorAll('[data-play]'))o.classList.toggle('on',o===b);demo.play(b.dataset.play);});
 let t0=0;
 function watch(){
- const doc=$('house').contentDocument,alerted=!!doc&&doc.getElementById('alert')?.hidden===false;
+ const doc=$('house').contentDocument,alerted=!!doc&&doc.getElementById('alert')?.hidden===false&&doc.documentElement.dataset.scene==='intrusion';
  $('seen').classList.toggle('on',alerted);
  if(alerted){if(!t0)t0=performance.now();const s=Math.floor((performance.now()-t0)/1000),hh=`02:15:${String(s%60).padStart(2,'0')}`;$('clock').textContent=hh;$('stamp').textContent='CAM 04 · JARDIN · '+hh;
   const small=$('feed-small').getContext('2d');small.drawImage($('feed'),0,0);$('cursor').style.setProperty('--cursor',(10+clamp(s/22,0,1)*78)+'%');}else t0=0;

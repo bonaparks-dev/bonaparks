@@ -40,7 +40,7 @@
       <p class="status" id="status" aria-live="polite"></p>
       <div class="who" id="who" aria-label="Présences simulées"><span title="Personnes"><svg><use href="#i-people"/></svg><b>0</b></span><span title="Animaux"><svg><use href="#i-paw"/></svg><b>0</b></span><span title="Voitures"><svg><use href="#i-car"/></svg><b>0</b></span></div>
     </header>
-    <div class="floors" role="group" aria-label="Niveau"><button data-floor="down" aria-pressed="true">RDC</button><button data-floor="up" aria-pressed="false">Étage</button></div>
+    <div class="floors" role="group" aria-label="Niveau"><button data-floor="down" aria-pressed="true">RDC</button><button data-floor="up" aria-pressed="false">Étage</button><button data-floor="garden" aria-pressed="false">Jardin</button></div>
     <section class="intro" id="intro" aria-label="Bienvenue">
       <p class="eyebrow">Parks 3D</p>
       <h2>Votre maison, vue d’en haut.<br>Regardez-la vivre.</h2>
@@ -49,9 +49,14 @@
         <button data-intro="arrival"><svg><use href="#i-home"/></svg>Tout le monde rentre</button>
         <button data-intro="departure"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button>
         <button data-intro="intrusion"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button>
+        <button data-intro="pool"><svg><use href="#i-people"/></svg>Un enfant près de la piscine</button>
+        <button data-intro="leak"><svg><use href="#i-air"/></svg>Une fuite d’eau</button>
+        <button data-intro="solar"><svg><use href="#i-sun"/></svg>Une journée au soleil</button>
       </div>
       <div class="intro-end"><button class="intro-free member-only" data-intro="free">Explorer librement →</button><a class="intro-free visitor-only" href="compte.html?next=maison">Créer mon accès pour piloter la maison →</a><a class="get-app" href="https://apps.apple.com/app/id6820940465" rel="noopener">Télécharger l’app</a></div>
     </section>
+    <!-- The scenes belong to the demo, not to the dashboard: a row of chips at the foot of the house. -->
+    <nav class="demo-scenes" id="demo-scenes" aria-label="Scénarios de démonstration"><button data-scene="arrival" aria-pressed="false"><svg><use href="#i-home"/></svg>Tout le monde rentre</button><button data-scene="departure" aria-pressed="false"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button><button data-scene="intrusion" aria-pressed="false"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button><button data-scene="pool" aria-pressed="false"><svg><use href="#i-people"/></svg>Un enfant près de la piscine</button><button data-scene="leak" aria-pressed="false"><svg><use href="#i-air"/></svg>Une fuite d’eau</button><button data-scene="solar" aria-pressed="false"><svg><use href="#i-sun"/></svg>Une journée au soleil</button></nav>
     <div class="now" id="now" hidden><button id="now-stop" aria-label="Arrêter le scénario">■</button><span id="now-caption"></span><div class="bar"><i id="now-bar"></i></div></div>
     <button class="back" id="back" hidden>← Vue complète</button>
     <p class="toast" id="toast" role="status" aria-live="polite"></p>
@@ -74,16 +79,11 @@
       <div class="tile"><svg><use href="#i-temp"/></svg><b>24,5 °C</b><small>Séjour</small></div>
     </div>
 
-    <p class="label">Scénarios</p>
-    <div class="scenes" id="scenes">
-      <button data-scene="arrival"><svg><use href="#i-home"/></svg>Tout le monde rentre</button>
-      <button data-scene="departure"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button>
-      <button data-scene="intrusion"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button>
-    </div>
     <div class="transport" id="transport" hidden>
       <button id="stop" aria-label="Arrêter le scénario">■</button><span id="caption"></span>
       <div class="bar"><i id="bar"></i></div>
     </div>
+    <div class="result" id="result" hidden><span>Ce que la maison a fait</span><strong id="result-text"></strong></div>
     <div class="alert" id="alert" hidden>
       <span>Alerte · démonstration</span><strong>Personne non identifiée dans le jardin, à droite.</strong>
       <ul><li>Téléphones <b>Notification reçue</b></li><li>Écran central <b>Alerte affichée</b></li><li>Enceintes <b>Annonce en cours</b></li></ul>

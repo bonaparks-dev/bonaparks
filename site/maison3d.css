@@ -158,3 +158,17 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .embedded .panel{background:transparent;border-left:0;padding-top:28px;padding-bottom:60px;-webkit-mask:linear-gradient(transparent,#000 34px,#000 calc(100% - 70px),transparent);mask:linear-gradient(transparent,#000 34px,#000 calc(100% - 70px),transparent)}
 .embedded .scene::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#05070c 0,transparent 7%,transparent 88%,#05070c 100%),linear-gradient(#05070c 0,transparent 9%,transparent 88%,#05070c 100%)}
 .embedded .status{display:none}
+
+/* What the house did, at the end of a scene. */
+.result{margin-top:12px;padding:13px 14px;border-radius:11px;border:1px solid #2f6f55;background:linear-gradient(120deg,#12291f,#0f1d18)}
+.result span{font:600 9px/1 'Manrope',system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#7fe0b0}
+.result strong{display:block;margin-top:8px;font:600 13px/1.4 'Manrope',system-ui,sans-serif;color:#eafaf2}
+
+/* The scenes of the demo, at the foot of the house; the dashboard keeps only what a home really has. */
+.demo-scenes{position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:6px;max-width:calc(100% - 28px);overflow-x:auto;scrollbar-width:none;padding:4px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:opacity .4s}
+.demo-scenes::-webkit-scrollbar{display:none}
+.demo-scenes button{flex:none;display:flex;align-items:center;gap:7px;padding:8px 13px;border:0;border-radius:99px;background:none;color:var(--soft);font-size:12px;white-space:nowrap}
+.demo-scenes button:hover{color:var(--ink)}.demo-scenes button[aria-pressed=true]{background:var(--ink);color:#0a0e16}
+.demo-scenes svg{width:14px;height:14px}
+.intro:not(.gone)~.demo-scenes,.embedded .demo-scenes,.only-scene .demo-scenes{opacity:0;pointer-events:none}
+.hint{display:none}
