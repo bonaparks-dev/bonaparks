@@ -17,14 +17,15 @@ requestAnimationFrame(spin);
 
 // 2. The demo. The chips above it start a scene; the alert scene opens what the camera saw.
 let demo=null;
-house($('house')).then(h=>{demo=h;});
+house($('house')).then(h=>{demo=h;h.cctv?.($('feed'));});
 for(const b of document.querySelectorAll('[data-play]'))b.addEventListener('click',()=>{if(!demo)return;
  for(const o of document.querySelectorAll('[data-play]'))o.classList.toggle('on',o===b);demo.play(b.dataset.play);});
 let t0=0;
 function watch(){
  const doc=$('house').contentDocument,alerted=!!doc&&doc.getElementById('alert')?.hidden===false;
  $('seen').classList.toggle('on',alerted);
- if(alerted){if(!t0)t0=performance.now();const s=Math.floor((performance.now()-t0)/1000);$('clock').textContent=`02:15:${String(s%60).padStart(2,'0')}`;$('cursor').style.setProperty('--cursor',(10+clamp(s/22,0,1)*78)+'%');}else t0=0;
+ if(alerted){if(!t0)t0=performance.now();const s=Math.floor((performance.now()-t0)/1000),hh=`02:15:${String(s%60).padStart(2,'0')}`;$('clock').textContent=hh;$('stamp').textContent='CAM 04 · JARDIN · '+hh;
+  const small=$('feed-small').getContext('2d');small.drawImage($('feed'),0,0);$('cursor').style.setProperty('--cursor',(10+clamp(s/22,0,1)*78)+'%');}else t0=0;
  const playing=!!doc&&doc.getElementById('transport')?.hidden===false;if(!playing)for(const o of document.querySelectorAll('[data-play]'))o.classList.remove('on');
  setTimeout(watch,250);}
 watch();

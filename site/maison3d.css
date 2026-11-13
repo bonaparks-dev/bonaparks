@@ -151,3 +151,10 @@ button.tile:hover{border-color:#2b3a52}button.tile[aria-pressed=true]{border-col
 .now button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:9px}
 .now .bar{grid-column:1/3}
 .visitor .scene:has(.now:not([hidden])) .intro{opacity:0;pointer-events:none}
+
+/* Shown inside the home page: one dark night with the page around it, the dashboard fading out at its edges
+   instead of being cut, and no line between the house and its dashboard. */
+.embedded body,.embedded .scene{background:#05070c}
+.embedded .panel{background:transparent;border-left:0;padding-top:28px;padding-bottom:60px;-webkit-mask:linear-gradient(transparent,#000 34px,#000 calc(100% - 70px),transparent);mask:linear-gradient(transparent,#000 34px,#000 calc(100% - 70px),transparent)}
+.embedded .scene::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#05070c 0,transparent 7%,transparent 88%,#05070c 100%),linear-gradient(#05070c 0,transparent 9%,transparent 88%,#05070c 100%)}
+.embedded .status{display:none}

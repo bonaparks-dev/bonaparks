@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#f5f5f7">
+  <link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#05070c">
   <link rel="canonical" href="https://bonaparks.com/">
   <title>Parks 3D · Votre maison. Vivante.</title>
   <meta name="description" content="Pilotez les lumières, les volets, le portail et les caméras depuis une vue 3D de votre maison. L’app Bonaparks pour iPhone et iPad.">
   <meta property="og:title" content="Parks 3D · Votre maison. Vivante."><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D"><meta property="og:image" content="https://bonaparks.com/accueil/hero.webp">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="accueil.css?v=2">
+  <link rel="stylesheet" href="accueil.css?v=3">
   <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=3"></script>
-  <script type="module" src="accueil.mjs?v=2"></script>
+  <script type="module" src="accueil.mjs?v=3"></script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -50,13 +50,13 @@
       <button class="chip" data-play="departure">Tout le monde s’en va</button>
       <button class="chip red" data-play="intrusion">Un mouvement inhabituel</button>
     </div>
-    <div class="demo-frame"><iframe id="house" title="Démo de la maison pilote" src="maison3d.html?app=1" loading="lazy"></iframe></div>
+    <div class="demo-frame"><iframe id="house" title="Démo de la maison pilote" src="maison3d.html?app=1&amp;embed=1" loading="lazy"></iframe></div>
 
     <!-- What the garden camera saw, under the demo, while the alert scene plays. -->
     <div class="seen" id="seen" aria-live="polite">
       <div class="alert-card">
-        <div class="alert-head"><i class="bell"></i><div><b>Alerte de sécurité</b><small>Mouvement détecté · Jardin</small></div><time>02:15</time></div>
-        <div class="cam-view garden"><span class="rec">● REC</span><span class="who-box"><i>Personne inconnue</i></span></div>
+        <div class="alert-head"><i class="bell"></i><div><b>Personne inconnue</b><small>Caméra Jardin</small></div><time id="alert-time">02:15</time></div>
+        <div class="feed"><canvas id="feed" width="320" height="200" aria-label="Image de la caméra du jardin, simulée"></canvas><span class="rec">● REC</span><span class="stamp" id="stamp">CAM 04 · JARDIN · 02:15:00</span></div>
         <small class="alert-foot">Caméra Jardin · démonstration</small>
       </div>
       <div class="seen-side">
@@ -65,7 +65,7 @@
           <figure class="cam-view entry"><figcaption>Entrée</figcaption></figure>
           <figure class="cam-view living"><figcaption>Salon</figcaption></figure>
           <figure class="cam-view kitchen"><figcaption>Cuisine</figcaption></figure>
-          <figure class="cam-view garden hot"><figcaption>Jardin</figcaption><span class="who-box small"></span></figure>
+          <figure class="cam-view garden hot"><canvas id="feed-small" width="320" height="200"></canvas><figcaption>Jardin</figcaption></figure>
         </div>
       </div>
     </div>

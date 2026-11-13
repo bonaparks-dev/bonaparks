@@ -23,7 +23,7 @@ export function avatars(T) {
   function human({kind = 'adulte', top = 0x7aa2e3, bottom = 0x2f3f5c, hair = 0x3a2a20, skin = SKIN[1], eyes = 0x5a3b26, style, accent = 0x7fd3a0} = {}) {
     const child = kind === 'enfant';
     const root = new T.Group(), body = pivot(root, 0, 0, 0); root.rotation.order = 'YXZ';   // lying: turn, then lie on the back
-    const m = {skin: mat(skin, .55), top: mat(top, .8), bottom: mat(bottom, .85), hair: mat(hair, .55), shoe: mat(0x23272f, .45), sole: mat(0xe9e6df, .6),
+    const m = {skin: mat(skin, .55), top: mat(top, .8), bottom: mat(bottom, .85), hair: mat(hair, .55), shoe: mat(0xe9ecf1, .5), sole: mat(0xffffff, .6), lace: mat(0x2b3242, .5),
                iris: mat(eyes, .3), eye: mat(0x14171d, .25), white: mat(0xfbfbf8, .25), mouth: mat(0xb5605a, .6), shine: new T.MeshBasicMaterial({color: 0xffffff, transparent: true}),
                ring: new T.MeshBasicMaterial({color: accent, transparent: true, opacity: .55, depthWrite: false})};
     const hips = pivot(body, 0, .9, 0);
@@ -68,8 +68,9 @@ export function avatars(T) {
       const kn = pivot(hp, 0, -.41, 0);
       mesh(sph(.06), m.bottom, kn, 0, 0, 0);
       mesh(cap(.056, .28), m.bottom, kn, 0, -.19, 0);
-      mesh(box(.1, .065, .24, .035), m.shoe, kn, 0, -.385, .04);
-      mesh(box(.104, .02, .246, .008), m.sole, kn, 0, -.415, .04);
+      mesh(box(.118, .085, .27, .04), m.shoe, kn, 0, -.38, .045);                                   // a clear sneaker, easy to see on a dark floor
+      mesh(box(.124, .026, .28, .01), m.sole, kn, 0, -.425, .045);
+      mesh(box(.122, .02, .09, .008), m.lace, kn, 0, -.34, .1);                                      // its dark laces band
       return {hp, kn};
     });
     const ring = new T.Mesh(g('ring', () => new T.RingGeometry(.26, .34, 40)), m.ring); ring.rotation.x = -Math.PI / 2; ring.position.y = .02; root.add(ring);
