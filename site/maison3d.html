@@ -8,9 +8,9 @@
   <title>Parks 3D · La maison en trois dimensions</title>
   <meta property="og:title" content="Parks 3D · La maison en trois dimensions"><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D">
   <link rel="stylesheet" href="fonts/fonts.css">
-  <link rel="stylesheet" href="maison3d.css?v=6">
+  <link rel="stylesheet" href="maison3d.css?v=7">
   <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=2"></script>
-  <script type="module" src="maison3d.mjs?v=11"></script>
+  <script type="module" src="maison3d.mjs?v=13"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -57,6 +57,8 @@
     </section>
     <!-- The scenes belong to the demo, not to the dashboard: a row of chips at the foot of the house. -->
     <nav class="demo-scenes" id="demo-scenes" aria-label="Scénarios de démonstration"><button data-scene="arrival" aria-pressed="false"><svg><use href="#i-home"/></svg>Tout le monde rentre</button><button data-scene="departure" aria-pressed="false"><svg><use href="#i-leave"/></svg>Tout le monde s’en va</button><button data-scene="intrusion" aria-pressed="false"><svg><use href="#i-eye"/></svg>Un mouvement inhabituel</button><button data-scene="pool" aria-pressed="false"><svg><use href="#i-people"/></svg>Un enfant près de la piscine</button><button data-scene="leak" aria-pressed="false"><svg><use href="#i-air"/></svg>Une fuite d’eau</button><button data-scene="solar" aria-pressed="false"><svg><use href="#i-sun"/></svg>Une journée au soleil</button></nav>
+    <!-- What the camera you touched sees: a card at the top right, never over the middle of the house. -->
+    <figure class="camcard" id="camcard" hidden><figcaption><i></i><span><b>Caméra</b><small>En direct · simulé</small></span><button id="camcard-x" aria-label="Fermer">×</button></figcaption><canvas id="camcard-feed" width="320" height="200"></canvas><span class="rec">● REC</span></figure>
     <div class="now" id="now" hidden><button id="now-stop" aria-label="Arrêter le scénario">■</button><span id="now-caption"></span><div class="bar"><i id="now-bar"></i></div></div>
     <button class="back" id="back" hidden>← Vue complète</button>
     <p class="toast" id="toast" role="status" aria-live="polite"></p>
@@ -79,6 +81,8 @@
       <div class="tile"><svg><use href="#i-temp"/></svg><b>24,5 °C</b><small>Séjour</small></div>
     </div>
 
+    <p class="label camstrip-label">Caméras</p>
+    <div class="camstrip" id="camstrip"><button data-cam="entree"><canvas width="320" height="200"></canvas><span>Entrée</span></button><button data-cam="salon"><canvas width="320" height="200"></canvas><span>Salon</span></button><button data-cam="cuisine"><canvas width="320" height="200"></canvas><span>Cuisine</span></button><button data-cam="jardin"><canvas width="320" height="200"></canvas><span>Jardin</span></button><button data-cam="piscine"><canvas width="320" height="200"></canvas><span>Piscine</span></button></div>
     <div class="transport" id="transport" hidden>
       <button id="stop" aria-label="Arrêter le scénario">■</button><span id="caption"></span>
       <div class="bar"><i id="bar"></i></div>

@@ -12,7 +12,12 @@ const $=id=>document.getElementById(id);
 let member=new URLSearchParams(location.search).has('app');
 const admit=()=>{member=true;document.documentElement.classList.remove('visitor');dispatchEvent(new Event('resize'));};
 if(member)document.documentElement.classList.remove('visitor');
-else fetch('/.netlify/functions/parks-access',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(d?.authenticated)admit();}).catch(()=>{});
+// The cameras of the demo are private: shown only to the owner of Parks 3D, signed in with a verified address (the server says so).
+// Everyone else, signed in or not, never sees them. Each person's own cameras live in the app, on their own home.
+let signedIn=false;const signIn=()=>{signedIn=true;document.documentElement.classList.add('cams-on');};
+// Local preview on this computer only (never on bonaparks.com): ?proprietaire shows the private parts, to check them.
+if(/^(127\.0\.0\.1|localhost)$/.test(location.hostname)&&new URLSearchParams(location.search).has('proprietaire'))signIn();
+fetch('/.netlify/functions/parks-access',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(d?.authenticated&&!member)admit();if(d?.owner)signIn();}).catch(()=>{});
 // Inside the Bonaparks app the same page is shown: ?app hides the way back to the site, ?vue=scene keeps the house alone.
 {const q=new URLSearchParams(location.search),root=document.documentElement;root.classList.toggle('in-app',q.has('app'));root.classList.toggle('only-scene',q.get('vue')==='scene');root.classList.toggle('embedded',q.has('embed'));}
 const canvas=$('view'),stageEl=$('scene'),labelsEl=$('labels');
@@ -131,7 +136,7 @@ cyl(492,364,.16,.06,.77,0xf1f1ee);
 box(506,296,568,416,.012,.105,0x5f7fb5,{roughness:1},false);
 box(540,300,566,400,.4,0,0xa7b2c2);box(559,300,566,400,.42,.4,0x94a1b4);box(540,290,566,300,.6,0,0x94a1b4);box(540,400,566,410,.6,0,0x94a1b4);
 for(const v of [303,336,369])box(541,v,558,v+29,.12,.4,0xbcc6d4);
-box(514,338,530,372,.05,.34,0xffffff,{map:tex.wood});for(const [u,v] of [[516,341],[528,341],[516,369],[528,369]])cyl(u,v,.03,.34,0,0x8a6642);
+box(525,322,537,368,.05,.34,0xffffff,{map:tex.wood});for(const [u,v] of [[527,325],[535,325],[527,365],[535,365]])cyl(u,v,.03,.34,0,0x8a6642);   // the low table, between the dining chairs (to 522) and the sofa (from 540)
 box(486,229,522,244,.48,0,0x9b7a55);const tv=box(488,231,520,233,.6,.55,0x0d1118,{emissive:0x4d7dff,emissiveIntensity:0,roughness:.2});
 // shower room
 box(333,345,358,395,.8,0,0xd9b98f);box(336,352,355,388,.1,.8,0xffffff,{roughness:.2});box(333,412,350,430,.4,0,0xffffff,{roughness:.2});box(333,430,352,446,.42,0,0xffffff,{roughness:.2});
@@ -230,26 +235,59 @@ family[3].a=[sx(-2.1),sz(-.2)];family[3].b=[sx(-2.1),sz(.6)];for(const f of fami
 // The garden camera of the alert scene, its red field of view on the lawn and the dashed way the person walked.
 const guard={cam:new T.Group(),at:new T.Vector3(X(945),2.4,Z(232)),walked:[]};
 {const body=new T.Mesh(new T.BoxGeometry(.34,.2,.2),mat(0xe9ecf1,{roughness:.4}));const lens=new T.Mesh(new T.CylinderGeometry(.07,.07,.08,16),mat(0x10141b,{roughness:.2}));lens.rotation.x=Math.PI/2;lens.position.z=.13;
- const led=new T.Mesh(new T.SphereGeometry(.03,10,8),new T.MeshBasicMaterial({color:0xff4b3a}));led.position.set(.11,.06,.1);guard.cam.add(body,lens,led);guard.cam.position.copy(guard.at);guard.cam.visible=false;house.add(guard.cam);
+ const led=new T.Mesh(new T.SphereGeometry(.03,10,8),new T.MeshBasicMaterial({color:0xff4b3a}));led.position.set(.11,.06,.1);guard.cam.add(body,lens,led);guard.cam.position.copy(guard.at);house.add(guard.cam);{const grab=new T.Mesh(new T.SphereGeometry(.45,10,8),new T.MeshBasicMaterial({visible:false}));guard.cam.add(grab);}
  const pole=new T.Mesh(new T.CylinderGeometry(.03,.03,2.4,8),mat(0x2a2f38));pole.position.set(guard.at.x,1.2,guard.at.z+.05);guard.pole=pole;pole.visible=false;house.add(pole);}
 guard.cone=new T.Mesh(new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute(new Float32Array(9),3)),new T.MeshBasicMaterial({color:0xff2d20,transparent:true,opacity:.38,side:T.DoubleSide,depthWrite:false}));guard.cone.visible=false;house.add(guard.cone);
 guard.trail=new T.Line(new T.BufferGeometry(),new T.LineDashedMaterial({color:0xff3b30,dashSize:.35,gapSize:.22,transparent:true,opacity:.95}));guard.trail.visible=false;house.add(guard.trail);
-function watchGuard(show,p){guard.cam.visible=guard.pole.visible=show;guard.cone.visible=guard.trail.visible=show&&!!p;if(!show||!p){guard.walked.length=0;return;}
+function watchGuard(show,p){guard.pole.visible=show;guard.cone.visible=guard.trail.visible=show&&!!p;if(!show||!p){guard.walked.length=0;return;}
  const c=guard.at,dx=p.x-c.x,dz=p.z-c.z,l=Math.hypot(dx,dz)||1,nx=-dz/l*1.4,nz=dx/l*1.4,a=guard.cone.geometry.attributes.position;
  a.setXYZ(0,c.x,.06,c.z);a.setXYZ(1,p.x+nx,.06,p.z+nz);a.setXYZ(2,p.x-nx,.06,p.z-nz);a.needsUpdate=true;guard.cone.geometry.computeBoundingSphere();guard.cam.lookAt(p.x,.9,p.z);
  const last=guard.walked[guard.walked.length-1];if(!last||Math.hypot(last.x-p.x,last.z-p.z)>.25)guard.walked.push(new T.Vector3(p.x,.07,p.z));
  guard.trail.geometry.setFromPoints(guard.walked);guard.trail.computeLineDistances();}
-const cctv={target:null,cam:new T.PerspectiveCamera(58,1.6,.2,90),rt:new T.WebGLRenderTarget(320,200),buf:new Uint8Array(320*200*4),n:0,seed:1};
-function filmGuard(){const c=cctv.target;if(!c||!guard.cam.visible||(++cctv.n%2))return;
- cctv.cam.position.set(guard.at.x-.25,guard.at.y-.05,guard.at.z+.25);cctv.cam.lookAt(person.visible?person.position.x:X(820),.9,person.visible?person.position.z:Z(420));
- const hide=[guard.cone,guard.trail,guard.cam,guard.pole].map(o=>[o,o.visible]);for(const [o] of hide)o.visible=false;
+const cctv={target:null,cam:new T.PerspectiveCamera(62,1.6,.15,90),rt:new T.WebGLRenderTarget(320,200),buf:new Uint8Array(320*200*4),n:0,seed:1};
+function filmCam(c,targets){if(!targets.length)return;
+ const subject=c.id==='jardin'&&person.visible?person.position:c.id==='piscine'&&kid.visible?kid.position:null;
+ cctv.cam.position.copy(c.pos).add(new T.Vector3(0,-.08,0));if(subject)cctv.cam.lookAt(subject.x,.8,subject.z);else cctv.cam.lookAt(c.aim);
+ const hide=[guard.cone,guard.trail,guard.pole,...cams.flatMap(k=>[k.node,k.cone])].map(o=>[o,o.visible]);for(const [o] of hide)o.visible=false;
  renderer.setRenderTarget(cctv.rt);renderer.render(scene,cctv.cam);renderer.readRenderTargetPixels(cctv.rt,0,0,320,200,cctv.buf);renderer.setRenderTarget(null);
  for(const [o,v] of hide)o.visible=v;
- const ctx=c.getContext('2d');if(!ctx)return;if(c.width!==320){c.width=320;c.height=200;}const img=ctx.createImageData(320,200),d=img.data,b=cctv.buf;
- for(let y=0;y<200;y++)for(let x=0;x<320;x++){const i=((199-y)*320+x)*4,o=(y*320+x)*4;cctv.seed=(cctv.seed*16807)%2147483647;
-  const dx=(x-160)/160,dy=(y-100)/100,vig=1-.35*(dx*dx+dy*dy),lum=(.3*b[i]+.59*b[i+1]+.11*b[i+2])*3.1+26+((cctv.seed%23)-11);
-  const v=Math.max(0,Math.min(255,lum*vig));d[o]=d[o+1]=d[o+2]=v;d[o+3]=255;}
- ctx.putImageData(img,0,0);}
+ const ir=night>.5,b=cctv.buf;let sum=0;for(let i=0;i<b.length;i+=64)sum+=.3*b[i]+.59*b[i+1]+.11*b[i+2];
+ // automatic exposure, like a real camera: a dark garden is lifted, a lit room is not burnt
+ const mean=sum/(b.length/64),gain=Math.max(.9,Math.min(3.1,105/Math.max(1,mean))),lift=mean<40?26:6;
+ for(const t of targets){const ctx=t.getContext('2d');if(!ctx)continue;if(t.width!==320){t.width=320;t.height=200;}const img=ctx.createImageData(320,200),d=img.data;
+  for(let y=0;y<200;y++)for(let x=0;x<320;x++){const i=((199-y)*320+x)*4,o=(y*320+x)*4;cctv.seed=(cctv.seed*16807)%2147483647;const n=(cctv.seed%17)-8,dx=(x-160)/160,dy=(y-100)/100,vig=1-.3*(dx*dx+dy*dy);
+   if(ir){const v=Math.max(0,Math.min(255,((.3*b[i]+.59*b[i+1]+.11*b[i+2])*gain+lift+n)*vig));d[o]=d[o+1]=d[o+2]=v;}else{d[o]=Math.max(0,Math.min(255,(b[i]+n)*vig));d[o+1]=Math.max(0,Math.min(255,(b[i+1]+n)*vig));d[o+2]=Math.max(0,Math.min(255,(b[i+2]+n)*vig));}d[o+3]=255;}
+  ctx.putImageData(img,0,0);}}
+function filmAll(){for(const c of cams)if(!c.guard)c.node.visible=signedIn;if(!signedIn)guard.cam.visible=guard.pole.visible;
+ if(!signedIn||document.documentElement.classList.contains('only-scene'))return;cctv.n++;
+ for(const c of cams){const show=camOpen===c.id&&!(c.guard&&guard.cone.visible);c.cone.visible=show;if(show){const subj=c.id==='piscine'&&kid.visible?kid.position:c.aim;camCone(c,subj,camAlert===c.id);}c.node.userData.led?.material.color.setHex(camAlert===c.id?0xff3b30:0x7fd3a0);}
+ // the open camera every other frame, the strip of thumbnails in turn on the other frames, the page's own feed (accueil) with the garden
+ if(cctv.n%2===0&&camOpen){const c=camById(camOpen),t=[$('camcard-feed')];if(c.id==='jardin'&&cctv.target)t.push(cctv.target);filmCam(c,t);return;}
+ const k=cams[(cctv.n>>1)%cams.length],t=[...document.querySelectorAll(`[data-cam="${k.id}"] canvas`)];if(k.id==='jardin'&&cctv.target&&!camOpen)t.push(cctv.target);
+ if(t.length&&cctv.n%6<2)filmCam(k,t);}
+// ---------- the cameras of the house: on their wall, touched to see what they see in a card at the top right.
+// The garden camera is the guard of the alert scene. Their pictures are drawn from the 3D house (simulated).
+function camModel(){const g=new T.Group();const body=new T.Mesh(new T.BoxGeometry(.3,.18,.18),mat(0xe9ecf1,{roughness:.4}));const lens=new T.Mesh(new T.CylinderGeometry(.06,.06,.07,16),mat(0x10141b,{roughness:.2}));lens.rotation.x=Math.PI/2;lens.position.z=.12;
+ const led=new T.Mesh(new T.SphereGeometry(.026,10,8),new T.MeshBasicMaterial({color:0x7fd3a0}));led.position.set(.1,.05,.09);g.add(body,lens,led);g.userData.led=led;
+ const grab=new T.Mesh(new T.SphereGeometry(.45,10,8),new T.MeshBasicMaterial({visible:false}));g.add(grab);return g;}
+const cams=[
+ {id:'entree',name:'Entrée',at:[205,252,2.6],look:[150,300,.6]},
+ {id:'salon',name:'Salon',at:[564,302,2.4],look:[500,380,.6]},
+ {id:'cuisine',name:'Cuisine',at:[452,262,2.4],look:[380,290,.6]},
+ {id:'jardin',name:'Jardin',at:[945,232,2.4],look:[820,420,.6],guard:true},
+ {id:'piscine',name:'Piscine',at:[985,650,2.4],look:[790,740,.3]}];
+for(const c of cams){c.pos=new T.Vector3(X(c.at[0]),c.at[2],Z(c.at[1]));c.aim=new T.Vector3(X(c.look[0]),c.look[2],Z(c.look[1]));c.node=c.guard?guard.cam:camModel();
+ if(!c.guard){c.node.position.copy(c.pos);house.add(c.node);}c.node.lookAt(c.aim);c.node.traverse(o=>{o.userData.cam=c.id;});
+ c.cone=new T.Mesh(new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute(new Float32Array(9),3)),new T.MeshBasicMaterial({color:0x7fd3a0,transparent:true,opacity:.16,side:T.DoubleSide,depthWrite:false}));house.add(c.cone);c.cone.visible=false;}
+const camById=id=>cams.find(c=>c.id===id);
+let camOpen=null,camAlert=null;
+function camCone(c,p,red){const d=c.cone.geometry.attributes.position,dx=p.x-c.pos.x,dz=p.z-c.pos.z,l=Math.hypot(dx,dz)||1,nx=-dz/l*1.3,nz=dx/l*1.3;
+ d.setXYZ(0,c.pos.x,.06,c.pos.z);d.setXYZ(1,p.x+nx,.06,p.z+nz);d.setXYZ(2,p.x-nx,.06,p.z-nz);d.needsUpdate=true;c.cone.geometry.computeBoundingSphere();c.cone.material.color.setHex(red?0xff2d20:0x7fd3a0);c.cone.material.opacity=red?.34:.16;}
+function openCam(id,alert){if(id&&!signedIn)return;camOpen=id;camAlert=alert?id:null;const c=camById(id),card=$('camcard');if(!card)return;
+ card.hidden=!id;card.classList.toggle('alert',!!alert);if(!id)return;card.querySelector('b').textContent=alert?'Personne inconnue':'Caméra '+c.name;card.querySelector('small').textContent=alert?'Caméra '+c.name:'En direct · simulé';
+ for(const t of document.querySelectorAll('[data-cam]'))t.classList.toggle('on',t.dataset.cam===id);}
+$('camcard-x')?.addEventListener('click',()=>openCam(null));
+for(const t of document.querySelectorAll('[data-cam]'))t.addEventListener('click',()=>openCam(camOpen===t.dataset.cam?null:t.dataset.cam));
 const person=A.human({top:0x26282e,bottom:0x1b1d22,hair:0x15161a,style:'court',skin:0xc68b5e,accent:0xff4b3a});person.visible=false;house.add(person);
 
 // ---------- lamps: a ball on its wire is the switch, and it really lights the room
@@ -320,9 +358,9 @@ const ray=new T.Raycaster(),ndc=new T.Vector2();
 const shown=o=>{for(let n=o;n;n=n.parent)if(!n.visible)return false;return true;};
 function pick(e){const r=canvas.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(ndc,camera);
  const lamp=ray.intersectObjects(hits,false).find(h=>!!lamps.get(h.object.userData.lamp).up===floorUp||!lamps.get(h.object.userData.lamp).up&&!indoor.has(h.object.userData.lamp));if(lamp)return {lamp:lamp.object.userData.lamp};
- for(const h of ray.intersectObjects(house.children,true)){if(!shown(h.object))continue;const d=h.object.userData;if(d.gate)return {gate:true};if(d.door!==undefined)return {door:d.door};if(d.room)return {room:d.room};}
+ for(const h of ray.intersectObjects(house.children,true)){const d=h.object.userData;if(d.cam&&signedIn)return {cam:d.cam};if(!shown(h.object))continue;if(d.gate)return {gate:true};if(d.door!==undefined)return {door:d.door};if(d.room)return {room:d.room};}
  return null;}
-function tap(e){if(live.tap?.(e))return;const hit=pick(e);if(!hit)return;if(!member&&!hit.room){invite();return;}if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
+function tap(e){if(live.tap?.(e))return;const hit=pick(e);if(!hit)return;if(hit.cam&&signedIn){openCam(camOpen===hit.cam?null:hit.cam);return;}if(!member&&!hit.room){invite();return;}if(hit.lamp)toggle(hit.lamp);else if(hit.gate)toggleGate();else if(hit.door!==undefined)swing(hit.door);else if(hit.room)enter(hit.room);}
 function swing(i){const d=doors[i];d.held=!d.held;say(`Porte · <b>${d.held?'Ouverte':'Fermée'}</b>`);}
 function view(id){const [a,b,c,d]=rooms[id].rect,w=Math.abs(X(c)-X(a)),dz=Math.abs(Z(d)-Z(b));return {target:new T.Vector3((X(a)+X(c))/2,.6+(rooms[id].up||0),(Z(b)+Z(d))/2),az:orbit.az,pol:clamp(orbit.pol,.55,.85),dist:clamp(Math.max(w,dz)*2.6/Math.min(1,camera.aspect),11,36)};}
 function enter(id){if(!rooms[id])return;manual();if(focused===id){leave();return;}focused=id;flyTo(view(id));back.hidden=false;say(`<b>${rooms[id].name}</b>`);live.enter?.(id);}
@@ -407,14 +445,14 @@ const scenes={
   start(){mode('night',true);flyTo({target:new T.Vector3(X(790),.5,Z(430)),az:.55,pol:.98,dist:27},1000);},
   at(t){const p=along(walkIn,between(t,1,20));person.visible=t>1;person.position.set(X(p.u),0,Z(p.v));person.rotation.y=p.heading;motionTag.show=t>2;motionTag.pos.set(X(p.u),2.1,Z(p.v));
    watchGuard(true,t>1.8?person.position:null);
-   $('alert').hidden=t<3.5;set('garden1',t>8,true);set('garden2',t>8.3,true);set('garden3',t>8.6,true);set('garden4',t>8.9,true);if(t>8)setShutters(false,true);}},
+   $('alert').hidden=t<3.5;if(t>3.5&&camAlert!=='jardin')openCam('jardin',true);set('garden1',t>8,true);set('garden2',t>8.3,true);set('garden3',t>8.6,true);set('garden4',t>8.9,true);if(t>8)setShutters(false,true);}},
  pool:{result:'Les parents ont été prévenus en 2 secondes, avant que l’enfant n’atteigne le bord.',
   alert:['Un enfant s’approche de la piscine.',[['Téléphones','Notification reçue'],['Enceintes','« Attention, piscine »'],['Lumière de la piscine','Clignote']]],
   steps:[[0,'Un après-midi à la maison. Un enfant joue sur la terrasse.'],[4,'Il part seul vers la piscine.'],[8,'Il franchit la zone de sécurité : l’alerte part.'],[13,'Un parent le ramène. La zone repasse au vert.']],
   start(){mode('day',true);flyTo({target:new T.Vector3(X(650),.5,Z(680)),az:-.3,pol:.92,dist:22},1100);},
   at(t){kid.visible=true;const out=t<12,p=out?stroll(poolWalk.map(([u,v])=>[X(u),Z(v),0]),clamp((t-3)/6,0,1)):stroll(poolBack.map(([u,v])=>[X(u),Z(v),0]),clamp((t-12)/6,0,1));
    kid.position.set(p.x,0,p.z);kid.rotation.y=p.heading;resident.visible=t>10;if(t>10){const q=stroll([[X(492),Z(596),0],[X(700),Z(705),0],...poolBack.slice(1).map(([u,v])=>[X(u)-.5,Z(v),0])],clamp((t-10)/8,0,1));resident.position.set(q.x,0,q.z);resident.rotation.y=q.heading;}
-   const danger=t>8&&t<13;poolTag.show=danger;poolTag.pos.set(p.x,1.6,p.z);$('alert').hidden=!danger;set('pool',danger?Math.floor(t*3)%2===0:false,true);}},
+   const danger=t>8&&t<13;if(danger&&camAlert!=='piscine')openCam('piscine',true);if(!danger&&camAlert==='piscine'&&t>13)openCam('piscine',false);poolTag.show=danger;poolTag.pos.set(p.x,1.6,p.z);$('alert').hidden=!danger;set('pool',danger?Math.floor(t*3)%2===0:false,true);}},
  leak:{result:'Fuite détectée et vanne fermée en 4 secondes. Environ 2 000 € de dégâts évités.',
   alert:['Fuite d’eau sous le lave-linge.',[['Capteur d’eau','Humidité détectée'],['Vanne générale','Fermée'],['Téléphones','Notification reçue']]],
   steps:[[0,'Le lave-linge tourne dans la buanderie.'],[3,'Le tuyau lâche : de l’eau coule au sol.'],[5,'Le capteur sent l’eau. La vanne générale se ferme toute seule.'],[12,'L’eau ne coule plus. Vous êtes prévenu.']],
@@ -431,7 +469,7 @@ let playing=null;
 function play(name){if(!scenes[name])return;stop(true);$('now').hidden=false;if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};document.documentElement.dataset.scene=name;$('result').hidden=true;
  {const al=s.alert||scenes.intrusion.alert;$('alert').querySelector('strong').textContent=al[0];$('alert').querySelector('ul').innerHTML=al[1].map(([a,b])=>`<li>${a} <b>${b}</b></li>`).join('');}focused=null;back.hidden=true;s.start();$('transport').hidden=false;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed',String(b.dataset.scene===name));}
-function stop(quiet){if(!playing)return;playing=null;kid.visible=false;puddle.visible=false;for(const g of [leakTag,valveTag,washTag,sunTag,poolTag])g.show=false;$('result').hidden=true;document.documentElement.removeAttribute('data-scene');watchGuard(false);$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
+function stop(quiet){if(!playing)return;playing=null;if(camAlert)openCam(null);kid.visible=false;puddle.visible=false;for(const g of [leakTag,valveTag,washTag,sunTag,poolTag])g.show=false;$('result').hidden=true;document.documentElement.removeAttribute('data-scene');watchGuard(false);$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed','false');if(!quiet)flyTo(home);}
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
@@ -475,7 +513,7 @@ function frame(now){
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
  renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
- filmGuard();
+ filmAll();
  const w=canvas.clientWidth,h=canvas.clientHeight;
  for(const t of tags){v3.copy(t.pos).project(camera);const off=!t.show||(t.low&&floorUp)||v3.z>1||Math.abs(v3.x)>1.05||Math.abs(v3.y)>1.05;t.el.style.opacity=off?0:1;t.el.style.pointerEvents=off?'none':'';t.el.style.transform=`translate(-50%,-50%) translate(${((v3.x+1)/2*w).toFixed(1)}px,${((1-v3.y)/2*h).toFixed(1)}px)`;}
  requestAnimationFrame(frame);
@@ -484,5 +522,5 @@ car.position.set(X(parked[0]),0,Z(parked[1]));mode('evening',true);place();reque
 // The house is first seen from above, like a plan, then the view comes down to three quarters.
 setTimeout(()=>{if(!playing&&!focused)flyTo(home,reduce?1:1500);},reduce?0:150);
 // Used by the page's own checks.
-window.parks3d={orbit,flyTo,home,enter,leave,toggle,mode,toggleGate,play,stop,floor,swing,cctv:c=>{cctv.target=c;}};
+window.parks3d={get signedIn(){return signedIn;},orbit,flyTo,home,enter,leave,toggle,mode,toggleGate,play,stop,floor,swing,cctv:c=>{cctv.target=c;}};
 if(new URLSearchParams(location.search).has('live')){admit();import('./maison3d-live.mjs').then(m=>m.start({T,house,camera,canvas,X,Z,figure,dogFigure,mat,tag,say,live,car,setGate,rooms,beds:cotsPlan,floorUp:()=>floorUp,setFloor:floor})).catch(e=>say('Mode live indisponible · '+e.message));}

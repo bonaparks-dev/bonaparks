@@ -9,3 +9,14 @@ test('expiry, invalid cookies and logout cannot yield an authenticated session',
 test('Google refuses unconfigured, invalid, unverified and replayed tokens',async()=>{const store=makeStore(),body={action:'google',credential:'fake'};assert.equal((await handleAccess(request(body),{store})).status,503);for(const payload of [{sub:'1',name:'Test',email:'test@example.invalid',email_verified:false,nonce:'nonce'},{sub:'1',name:'Test',email:'test@example.invalid',email_verified:true,nonce:'wrong'}])assert.equal((await handleAccess(request(body),{store,googleClientId:'client',verifyGoogle:async()=>payload})).status,401);assert.equal([...store.data.keys()].some(k=>k.startsWith('contacts/')),false);});
 test('Google registration uses server-verified claims rather than client-supplied profile',async()=>{const store=makeStore(),r=await handleAccess(request({action:'google',credential:'test',name:'forged',email:'forged@example.invalid'}),{store,googleClientId:'client',verifyGoogle:async()=>({sub:'google-sub',name:'Verified',email:'verified@example.invalid',email_verified:true,nonce:'nonce'})});assert.equal(r.status,201);const lead=[...store.data.entries()].find(([k])=>k.startsWith('contacts/'))[1];assert.equal(lead.name,'Verified');assert.equal(lead.emailVerified,true);assert.equal(lead.subject,'google-sub');});
 test('registration rate limit prevents unlimited creation',async()=>{const store=makeStore();for(let i=0;i<20;i++)assert.equal((await handleAccess(request(input),{store,ip:'test-ip'})).status,201);assert.equal((await handleAccess(request(input),{store,ip:'test-ip'})).status,429);});
+
+import {isOwner} from './access.mjs';
+test('only a verified owner address sees the private demo cameras',()=>{
+ const owners='owner@example.com, Second@Example.com';
+ assert.equal(isOwner(null,owners),false);
+ assert.equal(isOwner({email:'owner@example.com',emailVerified:false},owners),false);   // typed, never verified
+ assert.equal(isOwner({email:'owner@example.com',emailVerified:true},''),false);        // no owner configured
+ assert.equal(isOwner({email:'OWNER@example.com ',emailVerified:true},owners),true);
+ assert.equal(isOwner({email:'second@example.com',emailVerified:true},owners),true);
+ assert.equal(isOwner({email:'someone@example.com',emailVerified:true},owners),false);
+});
