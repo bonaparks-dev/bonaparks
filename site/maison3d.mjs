@@ -222,7 +222,7 @@ function dogFigure(){const g=new T.Group(),m=(geo,x,y,z)=>{const k=new T.Mesh(ge
 const family=[
  {node:A.human({top:0x6fb5a0,bottom:0x34405a,hair:0x4a3326,style:'court',accent:0x9fd8ff}),label:'Personne',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
  {node:A.human({top:0xe88f6f,bottom:0x2f3f5c,hair:0x2c1f18,style:'long',skin:0xe0ac82,accent:0x9fd8ff}),label:'Personne',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
- {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',a:[X(512),Z(330)],b:[X(512),Z(385)],y:0,up:false,every:7},   // the child plays on the rug, by the parents
+ {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',a:[X(518),Z(406)],b:[X(533),Z(406)],y:0,up:false,every:7},   // the child plays on the rug, below the low table, clear of the chairs and the sofa
  {node:A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x3a2a20,style:'long',accent:0x9fd8ff}),label:'Enfant',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
  {node:A.dog({fur:0xb48a5a,accent:0x9fd8ff}),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
 ];
@@ -381,7 +381,7 @@ const stroll=(pts,t)=>{const n=pts.length-1,k=clamp(t,0,1)*n,i=Math.min(n-1,Math
 const walk=(pts,t)=>{const p=stroll(pts,t);resident.position.set(p.x,p.y,p.z);resident.rotation.y=p.heading;};
 const upstairsView=()=>({target:new T.Vector3(sx(1.2),3,sz(-.2)),az:-.5,pol:.78,dist:25});
 // Each scene ends on what the house did for you, written in the dashboard (never over the house).
-const poolWalk=[[440,640],[560,660],[640,690],[705,712],[728,722]],poolBack=[[728,722],[640,690],[540,650],[470,600]];
+const poolWalk=[[490,600],[530,650],[640,690],[705,712],[728,722]],poolBack=[[728,722],[640,690],[540,650],[490,600]];   // round the garden table (432-472, 604-640), never through it
 const scenes={
  arrival:{result:'Le portail a reconnu la voiture. La maison était prête avant que vous ne passiez la porte.',
   steps:[[0,'Le portail s’ouvre.'],[5,'La voiture rejoint sa place.'],[12,'Elle descend de voiture. La terrasse et le séjour s’allument.'],[19,'Elle monte à l’étage : les volets s’ouvrent tout seuls.'],[26,'Bienvenue à la maison.']],
@@ -413,7 +413,7 @@ const scenes={
   steps:[[0,'Un après-midi à la maison. Un enfant joue sur la terrasse.'],[4,'Il part seul vers la piscine.'],[8,'Il franchit la zone de sécurité : l’alerte part.'],[13,'Un parent le ramène. La zone repasse au vert.']],
   start(){mode('day',true);flyTo({target:new T.Vector3(X(650),.5,Z(680)),az:-.3,pol:.92,dist:22},1100);},
   at(t){kid.visible=true;const out=t<12,p=out?stroll(poolWalk.map(([u,v])=>[X(u),Z(v),0]),clamp((t-3)/6,0,1)):stroll(poolBack.map(([u,v])=>[X(u),Z(v),0]),clamp((t-12)/6,0,1));
-   kid.position.set(p.x,0,p.z);kid.rotation.y=p.heading;resident.visible=t>10;if(t>10){const q=stroll([[X(470),Z(600),0],[X(700),Z(705),0],...poolBack.slice(1).map(([u,v])=>[X(u)-.5,Z(v),0])],clamp((t-10)/8,0,1));resident.position.set(q.x,0,q.z);resident.rotation.y=q.heading;}
+   kid.position.set(p.x,0,p.z);kid.rotation.y=p.heading;resident.visible=t>10;if(t>10){const q=stroll([[X(492),Z(596),0],[X(700),Z(705),0],...poolBack.slice(1).map(([u,v])=>[X(u)-.5,Z(v),0])],clamp((t-10)/8,0,1));resident.position.set(q.x,0,q.z);resident.rotation.y=q.heading;}
    const danger=t>8&&t<13;poolTag.show=danger;poolTag.pos.set(p.x,1.6,p.z);$('alert').hidden=!danger;set('pool',danger?Math.floor(t*3)%2===0:false,true);}},
  leak:{result:'Fuite détectée et vanne fermée en 4 secondes. Environ 2 000 € de dégâts évités.',
   alert:['Fuite d’eau sous le lave-linge.',[['Capteur d’eau','Humidité détectée'],['Vanne générale','Fermée'],['Téléphones','Notification reçue']]],
