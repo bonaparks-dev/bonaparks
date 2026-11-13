@@ -558,6 +558,7 @@ function frame(now){
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  {const f=v=>v.toFixed(1).replace('.',',')+'°',down=clim.on?clim.set:24.5,garden=nightTarget?18.2:26.4,t=[['temp-down',down],['temp-up',clim.on?clim.set+.6:23.8],['temp-garden',garden]];for(const [id,v] of t){const e=$(id);if(e&&e.textContent!==f(v))e.textContent=f(v);}}
+ {const bs=document.querySelectorAll('.floors button'),ts=document.querySelectorAll('#floor-temps span');bs.forEach((b,i)=>{const w=b.offsetWidth+'px';if(ts[i]&&ts[i].style.width!==w)ts[i].style.width=w;});}
  renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
  filmAll();airFlow(dt);
  const w=canvas.clientWidth,h=canvas.clientHeight;

@@ -230,5 +230,11 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 @media(max-width:700px){.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 124px);right:12px}.who{right:12px}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 168px);right:12px;width:min(260px,62%)}}
 
 /* The temperature of each level, under its name in the floor buttons. */
-.floors button{display:flex;flex-direction:column;align-items:center;line-height:1.1}.floors button small{font-size:10px;font-weight:500;opacity:.7;font-variant-numeric:tabular-nums}
 .who,.whobox,.air{pointer-events:auto}
+
+/* The temperature of each level, just under its button (outside it), aligned by the script. */
+.floor-temps{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 40px);display:flex;gap:2px;padding:0 3px;pointer-events:none}
+.floor-temps span{text-align:center;font-size:11px;color:var(--soft);font-variant-numeric:tabular-nums;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.who{top:calc(max(14px,env(safe-area-inset-top)) + 62px)}.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 102px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 148px)}
+@media(max-width:700px){.floor-temps{right:12px}.floors{right:12px}.who{top:calc(max(14px,env(safe-area-inset-top)) + 86px)}.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 126px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 170px)}}
+.only-scene .floor-temps,.embedded .floor-temps{display:none}
