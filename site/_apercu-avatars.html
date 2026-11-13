@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Avatars · aperçu</title>
+<style>html,body{margin:0;height:100%;background:#0b1020}canvas{display:block;width:100%;height:100%}p{position:absolute;left:16px;top:10px;color:#cfd8ea;font:13px system-ui}</style></head>
+<body><p>Aperçu local des avatars (page d’essai, non liée au site)</p><canvas id="c"></canvas>
+<script type="module">
+import * as T from './vendor/three.module.min.js';
+import {avatars} from './maison3d-avatars.mjs';
+const A = avatars(T), c = document.getElementById('c'), r = new T.WebGLRenderer({canvas: c, antialias: true});
+r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.shadowMap.enabled = true; r.outputColorSpace = T.SRGBColorSpace; r.toneMapping = T.ACESFilmicToneMapping;
+const s = new T.Scene(), cam = new T.PerspectiveCamera(30, 1, .1, 50);
+s.add(new T.HemisphereLight(0xbfd0ff, 0x30344a, 1.6));
+const sun = new T.DirectionalLight(0xfff1d6, 2.4); sun.position.set(3, 6, 4); sun.castShadow = true; s.add(sun);
+const floor = new T.Mesh(new T.PlaneGeometry(12, 8), new T.MeshStandardMaterial({color: 0x3a4157, roughness: .9})); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; s.add(floor);
+const bed = new T.Mesh(new T.BoxGeometry(.72, .35, 1.32), new T.MeshStandardMaterial({color: 0xf2f2f0})); bed.position.set(1.2, .175, 0); s.add(bed);
+const who = [
+  {n: A.human({kind: 'adulte', accent: 0xff8f7d, style: 'court'}), x: -1.9, colors: {top: '#c0506a', bottom: '#2d3a55', hair: '#2b1d16'}, o: {speed: 1}},
+  {n: A.human({kind: 'adulte', accent: 0xb9a0d6, style: 'long'}), x: -.8, colors: {top: '#e6e0f0', bottom: '#5a4a7a', hair: '#5b3a25'}, o: {speed: 0}},
+  {n: A.human({kind: 'enfant', accent: 0x7aa2e3}), x: .2, colors: {top: '#a58bd6', bottom: '#d9c7ef', hair: '#6b4a2f'}, o: {sitting: true}},
+  {n: A.human({kind: 'enfant', accent: 0x7fd3a0}), x: 1.2, colors: {top: '#a58bd6', bottom: '#d9c7ef', hair: '#6b4a2f'}, o: {lying: true}, bed: true},
+  {n: A.dog({accent: 0xf4bd6d}), x: 2.4, colors: {top: '#d8cfc4'}, o: {speed: .8}},
+];
+for (const w of who) { w.n.position.set(w.x, w.bed ? .35 : 0, w.bed ? .55 : 0); if (w.o.lying) { w.n.rotation.y = Math.PI; w.n.rotation.x = -Math.PI / 2; w.n.position.z = -.45; } s.add(w.n); for (let i = 0; i < 40; i++) A.dress(w.n, w.colors); }
+cam.position.set(.2, 2.1, 6.2); cam.lookAt(.2, .7, 0);
+let last = performance.now();
+(function f(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; r.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
+  for (const w of who) A.animate(w.n, {...w.o, t: now / 1000, dt: .05});
+  r.render(s, cam); requestAnimationFrame(f); })(last);
+</script></body></html>
