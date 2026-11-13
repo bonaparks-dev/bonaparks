@@ -249,3 +249,9 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 .whobox:not([hidden])~.airs{display:flex}
 .only-scene .airs,.embedded .airs{display:none}
 @media(max-width:700px){.airs{right:12px}.who{top:calc(max(14px,env(safe-area-inset-top)) + 136px)}.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 176px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 220px)}}
+
+/* Renaming in the list: a pencil per row, the name edited in place. */
+.whobox li.row{display:flex;align-items:center}.whobox li.row>button[data-who]{flex:1;min-width:0}
+.whobox .ren{flex:none;width:28px;height:28px;padding:0;margin-left:2px;display:grid;place-items:center;border-radius:8px;color:var(--soft)}.whobox .ren:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+.whobox .ren svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.whobox .ren-input{width:100%;margin:3px 4px;padding:8px 10px;border-radius:9px;border:1px solid #7fa9d8;background:#0b1120;color:var(--ink);font:inherit;font-size:13px}

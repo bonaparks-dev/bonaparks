@@ -419,13 +419,25 @@ $('clim-less').addEventListener('click',()=>{clim.set=clamp(clim.set-1,17,28);re
 // Who is where: the counter opens the list; a name flies the view to them. The air of the house sits just below.
 const U=x=>x/0.03396+470,V=z=>z/0.021227+470;
 function placeOf(o,up){if(up)return 'Étage';const u=U(o.position.x),v=V(o.position.z);for(const r of Object.values(rooms)){const [a,b,c,d]=r.rect;if(u>=a&&u<=c&&v>=b&&v<=d)return r.name;}return 'Dehors';}
-function whoList(){const ul=$('who-list');if(!ul)return;const rows=[];
+// Names given by the viewer (Marc can become Papa, the car its model): kept on this device only.
+const named=(()=>{try{return JSON.parse(localStorage.getItem('parks.names')||'{}')||{};}catch{return {};}})();
+const nameOf=(key,fallback)=>typeof named[key]==='string'&&named[key]?named[key]:fallback;
+const esc3=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+function rename(key,value){const v=String(value||'').replace(/[<>\x00-\x1f]/g,'').trim().slice(0,24);if(v)named[key]=v;else delete named[key];try{localStorage.setItem('parks.names',JSON.stringify(named));}catch{}
+ for(const f of family)f.tag.el.textContent=nameOf(f.name||f.label,f.name||f.label);}
+for(const f of family)f.tag.el.textContent=nameOf(f.name||f.label,f.name||f.label);
+let editing=null;
+function whoList(){const ul=$('who-list');if(!ul||editing)return;const rows=[];
  const people=playing?[]:family.filter(f=>!f.dog&&(f.node.visible||f.up)),pets=family.filter(f=>f.dog&&f.node.visible);
- if(people.length)rows.push(['Personnes',people.map(f=>[f.name||f.label,placeOf(f.node,f.up),f.node,f.label==='Personne'?'Adulte':f.label])]);
- if(pets.length)rows.push(['Animaux',pets.map(f=>[f.name||f.label,placeOf(f.node,false),f.node,f.label])]);
- if(car.visible)rows.push(['Voitures',[['Voiture',placeOf(car,false),car]]]);
- const html=rows.map(([g,list])=>`<li class="g">${g}</li>`+list.map(([n,w,,role],i)=>`<li><button data-who="${g}|${i}"><i class="av">${n[0]}</i><span><b>${n}</b>${role&&role!==n?`<em>${role}</em>`:''}</span><small>${w}</small></button></li>`).join('')).join('')||'<li class="g">Aucune présence</li>';
- if(ul.dataset.html!==html){ul.dataset.html=html;ul.innerHTML=html;for(const b of ul.querySelectorAll('[data-who]'))b.addEventListener('click',()=>{const [g,i]=b.dataset.who.split('|'),row=rows.find(r=>r[0]===g),o=row?.[1][+i]?.[2];if(o){manual();flyTo({target:o.position.clone().setY(.8),az:orbit.az,pol:.9,dist:12},900);}});}}
+ if(people.length)rows.push(['Personnes',people.map(f=>[nameOf(f.name||f.label,f.name||f.label),placeOf(f.node,f.up),f.node,f.label==='Personne'?'Adulte':f.label,f.name||f.label])]);
+ if(pets.length)rows.push(['Animaux',pets.map(f=>[nameOf(f.name||f.label,f.name||f.label),placeOf(f.node,false),f.node,f.label,f.name||f.label])]);
+ if(car.visible)rows.push(['Voitures',[[nameOf('car','Voiture'),placeOf(car,false),car,'','car']]]);
+ const html=rows.map(([g,list])=>`<li class="g">${g}</li>`+list.map(([n,w,,role,key],i)=>`<li class="row"><button data-who="${g}|${i}"><i class="av">${esc3(n[0]||'?')}</i><span><b>${esc3(n)}</b>${role&&role!==n?`<em>${role}</em>`:''}</span><small>${w}</small></button><button class="ren" data-ren="${esc3(key)}" aria-label="Renommer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button></li>`).join('')).join('')||'<li class="g">Aucune présence</li>';
+ if(ul.dataset.html!==html){ul.dataset.html=html;ul.innerHTML=html;for(const r of ul.querySelectorAll('[data-ren]'))r.addEventListener('click',e=>{e.stopPropagation();const key=r.dataset.ren,li=r.closest('li'),cur=li.querySelector('b').textContent;editing=key;
+  const input=document.createElement('input');input.className='ren-input';input.value=cur;input.maxLength=24;input.setAttribute('aria-label','Nouveau nom');li.replaceChildren(input);input.focus();input.select();
+  let done=false;const end=save=>{if(done)return;done=true;if(save)rename(key,input.value);editing=null;ul.dataset.html='';whoList();};
+  input.addEventListener('keydown',k=>{if(k.key==='Enter')end(true);if(k.key==='Escape')end(false);});input.addEventListener('blur',()=>end(true));});
+ for(const b of ul.querySelectorAll('[data-who]'))b.addEventListener('click',()=>{const [g,i]=b.dataset.who.split('|'),row=rows.find(r=>r[0]===g),o=row?.[1][+i]?.[2];if(o){manual();flyTo({target:o.position.clone().setY(.8),az:orbit.az,pol:.9,dist:12},900);}});}}
 $('who').addEventListener('click',()=>{const box=$('whobox'),open=box.hidden;box.hidden=!open;$('who').setAttribute('aria-expanded',String(open));if(open)whoList();});
 setInterval(()=>{if(!$('whobox').hidden)whoList();},1000);
 // The air: one small control under each level that has a unit (the living room below, the landing upstairs over the front door).

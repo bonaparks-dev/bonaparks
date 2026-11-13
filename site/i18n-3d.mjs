@@ -1,6 +1,7 @@
 // The pages in three dimensions. French source, then English and Italian; the four other languages of the site
 // read these pages in English until they are translated too.
 const rows3d=[
+["Renommer","Rename","Rinomina"],["Nouveau nom","New name","Nuovo nome"],
 ["Retour dans l’app…","Back to the app…","Ritorno all’app…"],["Le retour dans l’app n’a pas abouti. Réessayez.","Going back to the app failed. Try again.","Il ritorno all’app non è riuscito. Riprova."],["Connectez-vous d’abord.","Sign in first.","Accedi prima."],["Code expiré. Reconnectez-vous.","Code expired. Sign in again.","Codice scaduto. Accedi di nuovo."],
 ["Voiture","Car","Auto"],["Dehors","Outside","Fuori"],["froid","cooling","freddo"],["éteinte","off","spenta"],["Aucune présence","Nobody home","Nessuno in casa"],["Allumer ou éteindre la clim","Turn the AC on or off","Accendi o spegni il clima"],
 // The parcel scene and the titles of the camera card.
