@@ -208,7 +208,7 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 .whobox .g{padding:8px 8px 4px;font:600 9px/1 'Manrope',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
 .whobox button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px;border:0;border-radius:9px;background:none;color:var(--ink);font:inherit;font-size:12px;text-align:left}
 .whobox button:hover{background:rgba(255,255,255,.06)}.whobox small{color:var(--soft);font-size:11px}
-.air{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 86px);display:flex;align-items:center;gap:8px;padding:5px 6px 5px 11px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);color:var(--ink);font-size:12px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
 .whobox:not([hidden])~.air{display:none}
 .air>svg{width:15px;height:15px;color:var(--soft);fill:none;stroke:currentColor;stroke-width:1.7}.air.on>svg{color:#8fd3ff}
 .air span{display:flex;flex-direction:column;line-height:1.15;margin-right:2px}.air span b{font-weight:600}.air small{font-size:10px;color:var(--soft)}
@@ -238,3 +238,14 @@ html:not(.cams-on) .tag.cam-badge{display:none!important}
 .who{top:calc(max(14px,env(safe-area-inset-top)) + 62px)}.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 102px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 148px)}
 @media(max-width:700px){.floor-temps{right:12px}.floors{right:12px}.who{top:calc(max(14px,env(safe-area-inset-top)) + 86px)}.air,.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 126px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 170px)}}
 .only-scene .floor-temps,.embedded .floor-temps{display:none}
+
+/* Small air controls, each under its level: power, −, setpoint, +. */
+.airs{position:absolute;right:18px;top:calc(max(14px,env(safe-area-inset-top)) + 60px);display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding-left:3px;box-sizing:border-box;pointer-events:none}
+.airs .air{position:static;display:flex;align-items:center;gap:3px;padding:2px;border-radius:99px;background:rgba(14,19,28,.78);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:11px;pointer-events:auto}
+.airs .air button{width:22px;height:22px;border:0;border-radius:50%;background:rgba(255,255,255,.07);color:var(--ink);font-size:12px;line-height:1;display:grid;place-items:center;padding:0}
+.airs .air .pw svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.8}.airs .air.on .pw{background:#8fd3ff;color:#0a0e16}
+.airs .air b{min-width:26px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.who{top:calc(max(14px,env(safe-area-inset-top)) + 124px)}.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 164px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 206px)}
+.whobox:not([hidden])~.airs{display:flex}
+.only-scene .airs,.embedded .airs{display:none}
+@media(max-width:700px){.airs{right:12px}.who{top:calc(max(14px,env(safe-area-inset-top)) + 136px)}.whobox{top:calc(max(14px,env(safe-area-inset-top)) + 176px)}.camcard{top:calc(max(14px,env(safe-area-inset-top)) + 220px)}}

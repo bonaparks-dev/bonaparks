@@ -261,7 +261,7 @@ function filmCam(c,targets){if(!targets.length)return;
    if(ir){const v=Math.max(0,Math.min(255,((.3*b[i]+.59*b[i+1]+.11*b[i+2])*gain+lift+n)*vig));d[o]=d[o+1]=d[o+2]=v;}else{d[o]=Math.max(0,Math.min(255,(b[i]+n)*vig));d[o+1]=Math.max(0,Math.min(255,(b[i+1]+n)*vig));d[o+2]=Math.max(0,Math.min(255,(b[i+2]+n)*vig));}d[o+3]=255;}
   ctx.putImageData(img,0,0);}}
 function filmAll(){if(!cams[0].badge){for(const c of cams)c.indoor=['salon','cuisine'].includes(c.id);makeBadges();const b=tag('',530,229,2.85,{press:()=>$('clim-power').click()});b.el.classList.add('ac-badge');b.el.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>';b.el.setAttribute('aria-label','Allumer ou éteindre la clim');acUnit.userData.badge=b;}
- acUnit.userData.badge.show=!floorUp;acUnit.userData.badge.el.classList.toggle('on',clim.on);for(const c of cams){c.node.visible=false;c.badge.show=signedIn&&!(floorUp&&c.indoor);c.badge.el.classList.toggle('alert',camAlert===c.id);c.badge.el.classList.toggle('on',camOpen===c.id&&camAlert!==c.id);}guard.pole.visible=false;
+ acUnit.userData.badge.show=!floorUp;acUnit.userData.badge.el.classList.toggle('on',clim.on);if(!acUp.userData.badge){const b=tag('',519,463,2.75+2.85,{press:()=>$('air-up').querySelector('.pw').click()});b.el.classList.add('ac-badge');b.el.innerHTML=acUnit.userData.badge.el.innerHTML;b.el.setAttribute('aria-label','Clim Étage : allumer ou éteindre');acUp.userData.badge=b;}acUp.userData.badge.show=floorUp;acUp.userData.badge.el.classList.toggle('on',clims.up.on);for(const c of cams){c.node.visible=false;c.badge.show=signedIn&&!(floorUp&&c.indoor);c.badge.el.classList.toggle('alert',camAlert===c.id);c.badge.el.classList.toggle('on',camOpen===c.id&&camAlert!==c.id);}guard.pole.visible=false;
  if(!signedIn||document.documentElement.classList.contains('only-scene'))return;cctv.n++;
  for(const c of cams){const show=camOpen===c.id&&!(c.guard&&guard.cone.visible);c.cone.visible=show;if(show){const subj=c.id==='piscine'&&kid.visible?kid.position:c.aim;camCone(c,subj,camAlert===c.id);}c.node.userData.led?.material.color.setHex(camAlert===c.id?0xff3b30:0x7fd3a0);}
  // the open camera every other frame, the strip of thumbnails in turn on the other frames, the page's own feed (accueil) with the garden
@@ -428,20 +428,29 @@ function whoList(){const ul=$('who-list');if(!ul)return;const rows=[];
  if(ul.dataset.html!==html){ul.dataset.html=html;ul.innerHTML=html;for(const b of ul.querySelectorAll('[data-who]'))b.addEventListener('click',()=>{const [g,i]=b.dataset.who.split('|'),row=rows.find(r=>r[0]===g),o=row?.[1][+i]?.[2];if(o){manual();flyTo({target:o.position.clone().setY(.8),az:orbit.az,pol:.9,dist:12},900);}});}}
 $('who').addEventListener('click',()=>{const box=$('whobox'),open=box.hidden;box.hidden=!open;$('who').setAttribute('aria-expanded',String(open));if(open)whoList();});
 setInterval(()=>{if(!$('whobox').hidden)whoList();},1000);
-function air(){$('air-now').textContent=(clim.on?clim.set:24.5).toString().replace('.',',')+'°';$('air-mode').textContent=clim.on?'Clim · froid':'Clim · éteinte';$('air-set').textContent=clim.set+'°';$('air-power').setAttribute('aria-pressed',String(clim.on));$('air').classList.toggle('on',clim.on);}
-$('air-power').addEventListener('click',()=>$('clim-power').click());$('air-less').addEventListener('click',()=>$('clim-less').click());$('air-more').addEventListener('click',()=>$('clim-more').click());
+// The air: one small control under each level that has a unit (the living room below, the landing upstairs over the front door).
+const clims={down:clim,up:{on:false,set:22}};
+function air(){for(const [k,c] of Object.entries(clims)){const el=$('air-'+k);if(!el)continue;el.querySelector('b').textContent=c.set+'°';el.querySelector('.pw').setAttribute('aria-pressed',String(c.on));el.classList.toggle('on',c.on);}
+ const bs=[...document.querySelectorAll('.floors button')],box=$('airs');if(box&&bs[0]){const base=bs[0].offsetLeft;box.style.width=document.querySelector('.floors').offsetWidth+'px';for(const [k,i] of [['down',0],['up',1]]){const el=$('air-'+k);if(el)el.style.marginLeft=(bs[i].offsetLeft-base)+'px';}}}
+for(const [k,c] of Object.entries(clims)){const el=$('air-'+k);if(!el)continue;
+ const go=f=>()=>{f();if(k==='down')refresh();else{air();say(`Clim · Étage · <b>${c.on?'Allumée · '+c.set+' °C':'Éteinte'}</b>`);}};
+ el.querySelector('.pw').addEventListener('click',k==='down'?()=>$('clim-power').click():go(()=>{c.on=!c.on;}));
+ el.querySelector('.less').addEventListener('click',k==='down'?()=>$('clim-less').click():go(()=>{c.set=clamp(c.set-1,17,28);}));
+ el.querySelector('.more').addEventListener('click',k==='down'?()=>$('clim-more').click():go(()=>{c.set=clamp(c.set+1,17,28);}));}
+addEventListener('resize',()=>air());setTimeout(air,300);
 // The air conditioner of the living room, on the back wall: when it runs, its cold air is seen flowing into the room.
 const acUnit=new T.Group();{const body=new T.Mesh(new T.BoxGeometry(.95,.3,.24),mat(0xe9edf2,{roughness:.35}));const vent=new T.Mesh(new T.BoxGeometry(.85,.04,.02),new T.MeshBasicMaterial({color:0x2a3240}));vent.position.set(0,-.1,.125);
  const glow=new T.Mesh(new T.BoxGeometry(.8,.02,.01),new T.MeshBasicMaterial({color:0x8fd3ff}));glow.position.set(0,-.13,.13);acUnit.add(body,vent,glow);acUnit.userData.glow=glow;}
-acUnit.position.set(X(530),2.32,Z(229)+.14);house.add(acUnit);
+acUnit.position.set(X(530),2.32,Z(229)+.14);house.add(acUnit);acUnit.userData.dir=1;
+const acUp=acUnit.clone(true);acUp.userData={glow:acUp.children[2],dir:-1};acUp.rotation.y=Math.PI;acUp.position.set(X(519),2.32,Z(463)-.14);upper.add(acUp);
 const streaks=[],streakMat=new T.MeshBasicMaterial({color:0x6fc8ff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
-for(let i=0;i<46;i++){const m=new T.Mesh(new T.BoxGeometry(.018,.018,.42),streakMat.clone());m.userData={phase:Math.random(),lane:(Math.random()-.5)*.8,drop:.6+Math.random()*.7,speed:.35+Math.random()*.25};m.visible=false;house.add(m);streaks.push(m);}
+for(let i=0;i<64;i++){const m=new T.Mesh(new T.BoxGeometry(.018,.018,.42),streakMat.clone());m.userData={phase:Math.random(),lane:(Math.random()-.5)*.8,drop:.6+Math.random()*.7,speed:.35+Math.random()*.25,unit:i%2?'up':'down'};m.visible=false;(i%2?upper:house).add(m);streaks.push(m);}
 let airT=0;
-function airFlow(dt){airT+=dt;const on=clim.on&&!floorUp;acUnit.userData.glow.material.color.setHex(on?0x8fd3ff:0x3a4352);
- for(const m of streaks){m.visible=on;if(!on)continue;const d=m.userData,p=(airT*d.speed+d.phase)%1;
+function airFlow(dt){airT+=dt;const onDown=clim.on&&!floorUp,onUp=clims.up.on&&floorUp;acUnit.userData.glow.material.color.setHex(clim.on?0x8fd3ff:0x3a4352);acUp.userData.glow.material=acUp.userData.glow.material.clone();acUp.userData.glow.material.color.setHex(clims.up.on?0x8fd3ff:0x3a4352);
+ for(const m of streaks){const d=m.userData,u=d.unit==='up'?acUp:acUnit,on=d.unit==='up'?onUp:onDown;m.visible=on;if(!on)continue;const p=(airT*d.speed+d.phase)%1,dir=u.userData.dir;
   // from the vent, forward into the room and gently down, spreading a little
-  const x=acUnit.position.x+d.lane*(1+p*1.8),y=acUnit.position.y-.14-p*p*d.drop*1.4,z=acUnit.position.z+.05+p*2.3;
-  m.position.set(x,y,z);m.lookAt(x+d.lane*.25,y-p*d.drop*1.2-.3,z+1);m.material.opacity=Math.sin(p*Math.PI)*.6;}}
+  const x=u.position.x+d.lane*(1+p*1.8),y=u.position.y-.14-p*p*d.drop*1.4,z=u.position.z+dir*(.05+p*2.3);
+  m.position.set(x,y,z);const w=m.parent===upper?new T.Vector3(x+d.lane*.25,y-p*d.drop*1.2-.3,z+dir).add(upper.position):new T.Vector3(x+d.lane*.25,y-p*d.drop*1.2-.3,z+dir);m.lookAt(w);m.material.opacity=Math.sin(p*Math.PI)*.6;}}
 const hintEl=$('hint');let hinted=false;function hint(){if(hinted)return;hinted=true;setTimeout(()=>hintEl.classList.add('gone'),2500);}
 addEventListener('keydown',e=>{if(e.key==='Escape'&&focused)leave();});
 
@@ -557,7 +566,7 @@ function frame(now){
  for(const who of [resident,person,kid,courier]){if(!who.visible){who.userData.last=null;continue;}const l=who.userData.last,v=l?Math.hypot(who.position.x-l.x,who.position.z-l.z)/Math.max(dt,.001):0;who.userData.last=who.position.clone();who.userData.v=(who.userData.v||0)*.8+Math.min(2,v)*.2;A.animate(who,{speed:who.userData.v,t:now/1000,dt});}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
- {const f=v=>v.toFixed(1).replace('.',',')+'°',down=clim.on?clim.set:24.5,garden=nightTarget?18.2:26.4,t=[['temp-down',down],['temp-up',clim.on?clim.set+.6:23.8],['temp-garden',garden]];for(const [id,v] of t){const e=$(id);if(e&&e.textContent!==f(v))e.textContent=f(v);}}
+ {const f=v=>v.toFixed(1).replace('.',',')+'°',down=clim.on?clim.set:24.5,garden=nightTarget?18.2:26.4,t=[['temp-down',down],['temp-up',clims.up.on?clims.up.set:23.8],['temp-garden',garden]];for(const [id,v] of t){const e=$(id);if(e&&e.textContent!==f(v))e.textContent=f(v);}}
  {const bs=document.querySelectorAll('.floors button'),ts=document.querySelectorAll('#floor-temps span');bs.forEach((b,i)=>{const w=b.offsetWidth+'px';if(ts[i]&&ts[i].style.width!==w)ts[i].style.width=w;});}
  renderer.render(scene,camera);if(!drawn){drawn=true;tell('ready');}
  filmAll();airFlow(dt);
