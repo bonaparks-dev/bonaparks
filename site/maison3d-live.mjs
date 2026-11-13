@@ -11,7 +11,9 @@ import {avatars} from './maison3d-avatars.mjs';
 export function start(h) {
   const {T, house, camera, canvas, X, Z, figure, dogFigure, tag, say, car, setGate, rooms, beds = []} = h;
   const q = new URLSearchParams(location.search).get('live');
-  const base = (q && /^https?:\/\//.test(q) ? q : 'http://127.0.0.1:8790').replace(/\/$/, '');
+  // Only a bridge on this computer or the home network: a link to bonaparks.com/?live=<anything else> is ignored.
+  const local = u => { try { const h = new URL(u).hostname; return /^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|[a-z0-9-]+\.local)$/i.test(h); } catch { return false; } };
+  const base = (q && /^https?:\/\//.test(q) && local(q) ? q : 'http://127.0.0.1:8790').replace(/\/$/, '');
   const U = x => x / 0.03396 + 470, V = z => z / 0.021227 + 470;      // metres back to plan units
   const UP = 2.75, live = h.live, sceneEl = document.getElementById('scene');
   live.on = true;
@@ -175,7 +177,9 @@ export function start(h) {
   }
   const NAME = {adulte: 'Adulte', enfant: 'Enfant', animal: 'Animal', vehicule: 'Véhicule'}, ICON = {adulte: '🧑', enfant: '🧒', animal: '🐾', vehicule: '🚗'};
   const room = id => state.cameras.find(c => c.id === id)?.name || id;
-  const who = o => o.name || NAME[o.kind] || o.kind;
+  // Names, colours and ids come from the bridge: never trusted as HTML.
+  const esc = v => String(v ?? '').replace(/[&<>"'`]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;'}[c]));
+  const who = o => esc(o.name || NAME[o.kind] || o.kind);
   function update() {
     const floorUp = h.floorUp();
     for (const c of state.cameras) {
@@ -328,7 +332,7 @@ export function start(h) {
     const occ = state.occupants || [];
     if (selected === 'all') {
       const html = `<div class="lc-head"><b>Dans la maison maintenant</b><button class="lc-x" aria-label="Fermer">×</button></div>
-        ${occ.length ? occ.map(o => `<button class="lc-row" data-oid="${o.id}"><i>${ICON[o.kind] || '•'}</i><span><b>${who(o)}</b><small>${room(o.room)} · ${(PILL[o.status] || [o.status])[0]}</small></span><em>›</em></button>`).join('')
+        ${occ.length ? occ.map(o => `<button class="lc-row" data-oid="${esc(o.id)}"><i>${ICON[o.kind] || '•'}</i><span><b>${who(o)}</b><small>${room(o.room)} · ${(PILL[o.status] || [o.status])[0]}</small></span><em>›</em></button>`).join('')
           : '<p class="lc-fine">Personne n’est détecté pour le moment.</p>'}`;
       if (side.dataset.key !== html) { side.dataset.key = html; side.innerHTML = html; side.querySelector('.lc-x').onclick = () => select(selected); for (const b of side.querySelectorAll('[data-oid]')) b.onclick = () => select(+b.dataset.oid); }
       return;
@@ -356,7 +360,7 @@ export function start(h) {
       side.querySelector('[data-act=all]').onclick = () => select('all');
       boxMenu(side.querySelector('.lc-video'), o.room);
     }
-    side.querySelector('.lc-who b').textContent = `${who(o)} · ${room(o.room)}`;
+    side.querySelector('.lc-who b').textContent = `${o.name || NAME[o.kind] || o.kind} · ${room(o.room)}`;
     const [pill, cls] = PILL[o.status] || [o.status, ''];
     const pe = side.querySelector('.lc-pill'); pe.textContent = pill; pe.className = 'lc-pill ' + cls;
     const POSE = {debout: 'debout', assis: 'assis', allonge: 'allongé'};
@@ -402,7 +406,7 @@ export function start(h) {
     side.querySelector('.lc-video svg').innerHTML = (cam.detections || []).map(d => { const [x1, y1, x2, y2] = d.box.map(v => v * 1000);
       return `<rect x="${x1}" y="${y1}" width="${x2 - x1}" height="${y2 - y1}" rx="8" fill="none" stroke="${BOX[d.kind] || '#ffffffaa'}" stroke-width="4" vector-effect="non-scaling-stroke"/>`; }).join('');
     const here = (state.occupants || []).filter(o => o.room === cid);
-    const html = here.map(o => `<button class="lc-row" data-oid="${o.id}"><i>${ICON[o.kind] || '•'}</i><span><b>${who(o)}</b><small>${(PILL[o.status] || [o.status])[0]}</small></span><em>›</em></button>`).join('') || '<p class="lc-fine">Personne pour le moment.</p>';
+    const html = here.map(o => `<button class="lc-row" data-oid="${esc(o.id)}"><i>${ICON[o.kind] || '•'}</i><span><b>${who(o)}</b><small>${(PILL[o.status] || [o.status])[0]}</small></span><em>›</em></button>`).join('') || '<p class="lc-fine">Personne pour le moment.</p>';
     const box = side.querySelector('.lc-here'); if (box.dataset.html !== html) { box.dataset.html = html; box.innerHTML = html; for (const b of box.querySelectorAll('[data-oid]')) b.onclick = () => select(+b.dataset.oid); }
   }
 
@@ -421,7 +425,7 @@ export function start(h) {
       const fam = profiles.filter(p => (p.kind === 'animal') === (det.group === 'animal' || det.kind === 'animal'));
       menu.innerHTML = `<b>C’est…</b>
         <div>${['adulte', 'enfant', 'animal'].map(k => `<button data-k="${k}" ${det.kind === k ? 'class="on"' : ''}>${ICON[k]} ${NAME[k]}</button>`).join('')}</div>
-        ${fam.length ? `<div>${fam.map(p => `<button data-p="${p.id}"><i style="background:${p.color}"></i>${p.name}</button>`).join('')}</div>` : ''}
+        ${fam.length ? `<div>${fam.map(p => `<button data-p="${esc(p.id)}"><i style="background:${/^#[0-9a-f]{3,8}$/i.test(p.color)?p.color:'#888'}"></i>${esc(p.name)}</button>`).join('')}</div>` : ''}
         <div><button data-x="nothing">Ce n’est rien</button><button data-x="mirror">🪞 Un reflet</button><button data-x="close">×</button></div>`;
       holder.after(menu); holder.dataset.pick = det.box.join(',');
       const done = msg => { say(msg); menu.remove(); delete holder.dataset.pick; };
@@ -462,7 +466,7 @@ export function start(h) {
   function photoBlock(o) {
     if (!o.photo) return `<div class="lc-photo empty"><span>${o.kind === 'animal' ? '🐾' : '🙂'}</span><small>${o.kind === 'animal' ? 'En attente d’une photo de l’animal…' : 'En attente d’une photo du visage…'}</small></div>`;
     const note = o.kind === 'animal' ? (o.photo === 'visage' ? 'Tête capturée' : 'Photo de l’animal · de face, c’est encore mieux') : PHOTO_NOTE[o.photo];
-    return `<div class="lc-photo"><img src="${base}/photo/${o.id}.jpg?v=${photoTick()}" alt="Photo · ${who(o)}"><small class="${o.photo === 'visage' ? 'good' : ''}">${note}</small></div>`;
+    return `<div class="lc-photo"><img src="${base}/photo/${encodeURIComponent(o.id)}.jpg?v=${photoTick()}" alt="Photo · ${who(o)}"><small class="${o.photo === 'visage' ? 'good' : ''}">${note}</small></div>`;
   }
   // who it probably is, in percent, and why: presence logic (only the gate lets someone in), clothes, hair, size, face
   const CUE = {visage: 'Visage', vetements: 'Vêtements', cheveux: 'Cheveux', taille: 'Taille'};
@@ -483,14 +487,14 @@ export function start(h) {
     if (box.dataset.key === key || (idForm && box.querySelector('form'))) return; box.dataset.key = key;
     if (o.who) {
       const p = profiles.find(p => p.id === o.who);
-      box.innerHTML = matchBlock(o) + `<p class="lc-known"><b>${o.name}</b> · reconnu${learning ? ' · <span class="lc-learn">apprentissage en cours…</span>' : ''}</p>
+      box.innerHTML = matchBlock(o) + `<p class="lc-known"><b>${esc(o.name)}</b> · reconnu${learning ? ' · <span class="lc-learn">apprentissage en cours…</span>' : ''}</p>
         <p class="lc-fine">${p ? `${p.faces} visage${p.faces > 1 ? 's' : ''} et ${p.looks} apparence${p.looks > 1 ? 's' : ''} appris` : ''}</p>
         <div class="lc-actions"><button data-id="relearn">Continuer l’apprentissage</button></div>`;
       box.querySelector('[data-id=relearn]').onclick = () => post(`/profiles/${o.who}/learn`, {occupant: o.id});
       return;
     }
     if (!idForm) {
-      box.innerHTML = matchBlock(o) + `<p class="lc-label" style="margin-top:4px">Qui est-ce ?</p>${photoBlock(o)}<div class="lc-names">${same.map(p => `<button data-pid="${p.id}"><i style="background:${p.color}"></i>${p.name}</button>`).join('')}<button data-id="new">+ Enregistrer</button></div><div class="lc-actions"><button data-id="not">Ce n'est pas ${o.kind === 'animal' ? 'un animal' : o.kind === 'vehicule' ? 'un véhicule' : 'une personne'}</button></div>`;
+      box.innerHTML = matchBlock(o) + `<p class="lc-label" style="margin-top:4px">Qui est-ce ?</p>${photoBlock(o)}<div class="lc-names">${same.map(p => `<button data-pid="${p.id}"><i style="background:${/^#[0-9a-f]{3,8}$/i.test(p.color)?p.color:'#888'}"></i>${esc(p.name)}</button>`).join('')}<button data-id="new">+ Enregistrer</button></div><div class="lc-actions"><button data-id="not">Ce n'est pas ${o.kind === 'animal' ? 'un animal' : o.kind === 'vehicule' ? 'un véhicule' : 'une personne'}</button></div>`;
       for (const b of box.querySelectorAll('[data-pid]')) b.onclick = () => post(`/profiles/${b.dataset.pid}/learn`, {occupant: o.id}).then(loadProfiles);
       box.querySelector('[data-id=new]').onclick = () => { idForm = true; box.dataset.key = ''; drawIdentity(o); };
       box.querySelector('[data-yes]')?.addEventListener('click', e => post(`/profiles/${e.currentTarget.dataset.yes}/learn`, {occupant: o.id}).then(loadProfiles));
@@ -523,7 +527,7 @@ export function start(h) {
     const chips = occ.length
       ? [`<button class="chip count" data-oid="all">🧑 <b>${count('adulte')}</b> · 🧒 <b>${count('enfant')}</b> · 🐾 <b>${count('animal')}</b></button>`,
          ...occ.slice().sort((a, b) => (a.status === 'visible') - (b.status === 'visible')).map(o =>
-           `<button class="chip ${o.status === 'dort' ? 'dort' : o.status === 'hors de vue' ? 'cache' : ''}${selected === o.id ? ' sel' : ''}" data-oid="${o.id}"><i>${ICON[o.kind] || '•'}</i>${who(o)}<small>${room(o.room)}${STATUS[o.status] ? ' · ' + STATUS[o.status] : ''}</small></button>`)]
+           `<button class="chip ${o.status === 'dort' ? 'dort' : o.status === 'hors de vue' ? 'cache' : ''}${selected === o.id ? ' sel' : ''}" data-oid="${esc(o.id)}"><i>${ICON[o.kind] || '•'}</i>${who(o)}<small>${room(o.room)}${STATUS[o.status] ? ' · ' + STATUS[o.status] : ''}</small></button>`)]
       : [`<span class="chip"><small>${online ? 'Personne dans la maison pour le moment' : 'Bonaparks Vision ne répond pas'}</small></span>`];
     for (const c of state.cameras) if (c.mirror_suspect) chips.unshift(`<button class="chip cache" data-mirror="${c.id}">🪞 ${c.name}<small>même tenue en double · un miroir ?</small></button>`);
     if (state.gate?.ready && state.gate.state) chips.splice(occ.length ? 1 : 0, 0, `<button class="chip ${state.gate.state === 'ouvert' ? 'cache' : ''}" data-open-gate>🚪 Portail<small>${state.gate.state === 'ouvert' ? 'ouvert' : 'fermé'}</small></button>`);
@@ -544,7 +548,7 @@ export function start(h) {
     let html;
     if (open === 'famille') {
       html = `<h3>Famille</h3><small>Personnes et animaux enregistrés. Reconnus sur cet ordinateur uniquement.</small>
-        <div class="cams">${profiles.map(p => `<div class="cam">${p.photo ? `<img class="fam-ph" src="${base}/profiles/${p.id}/photo.jpg" alt="">` : ''}<div style="flex:1"><b><i class="sw" style="background:${p.color}"></i>${p.name}</b><br><span>${NAME[p.kind]} · ${p.faces} visage${p.faces > 1 ? 's' : ''} · ${p.looks} apparence${p.looks > 1 ? 's' : ''}</span></div><button data-del="${p.id}">Effacer</button></div>`).join('') || '<p class="fine">Personne n’est enregistré. Touche une personne ou un animal dans la maison, puis « + Enregistrer ».</p>'}</div>
+        <div class="cams">${profiles.map(p => `<div class="cam">${p.photo ? `<img class="fam-ph" src="${base}/profiles/${encodeURIComponent(p.id)}/photo.jpg" alt="">` : ''}<div style="flex:1"><b><i class="sw" style="background:${/^#[0-9a-f]{3,8}$/i.test(p.color)?p.color:'#888'}"></i>${esc(p.name)}</b><br><span>${NAME[p.kind]} · ${p.faces} visage${p.faces > 1 ? 's' : ''} · ${p.looks} apparence${p.looks > 1 ? 's' : ''}</span></div><button data-del="${p.id}">Effacer</button></div>`).join('') || '<p class="fine">Personne n’est enregistré. Touche une personne ou un animal dans la maison, puis « + Enregistrer ».</p>'}</div>
         <p class="fine">Effacer supprime le profil et tous ses visages et apparences appris.</p>
         <h3 style="margin-top:14px">Apprentissage</h3><small>L’IA s’améliore en continu, sur cet ordinateur.</small>
         <div class="cams">${state.cameras.map(c => { const l = state.learning?.[c.id] || {}; return `<div class="cam"><div><b>${c.name}</b><br><span>limite enfant ${String(l.limite_enfant ?? 1.45).replace('.', ',')} m · ${l.mesures_adulte || 0} mesures adulte · ${l.mesures_enfant || 0} enfant · ${l.corrections || 0} correction${(l.corrections || 0) > 1 ? 's' : ''}</span></div></div>`; }).join('')}</div>
@@ -566,7 +570,7 @@ export function start(h) {
     panel.querySelector('[data-gate-open]')?.addEventListener('click', () => { open = 'portail'; draw(true); });
     panel.querySelector('[data-reset-learning]')?.addEventListener('click', async () => { if (confirm('Oublier les tailles apprises et les corrections ?')) { await post('/learning/reset'); draw(true); } });
     for (const b of panel.querySelectorAll('[data-del]')) b.onclick = async () => {
-      const p = profiles.find(p => p.id === b.dataset.del); if (!p || !confirm(`Effacer ${p.name} et tout ce que l’IA a appris ?`)) return;
+      const p = profiles.find(p => p.id === b.dataset.del); if (!p || !confirm(`Effacer ${esc(p.name)} et tout ce que l’IA a appris ?`)) return;
       await post(`/profiles/${p.id}/delete`); await loadProfiles(); draw(true);
     };
   }
