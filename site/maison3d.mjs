@@ -246,7 +246,7 @@ function watchGuard(show,p){guard.pole.visible=show;guard.cone.visible=guard.tra
  guard.trail.geometry.setFromPoints(guard.walked);guard.trail.computeLineDistances();}
 const cctv={target:null,cam:new T.PerspectiveCamera(62,1.6,.15,90),rt:new T.WebGLRenderTarget(320,200),buf:new Uint8Array(320*200*4),n:0,seed:1};
 function filmCam(c,targets){if(!targets.length)return;
- const subject=c.id==='jardin'&&person.visible?person.position:c.id==='piscine'&&kid.visible?kid.position:null;
+ const subject=c.id==='jardin'&&person.visible?person.position:c.id==='piscine'&&kid.visible?kid.position:c.id==='entree'&&courier.visible?courier.position:c.id==='entree'&&playing&&car.visible&&car.position.z<Z(330)?car.position:null;
  cctv.cam.position.copy(c.pos).add(new T.Vector3(0,-.08,0));if(subject)cctv.cam.lookAt(subject.x,.8,subject.z);else cctv.cam.lookAt(c.aim);
  const hide=[guard.cone,guard.trail,guard.pole,...cams.flatMap(k=>[k.node,k.cone])].map(o=>[o,o.visible]);for(const [o] of hide)o.visible=false;
  renderer.setRenderTarget(cctv.rt);renderer.render(scene,cctv.cam);renderer.readRenderTargetPixels(cctv.rt,0,0,320,200,cctv.buf);renderer.setRenderTarget(null);
@@ -271,7 +271,7 @@ function camModel(){const g=new T.Group();const body=new T.Mesh(new T.BoxGeometr
  const led=new T.Mesh(new T.SphereGeometry(.026,10,8),new T.MeshBasicMaterial({color:0x7fd3a0}));led.position.set(.1,.05,.09);g.add(body,lens,led);g.userData.led=led;
  const grab=new T.Mesh(new T.SphereGeometry(.45,10,8),new T.MeshBasicMaterial({visible:false}));g.add(grab);return g;}
 const cams=[
- {id:'entree',name:'Entrée',at:[205,252,2.6],look:[150,300,.6]},
+ {id:'entree',name:'Entrée',at:[228,196,2.7],look:[185,170,.8]},   // on the gate pillar, away from the gate lamp
  {id:'salon',name:'Salon',at:[564,302,2.4],look:[500,380,.6]},
  {id:'cuisine',name:'Cuisine',at:[452,262,2.4],look:[380,290,.6]},
  {id:'jardin',name:'Jardin',at:[945,232,2.4],look:[820,420,.6],guard:true},
@@ -283,8 +283,9 @@ const camById=id=>cams.find(c=>c.id===id);
 let camOpen=null,camAlert=null;
 function camCone(c,p,red){const d=c.cone.geometry.attributes.position,dx=p.x-c.pos.x,dz=p.z-c.pos.z,l=Math.hypot(dx,dz)||1,nx=-dz/l*1.3,nz=dx/l*1.3;
  d.setXYZ(0,c.pos.x,.06,c.pos.z);d.setXYZ(1,p.x+nx,.06,p.z+nz);d.setXYZ(2,p.x-nx,.06,p.z-nz);d.needsUpdate=true;c.cone.geometry.computeBoundingSphere();c.cone.material.color.setHex(red?0xff2d20:0x7fd3a0);c.cone.material.opacity=red?.34:.16;}
-function openCam(id,alert){if(id&&!signedIn)return;camOpen=id;camAlert=alert?id:null;const c=camById(id),card=$('camcard');if(!card)return;
- card.hidden=!id;card.classList.toggle('alert',!!alert);if(!id)return;card.querySelector('b').textContent=alert?'Personne inconnue':'Caméra '+c.name;card.querySelector('small').textContent=alert?'Caméra '+c.name:'En direct · simulé';
+let camTitle=null;
+function openCam(id,alert,title){if(id&&!signedIn)return;camOpen=id;camAlert=alert?id:null;camTitle=id?title||null:null;const c=camById(id),card=$('camcard');if(!card)return;
+ card.hidden=!id;card.classList.toggle('alert',!!alert);if(!id)return;const head=title||(alert?'Personne inconnue':'Caméra '+c.name);card.querySelector('b').textContent=head;card.querySelector('small').textContent=head.startsWith('Caméra')?'En direct · simulé':'Caméra '+c.name;
  for(const t of document.querySelectorAll('[data-cam]'))t.classList.toggle('on',t.dataset.cam===id);}
 $('camcard-x')?.addEventListener('click',()=>openCam(null));
 for(const t of document.querySelectorAll('[data-cam]'))t.addEventListener('click',()=>openCam(camOpen===t.dataset.cam?null:t.dataset.cam));
@@ -325,6 +326,8 @@ const kid=A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x6b4a2f,styl
 const puddle=new T.Mesh(new T.CircleGeometry(1,40),new T.MeshStandardMaterial({color:0x4fb4ff,roughness:.05,metalness:.2,transparent:true,opacity:.55}));puddle.rotation.x=-Math.PI/2;puddle.position.set(X(372),.14,Z(505));puddle.scale.setScalar(.01);puddle.visible=false;house.add(puddle);
 const leakTag=tag('Fuite d’eau',372,505,1.4,{alert:true});leakTag.show=false;const valveTag=tag('Vanne · Ouverte',345,486,1.9);valveTag.show=false;const washTag=tag('Lave-linge · en marche',380,487,1.5);washTag.show=false;
 const sunTag=tag('Production · 0,0 kW',82,410,3.2);sunTag.show=false;const poolTag=tag('Enfant près du bassin',760,700,1.6,{alert:true});poolTag.show=false;
+const courier=A.human({top:0xf0b429,bottom:0x3b3f46,hair:0x2a1d14,style:'court',accent:0xf0b429});courier.visible=false;house.add(courier);
+const parcel=new T.Mesh(new T.BoxGeometry(.45,.32,.36),mat(0xc89a62,{roughness:.9}));parcel.position.set(X(205),.16,Z(236));parcel.visible=false;house.add(parcel);
 const tempTag=tag('24,5°',500,290,1.9);tempTag.low=true;tag('68 %',345,425,1.7).low=true;const motionTag=tag('Mouvement',880,430,2.1,{alert:true});motionTag.show=false;
 
 // ---------- the camera: an orbit with inertia
@@ -424,7 +427,7 @@ const scenes={
  arrival:{result:'Le portail a reconnu la voiture. La maison était prête avant que vous ne passiez la porte.',
   steps:[[0,'Le portail s’ouvre.'],[5,'La voiture rejoint sa place.'],[12,'Elle descend de voiture. La terrasse et le séjour s’allument.'],[19,'Elle monte à l’étage : les volets s’ouvrent tout seuls.'],[26,'Bienvenue à la maison.']],
   start(){mode('night',true);set('entry',false,true);shutter.target=0;shutter.open=0;flyTo(gateView,1600);},
-  at(t,s){setGate(t>1&&t<13,true);set('entry',t>1.5,true);set('garage',t>9,true);set('terrace',t>13,true);set('laundry',t>14,true);set('living',t>15,true);set('dining',t>15.6,true);set('kitchen',t>16.2,true);
+  at(t,s){if(t>2&&t<11.5&&camOpen!=='entree')openCam('entree',false,'Voiture reconnue');if(t>12&&camOpen==='entree'&&camTitle==='Voiture reconnue')openCam(null);setGate(t>1&&t<13,true);set('entry',t>1.5,true);set('garage',t>9,true);set('terrace',t>13,true);set('laundry',t>14,true);set('living',t>15,true);set('dining',t>15.6,true);set('kitchen',t>16.2,true);
    const p=along(driveIn,between(t,3,11.5));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t<11.5?p.heading:0;beams.intensity=t>2&&t<13?40:0;
    resident.visible=t>12;walk(outside,clamp((t-12)/7.5,0,1));if(t>19.5)walk(inside,clamp((t-19.5)/5,0,1));
    if(t>12.5&&!s.out){s.out=true;flyTo({target:new T.Vector3(X(420),1,Z(640)),az:-.35,pol:.95,dist:30},1800);}
@@ -437,6 +440,7 @@ const scenes={
    set('blue',t<1.5,true);set('children',t<2.5,true);set('hallup',t<4.5,true);setShutters(t<5,true);
    if(t>8&&!s.down){s.down=true;floor(false,true);flyTo({target:new T.Vector3(X(420),1,Z(640)),az:-.35,pol:.95,dist:30},1500);}
    for(const [id,at] of [['kitchen',8.5],['dining',9],['living',9.5],['laundry',10.5],['terrace',11.5],['garden1',12],['garden2',12],['garden3',12],['garden4',12],['pool',12.5]])set(id,t<at,true);set('entry',true,true);
+   if(t>15&&t<25&&camOpen!=='entree')openCam('entree',false,'Départ · portail ouvert');if(t>25.5&&camTitle==='Départ · portail ouvert')openCam(null);
    setGate(t>12&&t<26,true);const p=along([...driveIn].reverse(),between(t,16,25));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t>16?p.heading:0;beams.intensity=t>15&&t<25?40:0;car.visible=t<25;
    if(t>14&&!s.gone){s.gone=true;flyTo(gateView,1800);}}},
  intrusion:{result:'Alerte reçue en 3 secondes. Volets fermés, jardin éclairé, vidéo gardée sur votre réseau.',
@@ -459,6 +463,14 @@ const scenes={
   start(){mode('day',true);flyTo({target:new T.Vector3(X(380),.4,Z(500)),az:-.2,pol:.85,dist:12},1100);puddle.scale.setScalar(.01);},
   at(t){puddle.visible=t>3;const r=t<3?.01:Math.min(1.2,.15+(Math.min(t,7)-3)*.28);puddle.scale.setScalar(r);washTag.show=t<5;leakTag.show=t>4.5;valveTag.show=t>2;
    valveTag.el.textContent='Vanne · '+(t>7?'Fermée':'Ouverte');valveTag.el.classList.toggle('alert',t>7);$('alert').hidden=t<5.5;set('laundry',true,true);}},
+ delivery:{result:'Vous avez vu qui sonnait et ouvert depuis votre téléphone. Le colis vous attend à l’abri, derrière le portail.',
+  steps:[[0,'Un livreur arrive devant le portail.'],[4,'Il sonne : la caméra de l’entrée vous montre qui est là.'],[8,'Vous ouvrez le portail depuis votre téléphone.'],[11,'Le colis est déposé à l’abri.'],[15,'Le livreur repart, le portail se referme tout seul.']],
+  start(){mode('day',true);flyTo({target:new T.Vector3(X(190),.5,Z(215)),az:-.75,pol:.92,dist:17},1100);},
+  at(t){courier.visible=t<24;const go=[[185,-30],[185,150],[185,180]],inn=[[185,180],[195,222],[200,228]],out=[[200,228],[190,190],[185,120],[185,-30]];
+   const p=t<4?stroll(go.map(([u,v])=>[X(u),Z(v),0]),clamp(t/4,0,1)):t<9?{x:X(185),z:Z(180),heading:Math.PI}:t<11?stroll(inn.map(([u,v])=>[X(u),Z(v),0]),clamp((t-9)/2,0,1)):t<13?{x:X(200),z:Z(228),heading:0}:stroll(out.map(([u,v])=>[X(u),Z(v),0]),clamp((t-13)/9,0,1));
+   courier.position.set(p.x,0,p.z);courier.rotation.y=p.heading;parcel.visible=t>11.5;
+   if(t>4&&t<20&&camOpen!=='entree')openCam('entree',false,'Livreur au portail');if(t>20&&camTitle==='Livreur au portail')openCam(null);
+   setGate(t>8&&t<17,true);set('entry',true,true);}},
  solar:{result:'Le lave-linge et la piscine ont tourné au soleil. Ce mois-ci : environ 46 € économisés.',
   steps:[[0,'Il est 8 h. Le soleil se lève sur les panneaux.'],[5,'Midi : les panneaux produisent plus que la maison ne consomme.'],[10,'La maison lance le lave-linge et la pompe de la piscine maintenant.'],[20,'Le soir, elle repasse sur le réseau.']],
   start(){mode('day',true);flyTo({target:new T.Vector3(X(200),1.5,Z(430)),az:-.75,pol:.78,dist:30},1100);},
@@ -469,7 +481,7 @@ let playing=null;
 function play(name){if(!scenes[name])return;stop(true);$('now').hidden=false;if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};document.documentElement.dataset.scene=name;$('result').hidden=true;
  {const al=s.alert||scenes.intrusion.alert;$('alert').querySelector('strong').textContent=al[0];$('alert').querySelector('ul').innerHTML=al[1].map(([a,b])=>`<li>${a} <b>${b}</b></li>`).join('');}focused=null;back.hidden=true;s.start();$('transport').hidden=false;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed',String(b.dataset.scene===name));}
-function stop(quiet){if(!playing)return;playing=null;if(camAlert)openCam(null);kid.visible=false;puddle.visible=false;for(const g of [leakTag,valveTag,washTag,sunTag,poolTag])g.show=false;$('result').hidden=true;document.documentElement.removeAttribute('data-scene');watchGuard(false);$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
+function stop(quiet){if(!playing)return;playing=null;if(camAlert||camTitle)openCam(null);kid.visible=false;puddle.visible=false;courier.visible=false;parcel.visible=false;for(const g of [leakTag,valveTag,washTag,sunTag,poolTag])g.show=false;$('result').hidden=true;document.documentElement.removeAttribute('data-scene');watchGuard(false);$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed','false');if(!quiet)flyTo(home);}
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
@@ -508,7 +520,7 @@ function frame(now){
   const dir=t<1?1:-1;f.node.rotation.y=Math.atan2((f.b[0]-f.a[0])*dir,(f.b[1]-f.a[1])*dir);}
  for(const f of family){f.tag.show=f.node.visible&&orbit.dist<(camera.aspect<1?26:44);f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
  {const people=live.on?live.people:playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=live.on?live.pets:playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
- for(const who of [resident,person,kid]){if(!who.visible){who.userData.last=null;continue;}const l=who.userData.last,v=l?Math.hypot(who.position.x-l.x,who.position.z-l.z)/Math.max(dt,.001):0;who.userData.last=who.position.clone();who.userData.v=(who.userData.v||0)*.8+Math.min(2,v)*.2;A.animate(who,{speed:who.userData.v,t:now/1000,dt});}
+ for(const who of [resident,person,kid,courier]){if(!who.visible){who.userData.last=null;continue;}const l=who.userData.last,v=l?Math.hypot(who.position.x-l.x,who.position.z-l.z)/Math.max(dt,.001):0;who.userData.last=who.position.clone();who.userData.v=(who.userData.v||0)*.8+Math.min(2,v)*.2;A.animate(who,{speed:who.userData.v,t:now/1000,dt});}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
