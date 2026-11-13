@@ -31,10 +31,10 @@ function watch(){
 watch();
 
 // "Regardez de plus près": one picture per function.
-const shots={lumieres:'Une lampe par pièce, commandée d’un geste.',volets:'Les volets descendent tout seuls quand plus personne n’est à l’étage.',portail:'Le portail s’ouvre d’un geste, ou quand la voiture arrive.',intrusion:'La caméra repère une personne inconnue et trace son chemin en rouge.',scenario:'Arrivée, départ, nuit : une scène règle toute la maison d’un coup.'};
+const shots={lumieres:'Une lampe par pièce, commandée d’un geste.',volets:'Les volets descendent tout seuls quand plus personne n’est à l’étage.',portail:'Le portail s’ouvre d’un geste, ou quand la voiture arrive.',intrusion:'La caméra repère une personne inconnue et trace son chemin en rouge.',scenario:'Un enfant s’approche de la piscine : les parents sont prévenus avant qu’il n’atteigne le bord.'};
 for(const b of document.querySelectorAll('[data-shot]'))b.addEventListener('click',()=>{
  for(const o of document.querySelectorAll('[data-shot]'))o.setAttribute('aria-selected',String(o===b));
- const img=$('closer-img');img.style.opacity=0;setTimeout(()=>{img.src=`accueil/${b.dataset.shot}.webp`;img.style.opacity=1;},180);
+ const img=$('closer-img');img.style.opacity=0;setTimeout(()=>{img.src=`accueil/${b.dataset.shot}.webp?v=2`;img.style.opacity=1;},180);
  $('closer-text').textContent=shots[b.dataset.shot];
 });
 
