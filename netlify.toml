@@ -22,10 +22,10 @@
   status = 200
   force = true
 
-# The home address shows the house in three dimensions. The earlier demo stays at /index.html.
+# The home address shows the product page; the house in three dimensions is /maison3d.html, the earlier demo /index.html.
 [[redirects]]
   from = "/"
-  to = "/maison3d.html"
+  to = "/accueil.html"
   status = 200
   force = true
 

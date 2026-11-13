@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#f5f5f7">
+  <link rel="canonical" href="https://bonaparks.com/">
+  <title>Parks 3D · Votre maison. Vivante.</title>
+  <meta name="description" content="Pilotez les lumières, les volets, le portail et les caméras depuis une vue 3D de votre maison. L’app Bonaparks pour iPhone et iPad.">
+  <meta property="og:title" content="Parks 3D · Votre maison. Vivante."><meta property="og:type" content="website"><meta property="og:site_name" content="Parks 3D"><meta property="og:image" content="https://bonaparks.com/accueil/hero.webp">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <link rel="stylesheet" href="accueil.css?v=1">
+  <link rel="stylesheet" href="i18n.css?v=1"><script type="module" src="i18n.mjs?v=3"></script>
+  <script type="module" src="accueil.mjs?v=1"></script>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="mark" href="/" aria-label="Parks 3D, accueil"><i>3D</i>Parks</a>
+    <nav aria-label="Navigation principale"><a href="#decouvrir">Découvrir</a><a href="#lieux">Lieux</a><a href="#vie-privee">Vie privée</a><a href="#questions">Questions</a></nav>
+    <div class="top-actions"><a class="pill" href="#telecharger">Télécharger</a></div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <p class="eyebrow">Parks 3D</p>
+    <h1>Votre maison.<br>Vivante.</h1>
+    <p class="lead">Lumières, volets, portail, caméras. Toute la maison, pilotée depuis une seule vue.</p>
+    <p class="actions"><a class="button" href="#telecharger">Télécharger l’app</a><a class="link" href="maison3d.html">Visiter la maison <span aria-hidden="true">›</span></a></p>
+    <figure class="hero-shot"><img src="accueil/hero.webp" width="1600" height="1000" fetchpriority="high" alt="La maison pilote en 3D, de nuit, avec son jardin, sa piscine et ses lumières allumées"></figure>
+  </section>
+
+  <section class="statement" id="decouvrir">
+    <p>Une seule vue pour toute la maison. <span>Ce qui s’allume, ce qui s’ouvre, ce que voient les caméras. En temps réel.</span></p>
+  </section>
+
+  <!-- One house, driven by the scroll: the property, the ground floor, upstairs, then a night alert. -->
+  <section class="story" id="visite" aria-label="Visite de la maison">
+    <div class="pin">
+      <div class="stage">
+        <iframe id="house" title="Maison pilote en 3D" src="maison3d.html?app=1&amp;vue=scene" loading="eager" tabindex="-1"></iframe>
+        <div class="alert-card" id="alert-card" aria-hidden="true">
+          <div class="alert-head"><i class="bell"></i><div><b>Alerte de sécurité</b><small>Mouvement détecté · Jardin</small></div><time id="alert-time">02:15</time></div>
+          <div class="cam-view garden"><span class="rec">● REC</span><span class="who-box"><i>Personne inconnue</i></span></div>
+          <small class="alert-foot">Caméra Jardin · démonstration</small>
+        </div>
+        <div class="timeline" id="timeline" aria-hidden="true"><span class="play">❚❚</span><span class="clock" id="clock">02:14:58</span><div class="track"><i style="left:22%"></i><i style="left:47%;width:6%"></i><i style="left:71%"></i><b id="cursor"></b></div><span class="live">● Live</span></div>
+        <div class="cams" id="cams" aria-hidden="true">
+          <figure class="cam-view entry"><figcaption>Entrée</figcaption></figure>
+          <figure class="cam-view living"><figcaption>Salon</figcaption></figure>
+          <figure class="cam-view kitchen"><figcaption>Cuisine</figcaption></figure>
+          <figure class="cam-view garden hot"><figcaption>Jardin</figcaption><span class="who-box small"></span></figure>
+        </div>
+      </div>
+      <div class="captions">
+        <article data-from="0"><h2>Toute la propriété,<br>d’un seul regard.</h2><p>Jardin, portail, piscine et maison, réunis dans une vue que l’on fait tourner du bout du doigt.</p></article>
+        <article data-from=".26"><h2>Entrez.</h2><p>Touchez une pièce pour y entrer. Chaque lampe se commande d’un geste.</p></article>
+        <article data-from=".46"><h2>Montez à l’étage.</h2><p>Chambres, volets, portes : chaque étage, à sa place.</p></article>
+        <article data-from=".64" class="red"><h2>Elle veille pour vous.</h2><p>Une caméra repère une personne inconnue. Son trajet s’affiche en rouge et l’alerte arrive aussitôt sur votre téléphone.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="closer" id="regarder">
+    <h2 class="title">Regardez de plus près.</h2>
+    <div class="closer-in">
+      <ul class="tabs" role="tablist" aria-label="Fonctions">
+        <li><button role="tab" aria-selected="true" data-shot="lumieres">Lumières</button></li>
+        <li><button role="tab" aria-selected="false" data-shot="volets">Volets</button></li>
+        <li><button role="tab" aria-selected="false" data-shot="portail">Portail</button></li>
+        <li><button role="tab" aria-selected="false" data-shot="intrusion">Caméras</button></li>
+        <li><button role="tab" aria-selected="false" data-shot="scenario">Scénarios</button></li>
+      </ul>
+      <figure class="closer-shot"><img id="closer-img" src="accueil/lumieres.webp" width="1600" height="1000" loading="lazy" alt=""><figcaption id="closer-text">Une lampe par pièce, commandée d’un geste.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="places" id="lieux">
+    <h2 class="title">Quatre lieux.<br>Une seule app.</h2>
+    <div class="grid">
+      <a class="place" href="maison3d.html"><img src="accueil/lieu-maison.webp" width="1600" height="1000" loading="lazy" alt=""><b>Maison</b><small>Une maison de famille, son jardin et sa piscine.</small></a>
+      <a class="place" href="penthouse3d.html"><img src="accueil/lieu-penthouse3d.webp" width="1600" height="1000" loading="lazy" alt=""><b>Résidence</b><small>Un penthouse sur trois niveaux, visité à pied.</small></a>
+      <a class="place" href="business3d.html"><img src="accueil/lieu-business3d.webp" width="1600" height="1000" loading="lazy" alt=""><b>Business</b><small>Un rooftop, ses ambiances et ses accès.</small></a>
+      <a class="place" href="club3d.html"><img src="accueil/lieu-club3d.webp" width="1600" height="1000" loading="lazy" alt=""><b>Club</b><small>Une salle, son plan de tables et sa soirée.</small></a>
+    </div>
+  </section>
+
+  <section class="privacy" id="vie-privee">
+    <p class="apple-ish" aria-hidden="true">🔒</p>
+    <h2 class="title">Vos images restent chez vous.</h2>
+    <p class="lead">Ce qui se passe chez vous reste chez vous.</p>
+    <div class="cols">
+      <div><b>Sur votre réseau.</b><p>L’app se connecte à vos caméras sur le Wi-Fi de la maison. Les images ne passent pas par nos serveurs.</p></div>
+      <div><b>Votre maison, votre plan.</b><p>Un scan ou un plan importé reste sur votre iPhone. Vous choisissez ce que vous partagez.</p></div>
+      <div><b>Des démos honnêtes.</b><p>Sur ce site, les personnes, les équipements et les alertes sont simulés. Rien n’est suivi ni commandé.</p></div>
+    </div>
+  </section>
+
+  <section class="faq" id="questions">
+    <h2 class="title">Questions ? Réponses.</h2>
+    <details><summary>Qu’est-ce que Parks 3D ?</summary><p>Une vue 3D de votre maison, depuis laquelle vous pilotez lumières, volets, portail, scénarios et caméras.</p></details>
+    <details><summary>Comment obtenir la maquette de ma maison ?</summary><p>Avec l’app Bonaparks : scannez vos pièces avec l’iPhone, tracez-les coin par coin, ou importez le plan que vous avez déjà, en photo ou en PDF.</p></details>
+    <details><summary>Quelles caméras sont compatibles ?</summary><p>Les caméras et enregistreurs Reolink, et les caméras compatibles ONVIF ou RTSP, branchées sur le même Wi-Fi que l’iPhone.</p></details>
+    <details><summary>Faut-il un abonnement ?</summary><p>Non. L’app se télécharge gratuitement sur l’App Store.</p></details>
+    <details><summary>Est-ce disponible sur Android ?</summary><p>Pas encore. L’app existe aujourd’hui pour iPhone et iPad.</p></details>
+  </section>
+
+  <section class="cta" id="telecharger">
+    <h2 class="title">Votre maison vous attend.</h2>
+    <p class="lead">L’app Bonaparks pour iPhone et iPad.</p>
+    <p class="actions"><a class="button big" href="https://apps.apple.com/app/id6820940465" rel="noopener">Télécharger sur l’App Store</a></p>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p class="fine">Les maisons, personnes, équipements et alertes de ce site sont des démonstrations simulées.</p>
+    <nav aria-label="Liens utiles"><a href="comment-ca-marche.html">Le projet</a><a href="compte.html">Mon accès</a><a href="aide.html">Aide</a><a href="mentions-legales.html">Mentions légales</a><a href="confidentialite-web.html">Confidentialité</a></nav>
+    <div class="foot-row"><span>Parks 3D · Bonaparks</span><nav class="langs" id="langs" data-no-translate aria-label="Langue · Language · Lingua"><a href="?lang=fr" lang="fr" data-lang="fr">Français</a><a href="?lang=en" lang="en" data-lang="en">English</a><a href="?lang=it" lang="it" data-lang="it">Italiano</a></nav></div>
+  </div>
+</footer>
+</body>
+</html>

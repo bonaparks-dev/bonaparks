@@ -222,6 +222,18 @@ const family=[
  {node:dogFigure(),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
 ];
 family[3].a=[sx(-2.1),sz(-.2)];family[3].b=[sx(-2.1),sz(.6)];for(const f of family)house.add(f.node);
+// The garden camera of the alert scene, its red field of view on the lawn and the dashed way the person walked.
+const guard={cam:new T.Group(),at:new T.Vector3(X(945),2.4,Z(232)),walked:[]};
+{const body=new T.Mesh(new T.BoxGeometry(.34,.2,.2),mat(0xe9ecf1,{roughness:.4}));const lens=new T.Mesh(new T.CylinderGeometry(.07,.07,.08,16),mat(0x10141b,{roughness:.2}));lens.rotation.x=Math.PI/2;lens.position.z=.13;
+ const led=new T.Mesh(new T.SphereGeometry(.03,10,8),new T.MeshBasicMaterial({color:0xff4b3a}));led.position.set(.11,.06,.1);guard.cam.add(body,lens,led);guard.cam.position.copy(guard.at);guard.cam.visible=false;house.add(guard.cam);
+ const pole=new T.Mesh(new T.CylinderGeometry(.03,.03,2.4,8),mat(0x2a2f38));pole.position.set(guard.at.x,1.2,guard.at.z+.05);guard.pole=pole;pole.visible=false;house.add(pole);}
+guard.cone=new T.Mesh(new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute(new Float32Array(9),3)),new T.MeshBasicMaterial({color:0xff2d20,transparent:true,opacity:.38,side:T.DoubleSide,depthWrite:false}));guard.cone.visible=false;house.add(guard.cone);
+guard.trail=new T.Line(new T.BufferGeometry(),new T.LineDashedMaterial({color:0xff3b30,dashSize:.35,gapSize:.22,transparent:true,opacity:.95}));guard.trail.visible=false;house.add(guard.trail);
+function watchGuard(show,p){guard.cam.visible=guard.pole.visible=show;guard.cone.visible=guard.trail.visible=show&&!!p;if(!show||!p){guard.walked.length=0;return;}
+ const c=guard.at,dx=p.x-c.x,dz=p.z-c.z,l=Math.hypot(dx,dz)||1,nx=-dz/l*1.4,nz=dx/l*1.4,a=guard.cone.geometry.attributes.position;
+ a.setXYZ(0,c.x,.06,c.z);a.setXYZ(1,p.x+nx,.06,p.z+nz);a.setXYZ(2,p.x-nx,.06,p.z-nz);a.needsUpdate=true;guard.cone.geometry.computeBoundingSphere();guard.cam.lookAt(p.x,.9,p.z);
+ const last=guard.walked[guard.walked.length-1];if(!last||Math.hypot(last.x-p.x,last.z-p.z)>.25)guard.walked.push(new T.Vector3(p.x,.07,p.z));
+ guard.trail.geometry.setFromPoints(guard.walked);guard.trail.computeLineDistances();}
 const person=new T.Group();{const body=new T.Mesh(new T.CapsuleGeometry(.2,.75,6,12),mat(0x2b2f38));body.position.y=.82;const head=new T.Mesh(new T.SphereGeometry(.16,16,12),mat(0x3a3f4a));head.position.y=1.55;
  const ring=new T.Mesh(new T.TorusGeometry(.48,.03,8,40),new T.MeshBasicMaterial({color:0xff8f7d}));ring.rotation.x=Math.PI/2;ring.position.y=.12;body.castShadow=head.castShadow=true;person.add(body,head,ring);person.visible=false;house.add(person);}
 
@@ -368,12 +380,13 @@ const scenes={
  intrusion:{steps:[[0,'Il est 2 h 14. Tout le monde dort.'],[4,'Une personne entre dans le jardin, à droite.'],[9,'Individu non identifié : l’alerte est relayée.'],[16,'Le jardin s’éclaire. Les volets de l’étage se ferment.']],
   start(){mode('night',true);flyTo({target:new T.Vector3(X(790),.5,Z(430)),az:.55,pol:.98,dist:27},1800);},
   at(t){const p=along(walkIn,between(t,4,24));person.visible=t>4;person.position.set(X(p.u),0,Z(p.v));person.rotation.y=p.heading;motionTag.show=t>6;motionTag.pos.set(X(p.u),2.1,Z(p.v));
+   watchGuard(true,t>5?person.position:null);
    $('alert').hidden=t<9;set('garden1',t>16,true);set('garden2',t>16.6,true);if(t>16)setShutters(false,true);}}
 };
 let playing=null;
 function play(name){if(!scenes[name])return;stop(true);$('now').hidden=false;if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};focused=null;back.hidden=true;s.start();$('transport').hidden=false;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed',String(b.dataset.scene===name));}
-function stop(quiet){if(!playing)return;playing=null;$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
+function stop(quiet){if(!playing)return;playing=null;watchGuard(false);$('now').hidden=true;if(!member)intro?.classList.remove('gone');resident.visible=false;$('transport').hidden=true;$('alert').hidden=true;person.visible=false;motionTag.show=false;car.visible=true;car.position.set(X(parked[0]),0,Z(parked[1]));car.rotation.y=0;beams.intensity=0;
  for(const b of document.querySelectorAll('[data-scene]'))b.setAttribute('aria-pressed','false');if(!quiet)flyTo(home);}
 function manual(){if(playing)stop(true);}
 for(const b of document.querySelectorAll('[data-scene]'))b.addEventListener('click',()=>playing?.name===b.dataset.scene?stop():play(b.dataset.scene));
@@ -391,7 +404,7 @@ canvas.addEventListener('pointerdown',()=>{if(member)dismiss();});
 const v3=new T.Vector3(),white=new T.Color(0xffffff),moon=new T.Color(0x9db4ff),noon=new T.Color(0xfff1d6);let last=performance.now();
 function frame(now){
  const dt=clamp((now-last)/1000,0,.05);last=now;      // never backwards: a first frame can be stamped before the page finished loading
- if(playing){const t=(now-playing.t0)/1000;playing.s.at(Math.min(t,DURATION),playing.state);{const k=`scaleX(${clamp(t/DURATION,0,1)})`,line=playing.s.steps.filter(s=>s[0]<=t).pop()[1];$('bar').style.transform=k;$('now-bar').style.transform=k;if($('caption').textContent!==line){$('caption').textContent=line;$('now-caption').textContent=line;}}if(t>DURATION+1.5)stop();}
+ if(playing){const t=Math.max(0,(now-playing.t0)/1000);playing.s.at(Math.min(t,DURATION),playing.state);{const k=`scaleX(${clamp(t/DURATION,0,1)})`,line=(playing.s.steps.filter(s=>s[0]<=t).pop()||playing.s.steps[0])[1];$('bar').style.transform=k;$('now-bar').style.transform=k;if($('caption').textContent!==line){$('caption').textContent=line;$('now-caption').textContent=line;}}if(t>DURATION+1.5)stop();}
  if(fly){const k=ease(clamp((now-fly.t0)/fly.ms,0,1)),a=fly.from,b=fly.to;orbit.target.lerpVectors(a.target,b.target,k);orbit.az=a.az+(b.az-a.az)*k;orbit.pol=a.pol+(b.pol-a.pol)*k;orbit.dist=a.dist+(b.dist-a.dist)*k;if(k>=1)fly=null;}
  else if(!pointers.size&&!reduce){orbit.az+=orbit.vaz;orbit.pol=clamp(orbit.pol+orbit.vpol,.03,1.2);const f=Math.pow(.0015,dt);orbit.vaz*=f;orbit.vpol*=f;}
  place();
