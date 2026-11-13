@@ -14,15 +14,18 @@ frame.addEventListener('load',()=>{
 });
 
 const phases=[
- ()=>{house.stop?.();house.floor(false,true);house.mode('evening',true);house.flyTo({target:house.home.target.clone(),az:-.62,pol:.86,dist:36},1600);},
+ ()=>{house.stop?.();house.floor(false,true);house.mode('evening',true);house.flyTo({target:house.home.target.clone(),az:-.62+drift,pol:.86,dist:36},1600);},
  ()=>{house.stop?.();house.floor(false,true);house.enter('living');},
  ()=>{house.stop?.();house.floor(true,true);setTimeout(()=>house.flyTo({target:house.home.target.clone().set(-.5,3,0),az:-.5,pol:.78,dist:22},1400),200);},
  ()=>{house.floor(false,true);house.play('intrusion');}
 ];
 function update(){
  const r=story.getBoundingClientRect(),span=r.height-innerHeight,p=clamp(span>0?-r.top/span:0,0,1);
+ // The house starts as a card under the title, like a product shot, and opens to the whole screen as the page moves.
+ const grow=clamp((p-.005)/.07,0,1),g=grow*grow*(3-2*grow),side=Math.max(22,(innerWidth-1200)/2);
+ pin.style.setProperty('--grow',g);pin.style.setProperty('--inset-x',((1-g)*side).toFixed(1)+'px');pin.style.setProperty('--inset-y',((1-g)*Math.min(70,innerHeight*.07)).toFixed(1)+'px');pin.style.setProperty('--radius',((1-g)*28).toFixed(1)+'px');
  let i=0;captions.forEach((c,k)=>{if(p>=Number(c.dataset.from)-.0001)i=k;});
- captions.forEach((c,k)=>c.classList.toggle('on',k===i));
+ captions.forEach((c,k)=>c.classList.toggle('on',k===i&&p>=.08));
  if(house&&i!==phase){phase=i;try{phases[i]();}catch{}}
  // The alert shows once the garden camera has seen the person (the house says so with its own alert panel).
  const alerted=phase===3&&house&&frame.contentDocument?.getElementById('alert')?.hidden===false;
@@ -32,7 +35,7 @@ function update(){
 let queued=false;const ask=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;update();});};
 addEventListener('scroll',ask,{passive:true});addEventListener('resize',ask);
 // A slow turn of the whole property while the first caption is read.
-function tick(){if(house&&phase===0&&!reduce){drift+=.0012;house.orbit.az=-.62+Math.sin(drift)*.5;}
+function tick(){if(house&&phase===0&&!reduce){drift+=.0016;house.orbit.az=-.62+drift;}
  if(phase===3){const s=Math.floor(performance.now()/1000)%60;$('clock').textContent=`02:15:${String(s).padStart(2,'0')}`;}
  update();requestAnimationFrame(tick);}
 requestAnimationFrame(tick);
@@ -46,6 +49,7 @@ for(const b of document.querySelectorAll('[data-shot]'))b.addEventListener('clic
 });
 
 // The languages at the foot of the page: kept for the next visit, the current one marked.
-{const mark=()=>{const now=(document.documentElement.lang||'fr').slice(0,2);for(const a of document.querySelectorAll('#langs a'))a.toggleAttribute('aria-current',a.dataset.lang===now);};
- for(const a of document.querySelectorAll('#langs a'))a.addEventListener('click',e=>{e.preventDefault();try{localStorage.setItem('parks.language',a.dataset.lang);}catch{}const u=new URL(location.href);u.searchParams.set('lang',a.dataset.lang);location.href=u;});
+// The language, as Apple places its country and region: at the foot of the page, with a globe.
+{const pick=$('lang'),mark=()=>{const now=(document.documentElement.lang||'fr').slice(0,2);pick.value=['fr','en','it'].includes(now)?now:'en';};
+ pick.addEventListener('change',()=>{try{localStorage.setItem('parks.language',pick.value);}catch{}const u=new URL(location.href);u.searchParams.set('lang',pick.value);location.href=u;});
  mark();new MutationObserver(mark).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});}

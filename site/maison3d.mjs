@@ -3,6 +3,8 @@
 // Drag to turn around it, pinch or wheel to zoom, touch a room to enter it, touch a lamp to switch it.
 // Everything is simulated: nothing is measured, tracked or controlled.
 import * as T from './vendor/three.module.min.js';
+import {avatars} from './maison3d-avatars.mjs';
+const A=avatars(T);   // the articulated people and dog: they walk, breathe, sit and sleep
 
 const $=id=>document.getElementById(id);
 // Three steps. A visitor watches the scenes. With an access (or inside the app) the demo house can be explored and
@@ -204,9 +206,7 @@ const car=new T.Group(),beams=new T.SpotLight(0xfff0cc,0,14,.5,.6,1.4);{
  beams.position.set(0,.8,2);beams.target.position.set(0,0,9);car.add(beams,beams.target);
  house.add(car);}
 const parked=[185,520],street=[185,-40];   // the gate opens on the drive, clear of the carport
-const resident=new T.Group();{const m=(g,c,y,o)=>{const k=new T.Mesh(g,mat(c,o));k.position.y=y;k.castShadow=true;resident.add(k);return k;};
- m(new T.CapsuleGeometry(.17,.5,6,12),0x2f3f5c,.5);m(new T.CapsuleGeometry(.2,.42,6,12),0xe88f6f,1.08);m(new T.SphereGeometry(.15,18,14),0xe8c0a2,1.56);
- const hair=m(new T.SphereGeometry(.165,18,14),0x4a3326,1.6);hair.scale.set(1,.85,1);hair.position.z=-.03;resident.visible=false;house.add(resident);}
+const resident=A.human({top:0xe88f6f,bottom:0x2f3f5c,hair:0x4a3326,style:'long',accent:0x9fd8ff});resident.visible=false;house.add(resident);
 // The family at home: each one strolls a few steps in a room, the dog in the garden. Simulated, like the rest.
 function figure(shirt,hair,size=1,long=false){const g=new T.Group(),m=(geo,c,y)=>{const k=new T.Mesh(geo,mat(c));k.position.y=y*size;k.castShadow=true;g.add(k);return k;};
  m(new T.CapsuleGeometry(.17*size,.5*size,6,12),0x2f3f5c,.5);m(new T.CapsuleGeometry(.2*size,.42*size,6,12),shirt,1.08);m(new T.SphereGeometry(.15*size,18,14),0xe8c0a2,1.56);
@@ -215,11 +215,11 @@ const halo3=r=>{const ring=new T.Mesh(new T.TorusGeometry(r,.028,8,40),new T.Mes
 function dogFigure(){const g=new T.Group(),m=(geo,x,y,z)=>{const k=new T.Mesh(geo,mat(0xb48a5a));k.position.set(x,y,z);k.castShadow=true;g.add(k);return k;};
  m(new T.BoxGeometry(.24,.24,.6),0,.36,0);m(new T.BoxGeometry(.2,.2,.24),0,.52,.36);m(new T.BoxGeometry(.06,.2,.06),0,.5,-.32);for(const [x,z] of [[-.08,.2],[.08,.2],[-.08,-.2],[.08,-.2]])m(new T.BoxGeometry(.06,.26,.06),x,.13,z);g.add(halo3(.5));g.userData.tall=.8;return g;}
 const family=[
- {node:figure(0x6fb5a0,0x4a3326),label:'Personne',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
- {node:figure(0xe88f6f,0x2c1f18,1,true),label:'Personne',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
- {node:figure(0x7aa2e3,0x6b4a2f,.72),label:'Enfant',a:[X(440),Z(530)],b:[X(500),Z(540)],y:0,up:false,every:7},
- {node:figure(0xf2c14e,0x3a2a20,.66,true),label:'Enfant',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
- {node:dogFigure(),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
+ {node:A.human({top:0x6fb5a0,bottom:0x34405a,hair:0x4a3326,style:'court',accent:0x9fd8ff}),label:'Personne',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
+ {node:A.human({top:0xe88f6f,bottom:0x2f3f5c,hair:0x2c1f18,style:'long',skin:0xe0ac82,accent:0x9fd8ff}),label:'Personne',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
+ {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',a:[X(440),Z(530)],b:[X(500),Z(540)],y:0,up:false,every:7},
+ {node:A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x3a2a20,style:'long',accent:0x9fd8ff}),label:'Enfant',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
+ {node:A.dog({fur:0xb48a5a,accent:0x9fd8ff}),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
 ];
 family[3].a=[sx(-2.1),sz(-.2)];family[3].b=[sx(-2.1),sz(.6)];for(const f of family)house.add(f.node);
 // The garden camera of the alert scene, its red field of view on the lawn and the dashed way the person walked.
@@ -234,8 +234,7 @@ function watchGuard(show,p){guard.cam.visible=guard.pole.visible=show;guard.cone
  a.setXYZ(0,c.x,.06,c.z);a.setXYZ(1,p.x+nx,.06,p.z+nz);a.setXYZ(2,p.x-nx,.06,p.z-nz);a.needsUpdate=true;guard.cone.geometry.computeBoundingSphere();guard.cam.lookAt(p.x,.9,p.z);
  const last=guard.walked[guard.walked.length-1];if(!last||Math.hypot(last.x-p.x,last.z-p.z)>.25)guard.walked.push(new T.Vector3(p.x,.07,p.z));
  guard.trail.geometry.setFromPoints(guard.walked);guard.trail.computeLineDistances();}
-const person=new T.Group();{const body=new T.Mesh(new T.CapsuleGeometry(.2,.75,6,12),mat(0x2b2f38));body.position.y=.82;const head=new T.Mesh(new T.SphereGeometry(.16,16,12),mat(0x3a3f4a));head.position.y=1.55;
- const ring=new T.Mesh(new T.TorusGeometry(.48,.03,8,40),new T.MeshBasicMaterial({color:0xff8f7d}));ring.rotation.x=Math.PI/2;ring.position.y=.12;body.castShadow=head.castShadow=true;person.add(body,head,ring);person.visible=false;house.add(person);}
+const person=A.human({top:0x26282e,bottom:0x1b1d22,hair:0x15161a,style:'court',skin:0xc68b5e,accent:0xff4b3a});person.visible=false;house.add(person);
 
 // ---------- lamps: a ball on its wire is the switch, and it really lights the room
 const halo=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,'rgba(255,236,190,1)');r.addColorStop(.25,'rgba(255,214,140,.55)');r.addColorStop(1,'rgba(255,200,120,0)');g.fillStyle=r;g.fillRect(0,0,128,128);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;})();
@@ -358,7 +357,7 @@ const DURATION=30,gateView={target:new T.Vector3(X(190),.5,Z(330)),az:-.9,pol:.9
 const outside=[[185,566],[236,640],[300,700],[560,712],[593,668],[593,640,0],[593,416,2.75],[593,395,2.75]].map(([u,v,y=0])=>[X(u),Z(v),y]);
 const inside=[[X(593),Z(395),2.75],[sx(4.3),sz(.42),2.75],[sx(3.65),sz(.42),2.75],[sx(3.65),sz(-.6),2.75],[sx(3.9),sz(-2),2.75]];
 const stroll=(pts,t)=>{const n=pts.length-1,k=clamp(t,0,1)*n,i=Math.min(n-1,Math.floor(k)),f=k-i,a=pts[i],b=pts[i+1];return {x:a[0]+(b[0]-a[0])*f,y:a[2]+(b[2]-a[2])*f,z:a[1]+(b[1]-a[1])*f,heading:Math.atan2(b[0]-a[0],b[1]-a[1])};};
-const walk=(pts,t)=>{const p=stroll(pts,t);resident.position.set(p.x,p.y,p.z);resident.rotation.y=p.heading;resident.position.y+=Math.abs(Math.sin(performance.now()*.012))*.04*(t>0&&t<1?1:0);};
+const walk=(pts,t)=>{const p=stroll(pts,t);resident.position.set(p.x,p.y,p.z);resident.rotation.y=p.heading;};
 const upstairsView=()=>({target:new T.Vector3(sx(1.2),3,sz(-.2)),az:-.5,pol:.78,dist:25});
 const scenes={
  arrival:{steps:[[0,'Le portail s’ouvre.'],[5,'La voiture rejoint sa place.'],[12,'Elle descend de voiture. La terrasse et le séjour s’allument.'],[19,'Elle monte à l’étage : les volets s’ouvrent tout seuls.'],[26,'Bienvenue à la maison.']],
@@ -421,10 +420,11 @@ function frame(now){
  // the family is at home when no scene plays; each one walks there and back, with a pause at each end
  for(const [i,f] of family.entries()){const here=!playing&&f.up===floorUp||!playing&&!f.up&&!floorUp;f.node.visible=!playing&&!live.on&&(f.up?floorUp:true);if(!f.node.visible)continue;
   const t=reduce?0:((now/1000+i*2.3)%(f.every*2))/f.every,k=t<1?between(t,.25,.75):1-between(t-1,.25,.75),moving=!reduce&&((t%1)>.25&&(t%1)<.75);
-  f.node.position.set(f.a[0]+(f.b[0]-f.a[0])*k,f.y+(moving?Math.abs(Math.sin(now*.011+i))*.035:0),f.a[1]+(f.b[1]-f.a[1])*k);
+  f.node.position.set(f.a[0]+(f.b[0]-f.a[0])*k,f.y,f.a[1]+(f.b[1]-f.a[1])*k);A.animate(f.node,{speed:moving?.55:0,t:now/1000,dt});
   const dir=t<1?1:-1;f.node.rotation.y=Math.atan2((f.b[0]-f.a[0])*dir,(f.b[1]-f.a[1])*dir);}
  for(const f of family){f.tag.show=f.node.visible&&orbit.dist<(camera.aspect<1?26:44);f.tag.pos.set(f.node.position.x,f.y+f.node.userData.tall+.3,f.node.position.z);}
  {const people=live.on?live.people:playing?(resident.visible?1:0):family.filter(f=>!f.dog).length,pets=live.on?live.pets:playing?0:1,cars=car.visible?1:0,text=people+'·'+pets+'·'+cars;if(who.dataset.n!==text){who.dataset.n=text;who.children[0].lastChild.textContent=people;who.children[1].lastChild.textContent=pets;who.children[2].lastChild.textContent=cars;}}
+ for(const who of [resident,person]){if(!who.visible){who.userData.last=null;continue;}const l=who.userData.last,v=l?Math.hypot(who.position.x-l.x,who.position.z-l.z)/Math.max(dt,.001):0;who.userData.last=who.position.clone();who.userData.v=(who.userData.v||0)*.8+Math.min(2,v)*.2;A.animate(who,{speed:who.userData.v,t:now/1000,dt});}
  for(const d of doors){const near=resident.visible&&Math.abs(resident.position.y-d.y)<1&&Math.hypot(resident.position.x-d.x,resident.position.z-d.z)<1.25;d.open+=((near||d.held?1:0)-d.open)*Math.min(1,dt*(reduce?60:5));d.pivot.rotation.y=d.base+d.open*1.35;}
  gate.open+=(gate.target-gate.open)*Math.min(1,dt*(reduce?60:2.6));gate.leaves[0].rotation.y=-gate.open*Math.PI/2;gate.leaves[1].rotation.y=gate.open*Math.PI/2;
  tempTag.el.textContent=clim.on?clim.set+',0°':'24,5°';
