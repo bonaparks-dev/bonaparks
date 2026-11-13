@@ -95,6 +95,10 @@ pot(300,596);pot(560,596);pot(690,706);
 // carport: posts and a slatted roof
 for(const v of [215,600])for(const u of [52,112])cyl(u,v,.07,2.25,0,0xc9a36b);
 box(50,212,54,603,.1,2.25,0xc9a36b);box(110,212,114,603,.1,2.25,0xc9a36b);for(let v=222;v<600;v+=26)box(48,v,116,v+11,.05,2.35,0xdcbf93);
+// solar panels on the carport roof: two rows of glass panels, cells drawn on them, a thin aluminium frame
+{const cells=surface((g,n)=>{g.fillStyle='#0f1d3a';g.fillRect(0,0,n,n);g.strokeStyle='rgba(170,190,225,.55)';g.lineWidth=1.4;for(let i=0;i<=6;i++){g.beginPath();g.moveTo(i*n/6,0);g.lineTo(i*n/6,n);g.stroke();}for(let j=0;j<=10;j++){g.beginPath();g.moveTo(0,j*n/10);g.lineTo(n,j*n/10);g.stroke();}g.fillStyle='rgba(120,160,230,.08)';g.fillRect(0,0,n,n/2);},256,[1,1]);
+ const glassPanel=mat(0xffffff,{map:cells,roughness:.18,metalness:.35}),alu=mat(0xc9ced6,{roughness:.4,metalness:.6});
+ for(let v=226;v<596;v+=46)for(const [u0,u1] of [[50,82],[84,114]]){const p=box(u0,v,u1,v+44,.04,2.46,glassPanel);p.rotation.z=.12;const f=box(u0-.4,v-.4,u1+.4,v+44.4,.02,2.44,alu,undefined,false);f.rotation.z=.12;}}
 // gazebo by the pool
 for(const [u,v] of [[578,645],[612,645],[578,690],[612,690]])cyl(u,v,.06,2.3,0,0xc9a36b);
 {const m=new T.Mesh(new T.ConeGeometry(1.3,.55,4),mat(0xf1ece2,{flatShading:true}));m.position.set(X(595),2.57,Z(667));m.rotation.y=Math.PI/4;put(m);}
@@ -218,7 +222,7 @@ function dogFigure(){const g=new T.Group(),m=(geo,x,y,z)=>{const k=new T.Mesh(ge
 const family=[
  {node:A.human({top:0x6fb5a0,bottom:0x34405a,hair:0x4a3326,style:'court',accent:0x9fd8ff}),label:'Personne',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
  {node:A.human({top:0xe88f6f,bottom:0x2f3f5c,hair:0x2c1f18,style:'long',skin:0xe0ac82,accent:0x9fd8ff}),label:'Personne',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
- {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',a:[X(440),Z(530)],b:[X(500),Z(540)],y:0,up:false,every:7},
+ {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',a:[X(512),Z(330)],b:[X(512),Z(385)],y:0,up:false,every:7},   // the child plays on the rug, by the parents
  {node:A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x3a2a20,style:'long',accent:0x9fd8ff}),label:'Enfant',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
  {node:A.dog({fur:0xb48a5a,accent:0x9fd8ff}),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
 ];
@@ -254,7 +258,7 @@ const lampList=[
  {id:'kitchen',name:'Cuisine',at:[388,272],h:1.9,power:9},{id:'living',name:'Séjour',at:[530,345],h:1.9,power:12},{id:'dining',name:'Salle à manger',at:[492,364],h:1.75,power:9},
  {id:'bath',name:'Salle d’eau',at:[357,392],h:1.9,power:7},{id:'laundry',name:'Buanderie',at:[440,522],h:1.9,power:11},{id:'terrace',name:'Terrasse',at:[450,632],h:2,power:11},
  {id:'stairs',name:'Escalier',at:[593,470],h:3.1,power:8},{id:'entry',name:'Portail',at:[185,238],h:1.7,power:12},{id:'garage',name:'Garage',at:[82,400],h:2,power:11},
- {id:'garden1',name:'Jardin · haut',at:[760,300],h:.7,power:9,low:true},{id:'garden2',name:'Jardin · bas',at:[850,560],h:.7,power:9,low:true},{id:'gazebo',name:'Gazebo',at:[595,667],h:2,power:8},
+ {id:'garden1',name:'Jardin · haut · gauche',at:[634,232],h:.7,power:9,low:true},{id:'garden2',name:'Jardin · haut · droite',at:[942,232],h:.7,power:9,low:true},{id:'garden3',name:'Jardin · bas · droite',at:[942,668],h:.7,power:9,low:true},{id:'garden4',name:'Jardin · bas · gauche',at:[700,668],h:.7,power:9,low:true},{id:'gazebo',name:'Gazebo',at:[595,667],h:2,power:8},
  {id:'pool',name:'Piscine',at:[830,784],h:-.5,power:14,cool:true},
  {id:'master',name:'Chambre · gauche',at:[ru(-1.6),rv(2.5)],h:4.55,power:9,up:true},{id:'guest',name:'Chambre · droite',at:[ru(3.3),rv(2.4)],h:4.55,power:9,up:true},{id:'children',name:'Chambre des enfants',at:[ru(-2),rv(-1.2)],h:4.55,power:9,up:true},
  {id:'blue',name:'Chambre au lit bleu',at:[ru(2.9),rv(-1.8)],h:4.55,power:9,up:true},{id:'bathup',name:'Salle de bain',at:[ru(.2),rv(-1.6)],h:4.55,power:7,up:true},{id:'hallup',name:'Couloir du haut',at:[ru(2),rv(.45)],h:4.55,power:7,up:true}
@@ -346,7 +350,7 @@ function setShutters(open,quiet){if(!!shutter.target===!!open)return;shutter.tar
 function setGate(open,quiet){if(!!gate.target===!!open)return;gate.target=open?1:0;if(!quiet)say(`Portail · <b>${open?'Ouvert':'Fermé'}</b>`);refresh();}
 const toggleGate=()=>{manual();setGate(!gate.target);};
 for(const l of lampList){const li=document.createElement('li');li.innerHTML=`<button data-lamp="${l.id}" aria-pressed="false"><i></i><span>${l.name}<small></small></span></button>`;li.firstChild.addEventListener('click',()=>toggle(l.id));listEl.append(li);}
-const modes={day:{night:0,on:[]},evening:{night:1,on:['kitchen','living','dining','laundry','terrace','garden1','garden2','pool','entry','children','blue','hallup']},night:{night:1,on:['entry']}};
+const modes={day:{night:0,on:[]},evening:{night:1,on:['kitchen','living','dining','laundry','terrace','garden1','garden2','garden3','garden4','pool','entry','children','blue','hallup']},night:{night:1,on:['entry']}};
 const modeShutters={day:true,evening:true,night:false};
 let night=1,nightTarget=1;
 function mode(name,quiet){const m=modes[name];nightTarget=m.night;for(const id of lamps.keys())set(id,m.on.includes(id),true);stageEl.classList.toggle('day',!m.night);
@@ -385,14 +389,14 @@ const scenes={
   at(t,s){resident.visible=t<14.5;if(t<5)walk([...inside].reverse(),clamp(t/4.5,0,1));else walk([...outside].reverse(),clamp((t-5)/9,0,1));
    set('blue',t<1.5,true);set('children',t<2.5,true);set('hallup',t<4.5,true);setShutters(t<5,true);
    if(t>8&&!s.down){s.down=true;floor(false,true);flyTo({target:new T.Vector3(X(420),1,Z(640)),az:-.35,pol:.95,dist:30},1500);}
-   for(const [id,at] of [['kitchen',8.5],['dining',9],['living',9.5],['laundry',10.5],['terrace',11.5],['garden1',12],['garden2',12],['pool',12.5]])set(id,t<at,true);set('entry',true,true);
+   for(const [id,at] of [['kitchen',8.5],['dining',9],['living',9.5],['laundry',10.5],['terrace',11.5],['garden1',12],['garden2',12],['garden3',12],['garden4',12],['pool',12.5]])set(id,t<at,true);set('entry',true,true);
    setGate(t>12&&t<26,true);const p=along([...driveIn].reverse(),between(t,16,25));car.position.set(X(p.u),0,Z(p.v));car.rotation.y=t>16?p.heading:0;beams.intensity=t>15&&t<25?40:0;car.visible=t<25;
    if(t>14&&!s.gone){s.gone=true;flyTo(gateView,1800);}}},
  intrusion:{steps:[[0,'Il est 2 h 14. Tout le monde dort.'],[1.2,'Une personne entre dans le jardin, à droite.'],[3.5,'Individu non identifié : l’alerte est relayée.'],[8,'Le jardin s’éclaire. Les volets de l’étage se ferment.']],
   start(){mode('night',true);flyTo({target:new T.Vector3(X(790),.5,Z(430)),az:.55,pol:.98,dist:27},1000);},
   at(t){const p=along(walkIn,between(t,1,20));person.visible=t>1;person.position.set(X(p.u),0,Z(p.v));person.rotation.y=p.heading;motionTag.show=t>2;motionTag.pos.set(X(p.u),2.1,Z(p.v));
    watchGuard(true,t>1.8?person.position:null);
-   $('alert').hidden=t<3.5;set('garden1',t>8,true);set('garden2',t>8.5,true);if(t>8)setShutters(false,true);}}
+   $('alert').hidden=t<3.5;set('garden1',t>8,true);set('garden2',t>8.3,true);set('garden3',t>8.6,true);set('garden4',t>8.9,true);if(t>8)setShutters(false,true);}}
 };
 let playing=null;
 function play(name){if(!scenes[name])return;stop(true);$('now').hidden=false;if(floorUp)floor(false,true);const s=scenes[name];playing={name,s,t0:performance.now(),state:{}};focused=null;back.hidden=true;s.start();$('transport').hidden=false;

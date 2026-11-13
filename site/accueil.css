@@ -163,7 +163,7 @@ body{background:radial-gradient(120% 60% at 50% 0%,#111826 0,#05070c 55%) no-rep
 .bar{background:rgba(5,7,12,.72);border-bottom-color:rgba(255,255,255,.06)}.bar nav{color:#c7c7cc}.bar nav a:hover{color:#fff}
 .mark i{background:#f5f5f7;color:#05070c}
 .statement span{color:#6e6e73}
-.turn-frame{box-shadow:none;background:transparent;border-radius:0;-webkit-mask:radial-gradient(75% 70% at 50% 50%,#000 55%,transparent 100%);mask:radial-gradient(75% 70% at 50% 50%,#000 55%,transparent 100%)}
+.turn-frame{box-shadow:none;background:transparent;border-radius:0;-webkit-mask:radial-gradient(85% 80% at 50% 50%,#000 70%,transparent 100%);mask:radial-gradient(85% 80% at 50% 50%,#000 70%,transparent 100%)}
 .demo,.places,.cta{background:transparent}
 .chip{background:var(--card);color:var(--ink);border-color:var(--line)}.chip:hover{border-color:#3a3d46}.chip.on{background:#f5f5f7;color:#05070c;border-color:#f5f5f7}
 .demo-frame{box-shadow:0 0 0 1px rgba(255,255,255,.05);background:#0a0e18}

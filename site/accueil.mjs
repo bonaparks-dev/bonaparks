@@ -11,7 +11,7 @@ function house(frame,css){return new Promise(done=>{let started=false;const read
 
 // 1. The house under the title turns slowly, on its own, like a product on its stand. No text, no controls on it.
 let turning=null,az=-.62;
-house($('turn'),quiet).then(h=>{turning=h;h.mode('evening',true);h.flyTo({target:h.home.target.clone(),az,pol:.86,dist:36},1200);});
+house($('turn'),quiet).then(h=>{turning=h;h.mode('evening',true);h.flyTo({target:h.home.target.clone(),az,pol:.82,dist:52},1200);});
 function spin(){if(turning&&!reduce){az+=.0016;turning.orbit.az=az;}requestAnimationFrame(spin);}
 requestAnimationFrame(spin);
 
