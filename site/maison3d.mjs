@@ -225,11 +225,11 @@ const halo3=r=>{const ring=new T.Mesh(new T.TorusGeometry(r,.028,8,40),new T.Mes
 function dogFigure(){const g=new T.Group(),m=(geo,x,y,z)=>{const k=new T.Mesh(geo,mat(0xb48a5a));k.position.set(x,y,z);k.castShadow=true;g.add(k);return k;};
  m(new T.BoxGeometry(.24,.24,.6),0,.36,0);m(new T.BoxGeometry(.2,.2,.24),0,.52,.36);m(new T.BoxGeometry(.06,.2,.06),0,.5,-.32);for(const [x,z] of [[-.08,.2],[.08,.2],[-.08,-.2],[.08,-.2]])m(new T.BoxGeometry(.06,.26,.06),x,.13,z);g.add(halo3(.5));g.userData.tall=.8;return g;}
 const family=[
- {node:A.human({top:0x6fb5a0,bottom:0x34405a,hair:0x4a3326,style:'court',accent:0x9fd8ff}),label:'Personne',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
- {node:A.human({top:0xe88f6f,bottom:0x2f3f5c,hair:0x2c1f18,style:'long',skin:0xe0ac82,accent:0x9fd8ff}),label:'Personne',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
- {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',a:[X(518),Z(406)],b:[X(533),Z(406)],y:0,up:false,every:7},   // the child plays on the rug, below the low table, clear of the chairs and the sofa
- {node:A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x3a2a20,style:'long',accent:0x9fd8ff}),label:'Enfant',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
- {node:A.dog({fur:0xb48a5a,accent:0x9fd8ff}),label:'Chien',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
+ {node:A.human({top:0x6fb5a0,bottom:0x34405a,hair:0x4a3326,style:'court',accent:0x9fd8ff}),label:'Personne',name:'Marc',a:[X(372),Z(300)],b:[X(410),Z(300)],y:0,up:false,every:9},
+ {node:A.human({top:0xe88f6f,bottom:0x2f3f5c,hair:0x2c1f18,style:'long',skin:0xe0ac82,accent:0x9fd8ff}),label:'Personne',name:'Sarah',a:[X(520),Z(430)],b:[X(470),Z(440)],y:0,up:false,every:11},
+ {node:A.human({kind:'enfant',top:0x7aa2e3,bottom:0x3a4660,hair:0x6b4a2f,style:'boucles',accent:0x9fd8ff}),label:'Enfant',name:'Léo',a:[X(518),Z(406)],b:[X(533),Z(406)],y:0,up:false,every:7},   // the child plays on the rug, below the low table, clear of the chairs and the sofa
+ {node:A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x3a2a20,style:'long',accent:0x9fd8ff}),label:'Enfant',name:'Emma',a:[X(470)-.01,Z(470)],b:[X(470),Z(470)],y:2.75,up:true,every:8,at:null},
+ {node:A.dog({fur:0xb48a5a,accent:0x9fd8ff}),label:'Chien',name:'Rio',a:[X(760),Z(540)],b:[X(840),Z(470)],y:0,up:false,every:13,dog:true}
 ];
 family[3].a=[sx(-2.1),sz(-.2)];family[3].b=[sx(-2.1),sz(.6)];for(const f of family)house.add(f.node);
 // The garden camera of the alert scene, its red field of view on the lawn and the dashed way the person walked.
@@ -324,7 +324,7 @@ for(const def of lampList){
 // ---------- small labels, as on a dashboard: a few readings, no more
 const tags=[];
 function tag(text,u,v,h,o={}){const el=document.createElement(o.press?'button':'span');el.className='tag'+(o.alert?' alert':'')+(o.press?' press':'');el.textContent=text;if(o.press)el.addEventListener('click',o.press);labelsEl.append(el);const t={el,pos:new T.Vector3(X(u),h,Z(v)),show:true};tags.push(t);return t;}
-for(const f of family){f.tag=tag(f.label,0,0,0);f.tag.el.classList.add('who-tag');}
+for(const f of family){f.tag=tag(f.name||f.label,0,0,0);f.tag.el.classList.add('who-tag');}
 const gateTag=tag('Portail · Fermé',185,200,2.1,{press:()=>toggleGate()});gateTag.show=false;   // no fixed label over the gate: its state is in the dashboard, and a change is said once
 // What the new scenes need: a child who wanders to the pool, water on the laundry floor, readings on the roof.
 const kid=A.human({kind:'enfant',top:0xf2c14e,bottom:0x5b6aa8,hair:0x6b4a2f,style:'boucles',accent:0xff8f7d});kid.visible=false;house.add(kid);
@@ -417,11 +417,11 @@ $('clim-less').addEventListener('click',()=>{clim.set=clamp(clim.set-1,17,28);re
 const U=x=>x/0.03396+470,V=z=>z/0.021227+470;
 function placeOf(o,up){if(up)return 'Étage';const u=U(o.position.x),v=V(o.position.z);for(const r of Object.values(rooms)){const [a,b,c,d]=r.rect;if(u>=a&&u<=c&&v>=b&&v<=d)return r.name;}return 'Dehors';}
 function whoList(){const ul=$('who-list');if(!ul)return;const rows=[];
- const people=family.filter(f=>!f.dog&&f.node.visible),pets=family.filter(f=>f.dog&&f.node.visible);
- if(people.length)rows.push(['Personnes',people.map(f=>[f.label,placeOf(f.node,f.up),f.node])]);
- if(pets.length)rows.push(['Animaux',pets.map(f=>[f.label,placeOf(f.node,false),f.node])]);
+ const people=playing?[]:family.filter(f=>!f.dog&&(f.node.visible||f.up)),pets=family.filter(f=>f.dog&&f.node.visible);
+ if(people.length)rows.push(['Personnes',people.map(f=>[f.name||f.label,placeOf(f.node,f.up),f.node,f.label==='Personne'?'Adulte':f.label])]);
+ if(pets.length)rows.push(['Animaux',pets.map(f=>[f.name||f.label,placeOf(f.node,false),f.node,f.label])]);
  if(car.visible)rows.push(['Voitures',[['Voiture',placeOf(car,false),car]]]);
- const html=rows.map(([g,list])=>`<li class="g">${g}</li>`+list.map(([n,w],i)=>`<li><button data-who="${g}|${i}"><b>${n}</b><small>${w}</small></button></li>`).join('')).join('')||'<li class="g">Aucune présence</li>';
+ const html=rows.map(([g,list])=>`<li class="g">${g}</li>`+list.map(([n,w,,role],i)=>`<li><button data-who="${g}|${i}"><i class="av">${n[0]}</i><span><b>${n}</b>${role&&role!==n?`<em>${role}</em>`:''}</span><small>${w}</small></button></li>`).join('')).join('')||'<li class="g">Aucune présence</li>';
  if(ul.dataset.html!==html){ul.dataset.html=html;ul.innerHTML=html;for(const b of ul.querySelectorAll('[data-who]'))b.addEventListener('click',()=>{const [g,i]=b.dataset.who.split('|'),row=rows.find(r=>r[0]===g),o=row?.[1][+i]?.[2];if(o){manual();flyTo({target:o.position.clone().setY(.8),az:orbit.az,pol:.9,dist:12},900);}});}}
 $('who').addEventListener('click',()=>{const box=$('whobox'),open=box.hidden;box.hidden=!open;$('who').setAttribute('aria-expanded',String(open));if(open)whoList();});
 setInterval(()=>{if(!$('whobox').hidden)whoList();},1000);
