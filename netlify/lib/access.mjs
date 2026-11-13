@@ -5,17 +5,34 @@ export const cookie=(name,value,age=SESSION_AGE)=>`${name}=${value}; Path=/; Max
 export function cookies(req){return Object.fromEntries((req.headers.get('cookie')||'').split(';').map(s=>s.trim().split('=')).filter(p=>p.length===2));}
 export function equal(a,b){if(typeof a!=='string'||typeof b!=='string'||!a.length)return false;const x=Buffer.from(a),y=Buffer.from(b);return x.length===y.length&&timingSafeEqual(x,y);}
 export function cleanRegistration(body){const name=typeof body.name==='string'?body.name.trim().replace(/\s+/g,' '):'',email=typeof body.email==='string'?body.email.trim().toLowerCase():'';if(name.length<2||name.length>80||/[<>\x00-\x1f]/.test(name)||email.length>254||!/^\S+@[^\s@]+\.[^\s@]+$/.test(email)||body.company)return null;return {name,email,marketing:body.marketing===true};}
-export async function session(req,store){const token=cookies(req).parks_session;if(!/^[a-f0-9]{64}$/.test(token||''))return null;const s=await store.get('sessions/'+hash(token),{type:'json'});if(!s||s.expiresAt<=Date.now())return null;return s;}
+export const bearer=req=>(req.headers.get('authorization')||'').match(/^Bearer ([a-f0-9]{64})$/)?.[1]||null;
+export async function session(req,store){const token=cookies(req).parks_session||bearer(req);if(!/^[a-f0-9]{64}$/.test(token||''))return null;const s=await store.get('sessions/'+hash(token),{type:'json'});if(!s||s.expiresAt<=Date.now())return null;return s;}
 export async function register(data,store,{provider='email',subject=null,verified=false}={}){const id=randomUUID(),token=randomBytes(32).toString('hex'),now=Date.now(),sessionKey='sessions/'+hash(token),record={id,name:data.name,email:data.email,provider,subject,emailVerified:verified,marketing:data.marketing,consentText:data.marketing?'Je souhaite recevoir l’offre et les nouvelles de Parks 3D par e-mail.':null,consentVersion:'2026-11-10',consentAt:data.marketing?new Date(now).toISOString():null,createdAt:new Date(now).toISOString(),expiresAt:now+(data.marketing?3*365:30)*86400000};await store.setJSON('contacts/'+id,record);const s={contactId:id,name:data.name,provider,expiresAt:now+SESSION_AGE*1000};await store.setJSON(sessionKey,s);return {token,session:s};}
 // The owner sees the private parts of the demo (its cameras): her address must be verified (Google), never only typed.
 export function isOwner(current,ownerEmails=''){if(!current||current.emailVerified!==true||!current.email)return false;const list=String(ownerEmails).split(',').map(e=>e.trim().toLowerCase()).filter(Boolean);return list.includes(String(current.email).trim().toLowerCase());}
 export async function handleAccess(req,{store,googleClientId='',verifyGoogle,ip='unknown',ownerEmails=''}){
  const url=new URL(req.url),json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store',...headers}});
- if(req.method==='GET'){const current=await session(req,store),nonce=cookies(req).parks_csrf||randomBytes(24).toString('hex');return json({authenticated:!!current,owner:isOwner(current,ownerEmails),name:current?.name||null,googleClientId,csrf:nonce},200,{'set-cookie':cookie('parks_csrf',nonce,3600)});}
+ if(req.method==='GET'){const current=await session(req,store),contact=current?await store.get('contacts/'+current.contactId,{type:'json'}):null,nonce=cookies(req).parks_csrf||randomBytes(24).toString('hex');return json({authenticated:!!current,owner:isOwner(contact,ownerEmails),name:current?.name||null,googleClientId,csrf:nonce},200,{'set-cookie':cookie('parks_csrf',nonce,3600)});}
  if(req.method!=='POST')return json({error:'Méthode non autorisée.'},405);
+ if(req.headers.get('x-parks-app')==='1'){
+  let body;try{const text=await req.text();if(text.length>2000)return json({error:'Requête trop volumineuse.'},413);body=JSON.parse(text);}catch{return json({error:'Requête illisible.'},400);}
+  if(body?.action==='app-redeem'){
+   const bucket='rate-app/'+new Date().toISOString().slice(0,13)+'/'+hash(ip),attempts=Number(await store.get(bucket)||0);if(attempts>=30)return json({error:'Trop de tentatives. Réessayez dans une heure.'},429);await store.set(bucket,String(attempts+1));
+   if(typeof body.code!=='string'||!/^[a-f0-9]{48}$/.test(body.code))return json({error:'Code invalide.'},400);
+   const key='appcodes/'+hash(body.code),rec=await store.get(key,{type:'json'});await store.delete(key);
+   if(!rec||rec.expiresAt<=Date.now())return json({error:'Code expiré. Reconnectez-vous.'},400);
+   const s=await store.get('sessions/'+hash(rec.token),{type:'json'}),contact=s?await store.get('contacts/'+s.contactId,{type:'json'}):null;if(!s)return json({error:'Code expiré. Reconnectez-vous.'},400);
+   return json({token:rec.token,name:s.name||null,owner:isOwner(contact,ownerEmails)});}
+  const token=bearer(req);if(!token)return json({error:'Reconnectez-vous.'},401);
+  if(body?.action==='logout'){await store.delete('sessions/'+hash(token));return json({ok:true});}
+  if(body?.action==='erase'){const current=await session(req,store);if(!current)return json({error:'Reconnectez-vous pour gérer cet accès.'},401);await store.delete('contacts/'+current.contactId);await store.delete('sessions/'+hash(token));return json({ok:true});}
+  return json({error:'Action inconnue.'},400);}
  if(req.headers.get('origin')!==url.origin||!equal(req.headers.get('x-parks-csrf'),cookies(req).parks_csrf))return json({error:'Session expirée. Rechargez la page.'},403);
  if(!req.headers.get('content-type')?.includes('application/json'))return json({error:'Format non accepté.'},415);
  const text=await req.text();if(text.length>12000)return json({error:'Requête trop volumineuse.'},413);let body;try{body=JSON.parse(text);}catch{return json({error:'Requête illisible.'},400);}if(!body||typeof body!=='object')return json({error:'Requête illisible.'},400);
+ if(body.action==='app-code'){const current=await session(req,store);if(!current)return json({error:'Connectez-vous d’abord.'},401);
+  const token=randomBytes(32).toString('hex'),code=randomBytes(24).toString('hex');await store.setJSON('sessions/'+hash(token),{...current,expiresAt:Date.now()+SESSION_AGE*1000});
+  await store.setJSON('appcodes/'+hash(code),{token,expiresAt:Date.now()+120000});return json({code});}
  if(body.action==='logout'){const token=cookies(req).parks_session;if(/^[a-f0-9]{64}$/.test(token||''))await store.delete('sessions/'+hash(token));return json({ok:true},200,{'set-cookie':cookie('parks_session','',0)});}
  if(body.action==='erase'){const current=await session(req,store);if(!current)return json({error:'Reconnectez-vous pour gérer cet accès.'},401);await store.delete('contacts/'+current.contactId);const token=cookies(req).parks_session;await store.delete('sessions/'+hash(token));return json({ok:true},200,{'set-cookie':cookie('parks_session','',0)});}
  const bucket='rate/'+new Date().toISOString().slice(0,13)+'/'+hash(ip),attempts=Number(await store.get(bucket)||0);if(attempts>=20)return json({error:'Trop de tentatives. Réessayez dans une heure.'},429);await store.set(bucket,String(attempts+1));

@@ -17,6 +17,8 @@ if(member)document.documentElement.classList.remove('visitor');
 let signedIn=false;const signIn=()=>{signedIn=true;document.documentElement.classList.add('cams-on');};
 // Local preview on this computer only (never on bonaparks.com): ?proprietaire shows the private parts, to check them.
 if(/^(127\.0\.0\.1|localhost)$/.test(location.hostname)&&new URLSearchParams(location.search).has('proprietaire'))signIn();
+// Inside the iPhone app only (its own parks3d:// page, never bonaparks.com): the app says the owner signed in with Google.
+if(location.protocol==='parks3d:')window.parks3dOwner=()=>signIn();
 fetch('/.netlify/functions/parks-access',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(d=>{if(d?.authenticated&&!member)admit();if(d?.owner)signIn();}).catch(()=>{});
 // Inside the Bonaparks app the same page is shown: ?app hides the way back to the site, ?vue=scene keeps the house alone.
 {const q=new URLSearchParams(location.search),root=document.documentElement;root.classList.toggle('in-app',q.has('app'));root.classList.toggle('only-scene',q.get('vue')==='scene');root.classList.toggle('embedded',q.has('embed'));}

@@ -20,3 +20,26 @@ test('only a verified owner address sees the private demo cameras',()=>{
  assert.equal(isOwner({email:'second@example.com',emailVerified:true},owners),true);
  assert.equal(isOwner({email:'someone@example.com',emailVerified:true},owners),false);
 });
+
+import {register} from './access.mjs';
+const get=headers=>new Request('https://bonaparks.com/.netlify/functions/parks-access',{headers});
+test('the owner is read from the verified contact, never from a typed address',async()=>{const store=makeStore(),owners='owner@example.com';
+ const g=await register({name:'Propriétaire',email:'owner@example.com',marketing:false},store,{provider:'google',subject:'s1',verified:true});
+ let r=await handleAccess(get({cookie:'parks_session='+g.token}),{store,ownerEmails:owners});assert.equal((await r.json()).owner,true);
+ const e=await register({name:'Imposteur',email:'owner@example.com',marketing:false},store);
+ r=await handleAccess(get({cookie:'parks_session='+e.token}),{store,ownerEmails:owners});assert.equal((await r.json()).owner,false);});
+const app=body=>new Request('https://bonaparks.com/.netlify/functions/parks-access',{method:'POST',headers:{'x-parks-app':'1','content-type':'application/json'},body:JSON.stringify(body)});
+test('the app gets its own session from a one-time code handed by the signed-in page',async()=>{const store=makeStore(),owners='owner@example.com';
+ const g=await register({name:'Propriétaire',email:'owner@example.com',marketing:false},store,{provider:'google',subject:'s1',verified:true});
+ assert.equal((await handleAccess(request({action:'app-code'}),{store})).status,401);                       // not signed in on the page
+ const r=await handleAccess(request({action:'app-code'},{cookie:'parks_csrf=nonce; parks_session='+g.token}),{store});assert.equal(r.status,200);const {code}=await r.json();assert.match(code,/^[a-f0-9]{48}$/);
+ const forged=new Request('https://bonaparks.com/.netlify/functions/parks-access',{method:'POST',headers:{origin:'https://evil.example','content-type':'application/json',cookie:'parks_session='+g.token},body:JSON.stringify({action:'app-code'})});
+ assert.equal((await handleAccess(forged,{store})).status,403);                                              // another site cannot ask for a code
+ const a=await handleAccess(app({action:'app-redeem',code}),{store,ownerEmails:owners});assert.equal(a.status,200);const got=await a.json();assert.equal(got.owner,true);assert.notEqual(got.token,g.token);
+ assert.equal((await handleAccess(app({action:'app-redeem',code}),{store})).status,400);                  // one time only
+ let s=await handleAccess(get({authorization:'Bearer '+got.token}),{store,ownerEmails:owners});assert.equal((await s.json()).authenticated,true);
+ assert.equal((await handleAccess(app({action:'logout'}),{store})).status,401);
+ const out=new Request('https://bonaparks.com/.netlify/functions/parks-access',{method:'POST',headers:{'x-parks-app':'1','content-type':'application/json',authorization:'Bearer '+got.token},body:JSON.stringify({action:'logout'})});
+ assert.equal((await handleAccess(out,{store})).status,200);
+ s=await handleAccess(get({authorization:'Bearer '+got.token}),{store});assert.equal((await s.json()).authenticated,false);
+ s=await handleAccess(get({cookie:'parks_session='+g.token}),{store});assert.equal((await s.json()).authenticated,true);});   // the page stays signed in
